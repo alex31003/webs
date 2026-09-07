@@ -402,7 +402,7 @@ def ensure_audio(clip):
     out = clip.replace(".mp4", "_a.mp4")
     run([
         "ffmpeg", "-i", clip,
-        "-f", "lavfi", "-i", "aevalsrc=0:c=stereo:r=44100",
+        "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=44100",
         "-shortest", "-map", "0:v", "-map", "1:a",
         "-c:v", "copy", "-c:a", "aac", "-b:a", "128k", "-y", out
     ], f"Add silent audio → {os.path.basename(clip)}")
