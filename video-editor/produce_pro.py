@@ -367,12 +367,14 @@ def add_screen_text(inp, out, texts, watermark="@tu_usuario"):
     vf = f"drawbox=x=0:y=0:w={W}:h=7:color={P['mustard']}:t=fill"
     for t in texts:
         color = {"mustard": P["mustard"], "green": P["green"]}.get(t.get("color"), "white")
+        txt = esc(t["text"])
+        ts, te = t["start"], t["end"]
         vf += (
-            f",drawtext=text='{esc(t[\"text\"])}':fontsize=42:fontcolor={color}"
+            f",drawtext=text='{txt}':fontsize=42:fontcolor={color}"
             f":x=(w-text_w)/2:y={H-200}:font={P['font']}"
             f":shadowcolor=black@0.95:shadowx=2:shadowy=2"
             f":box=1:boxcolor=black@0.5:boxborderw=14"
-            f":enable='between(t,{t[\"start\"]},{t[\"end\"]})'"
+            f":enable='between(t,{ts},{te})'"
         )
     vf += (
         f",drawtext=text='{wm}':fontsize=19:fontcolor=white@0.72"
