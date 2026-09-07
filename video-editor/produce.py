@@ -346,12 +346,34 @@ def make_outro(out, cta="Sígueme para más", username="@tu_usuario", duration=4
 # ══════════════════════════════════════════════════════════════════════════════
 # 10. CONCAT
 # ══════════════════════════════════════════════════════════════════════════════
+def ensure_audio(clip, out_dir):
+    """Add silent audio track if clip has no audio."""
+    import tempfile
+    r = subprocess.run(
+        ["ffprobe", "-v", "error", "-select_streams", "a:0",
+         "-show_entries", "stream=codec_type", "-of", "csv=p=0", clip],
+        capture_output=True, text=True
+    )
+    if "audio" in r.stdout:
+        return clip  # already has audio
+    # Add silent audio
+    out = clip.replace(".mp4", "_a.mp4")
+    run([
+        "ffmpeg", "-i", clip,
+        "-f", "lavfi", "-i", "aevalsrc=0:c=stereo:r=44100",
+        "-shortest", "-map", "0:v", "-map", "1:a",
+        "-c:v", "copy", "-c:a", "aac", "-b:a", "128k", "-y", out
+    ], f"Add silent audio → {os.path.basename(out)}")
+    return out if os.path.exists(out) else clip
+
+
 def concat(clips, out):
+    # Ensure all clips have audio for compatible concat
+    fixed = [ensure_audio(c, os.path.dirname(out)) for c in clips if os.path.exists(c)]
     lst = out + ".txt"
     with open(lst, "w") as f:
-        for v in clips:
-            if os.path.exists(v):
-                f.write(f"file '{os.path.abspath(v)}'\n")
+        for v in fixed:
+            f.write(f"file '{os.path.abspath(v)}'\n")
     ok = run([
         "ffmpeg", "-f", "concat", "-safe", "0", "-i", lst,
         "-c", "copy", "-y", out
@@ -458,9 +480,9 @@ def full_produce(
     # ⑤ Segmento final del speaker (lo que queda) con captions
     spk_final = f"{output_dir}/spk_final.mp4"
     run([
-        "ffmpeg", "-i", graded, "-ss", str(spk_offset),
+        "ffmpeg", "-i", graded, "-ss", str(spk_offset), "-t", "60",
         "-c:v", "libx264", "-preset", "fast", "-crf", "18",
-        "-c:a", "aac", "-b:a", "192k", "-y", spk_final
+        "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", "-y", spk_final
     ], f"Speaker final desde {spk_offset}s")
 
     if segments:
