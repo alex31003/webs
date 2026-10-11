@@ -32,7 +32,7 @@ $msg = ''; $tone = 'info';
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
   if (isset($_POST['gemini_key']) && !$gSet) {
     $k = trim((string) $_POST['gemini_key']);
-    if ($k === '' || strpos($k, 'AIza') !== 0 || strlen($k) > 80) { $msg = 'La clave debe empezar por «AIza». Revísala y vuelve a pegarla.'; $tone = 'warn'; }
+    if ($k === '' || !preg_match('/^(AIza|AQ\.)[A-Za-z0-9_\-.]{20,}$/', $k) || strlen($k) > 120) { $msg = 'La clave debe empezar por «AIza» o «AQ.». Revísala y vuelve a pegarla.'; $tone = 'warn'; }
     elseif (!validate_gemini($k)) { $msg = 'Google no ha aceptado esa clave. Comprueba que la has copiado entera.'; $tone = 'warn'; }
     elseif (write_val($G_OUT, $G_IN, $k)) { $gSet = true; $msg = '¡Listo! La IA ya está activada: el asistente y el planificador funcionan.'; $tone = 'ok'; }
     else { $msg = 'La clave es correcta pero no se ha podido guardar en el servidor (permisos).'; $tone = 'warn'; }
@@ -87,9 +87,9 @@ header('X-Robots-Tag: noindex, nofollow');
     <div class="card">
       <h2>Clave de Google Gemini <span class="pill <?php echo $gSet ? 'ok' : 'no'; ?>"><?php echo $gSet ? 'Activada ✓' : 'Pendiente'; ?></span></h2>
       <?php if (!$gSet): ?>
-        <p class="hint">Créala gratis en <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> → «Crear clave de API». Empieza por <code>AIza…</code></p>
+        <p class="hint">Créala gratis en <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> → «Crear clave de API». Empieza por <code>AIza…</code> o <code>AQ.…</code></p>
         <form method="post" autocomplete="off">
-          <input name="gemini_key" type="password" placeholder="AIza..." required>
+          <input name="gemini_key" type="password" placeholder="AIza… o AQ.…" required>
           <button type="submit">Activar la IA</button>
         </form>
       <?php endif; ?>

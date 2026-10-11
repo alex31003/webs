@@ -503,7 +503,7 @@ html:not(.js) .reveal-img img { transform: none; }
 .x-warn { color: #ffd9a8; font-size: .9rem; }
 .x-reset { margin-top: 12px; font-size: .84rem; color: var(--yellow); text-decoration: underline; text-underline-offset: 3px; }
 .manual { margin-top: 20px; }
-.manual[hidden] { display: none; }
+.manual[hidden], .drop[hidden], .planner-progress[hidden] { display: none; }
 .p-privacy { display: flex; align-items: center; gap: 8px; margin-top: 16px; font-size: .8rem; color: var(--on-dark-3); }
 .p-privacy svg { width: 16px; height: 16px; color: var(--yellow); flex: none; }
 .planner-disclaimer { max-width: 940px; margin: 22px auto 0; display: flex; gap: 10px; align-items: flex-start; font-size: .84rem; color: var(--on-dark-3); }
