@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Amigo Fiel · Clínica Veterinaria para perros y gatos</title>
+  <meta name="description" content="Amigo Fiel, clínica veterinaria de confianza para perros y gatos: consulta, vacunación, cirugía, urgencias 24 h, dental y peluquería. Planifica sus cuidados con IA y pide cita.">
+  <meta name="theme-color" content="#111111">
+  <meta property="og:title" content="Amigo Fiel · Clínica Veterinaria">
+  <meta property="og:description" content="Cuidamos de quien siempre te espera. Clínica veterinaria para perros y gatos con urgencias 24 h.">
+  <meta property="og:image" content="assets/img/hero.webp">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap">
+  <link rel="preload" as="image" href="assets/img/hero.webp" fetchpriority="high">
+  <link rel="stylesheet" href="styles.css?v=20261011">
+
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+
+  <!-- ===== Iconos (sprite) ===== -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="logo-mark" viewBox="0 0 64 64">
+        <ellipse cx="16" cy="25" rx="6" ry="7.5" transform="rotate(-18 16 25)"/>
+        <ellipse cx="26.5" cy="14.5" rx="6" ry="7.8" transform="rotate(-6 26.5 14.5)"/>
+        <ellipse cx="38.5" cy="14.5" rx="6" ry="7.8" transform="rotate(6 38.5 14.5)"/>
+        <ellipse cx="48.5" cy="25" rx="6" ry="7.5" transform="rotate(18 48.5 25)"/>
+        <path d="M32.2 58c-1 0-2-.4-2.8-1.1L17.6 46.1c-3.9-3.6-4.2-9.7-.6-13.6 3.5-3.8 9.3-4.1 13.2-.8l2 1.7 2-1.7c3.9-3.3 9.7-3 13.2.8 3.6 3.9 3.3 10-.6 13.6L35 56.9c-.8.7-1.8 1.1-2.8 1.1z"/>
+      </symbol>
+      <symbol id="i-steth" viewBox="0 0 24 24"><path d="M5 3v6a5 5 0 0 0 10 0V3M5 3H3.5M5 3h1.5M15 3h-1.5M15 3h1.5M10 14v2a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="11.5" r="2.5"/></symbol>
+      <symbol id="i-syringe" viewBox="0 0 24 24"><path d="m18 2 4 4M17 7l3-3M19 9 8.7 19.3a2.4 2.4 0 0 1-3.4 0l-.6-.6a2.4 2.4 0 0 1 0-3.4L15 5M9 11l4 4M5 19l-3 3M14 4l6 6"/></symbol>
+      <symbol id="i-scalpel" viewBox="0 0 24 24"><path d="M3 21 14.5 9.5M14.5 9.5 19 5a2.1 2.1 0 0 1 3 3l-4.5 4.5M14.5 9.5l3 3M3 21h7"/></symbol>
+      <symbol id="i-siren" viewBox="0 0 24 24"><path d="M7 18v-6a5 5 0 0 1 10 0v6M5 21h14a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1zM21 12h1M18.5 4.5 18 5M2 12h1M12 2v1M4.9 4.9l.7.7M12 12v6"/></symbol>
+      <symbol id="i-tooth" viewBox="0 0 24 24"><path d="M12 5.5c-1.5-1-3-2-5-1.5-2.6.6-3.6 3.5-3 6.5.5 2.5 1.5 4 2 6.5.4 2 .8 4.5 2 4.5 1.6 0 1.6-5 4-5s2.4 5 4 5c1.2 0 1.6-2.5 2-4.5.5-2.5 1.5-4 2-6.5.6-3-.4-5.9-3-6.5-2-.5-3.5.5-5 1.5z"/></symbol>
+      <symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></symbol>
+      <symbol id="i-scan" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10M12 7v10"/></symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7z"/></symbol>
+      <symbol id="i-paw" viewBox="0 0 24 24"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10z"/></symbol>
+      <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+      <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+      <symbol id="i-chat" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/></symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
+      <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2z"/><path d="M19 3v4M21 5h-4"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+      <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4zM22 2 11 13"/></symbol>
+      <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></symbol>
+      <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- ===== Splash ===== -->
+  <div class="splash" aria-hidden="true">
+    <svg class="splash-mark"><use href="#logo-mark"/></svg>
+    <span class="splash-word">Amigo <em>Fiel</em></span>
+  </div>
+
+  <!-- ===== Cabecera ===== -->
+  <header class="nav" id="top">
+    <div class="nav-inner container">
+      <a class="logo" href="#top" aria-label="Amigo Fiel, inicio">
+        <span class="logo-badge"><svg><use href="#logo-mark"/></svg></span>
+        <span class="logo-word">Amigo <em>Fiel</em></span>
+      </a>
+      <nav class="nav-links" aria-label="Principal">
+        <a href="#servicios">Servicios</a>
+        <a href="#clinica">La clínica</a>
+        <a href="#como-funciona">Cómo funciona</a>
+        <a href="#planificador">Plan de cuidados <span class="tag-ai">IA</span></a>
+        <a href="#faq">Preguntas</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="nav-phone" href="tel:+34600000000" aria-label="Llamar a la clínica (teléfono de ejemplo)"><svg><use href="#i-phone"/></svg><span>600 000 000</span></a>
+        <a class="btn btn-red btn-sm magnetic" href="#contacto">Pedir cita</a>
+        <button class="nav-burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobile-menu" hidden>
+      <a href="#servicios">Servicios</a>
+      <a href="#clinica">La clínica</a>
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#planificador">Plan de cuidados IA</a>
+      <a href="#faq">Preguntas frecuentes</a>
+      <a href="#contacto">Contacto</a>
+      <a class="btn btn-red" href="#contacto">Pedir cita</a>
+      <a class="mm-urgent" href="tel:+34600000000"><svg><use href="#i-siren"/></svg> Urgencias 24 h · 600 000 000</a>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ===== HERO ===== -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-spot" aria-hidden="true"></div>
+      <div class="hero-grain" aria-hidden="true"></div>
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="kicker"><span class="dot-live"></span> Clínica veterinaria · Perros y gatos · Valencia <small>(ejemplo)</small></p>
+          <h1 class="hero-title" id="hero-title">
+            <span class="line"><span>Cuidamos de</span></span>
+            <span class="line"><span>quien siempre</span></span>
+            <span class="line"><span><em class="serif">te espera</em><span class="hl-dot">.</span></span></span>
+          </h1>
+          <p class="hero-lead">Medicina veterinaria cercana y de verdad: un equipo que conoce a tu mascota por su nombre, urgencias 24&nbsp;h y un plan de cuidados pensado para cada etapa de su vida, desde el primer día en casa hasta sus años más tranquilos.</p>
+          <div class="hero-ctas">
+            <a class="btn btn-red btn-lg magnetic" href="#contacto">Pedir cita <svg><use href="#i-arrow"/></svg></a>
+            <a class="btn btn-ghost btn-lg" href="#planificador"><svg><use href="#i-spark"/></svg> Crea su plan de cuidados con IA</a>
+          </div>
+          <ul class="hero-proof">
+            <li><strong data-count="4.9" data-decimals="1">4,9</strong><span><svg><use href="#i-star"/></svg> valoración media<small>dato de ejemplo</small></span></li>
+            <li><strong data-count="24">24</strong><span>h · urgencias todos los días</span></li>
+            <li><strong data-count="12">12</strong><span>años cuidando familias<small>dato de ejemplo</small></span></li>
+          </ul>
+        </div>
+
+        <div class="hero-visual">
+          <figure class="hero-photo">
+            <img src="assets/img/hero.webp" alt="Un perro golden retriever y un gato atigrado juntos, felices, con luz cálida" width="960" height="1200" fetchpriority="high" loading="eager">
+          </figure>
+          <div class="hero-badge hb-urgent float-a">
+            <span class="hb-icon"><svg><use href="#i-siren"/></svg></span>
+            <span><strong>Urgencias 24 h</strong><small>365 días al año</small></span>
+          </div>
+          <div class="hero-badge hb-plan float-b">
+            <span class="hb-icon yellow"><svg><use href="#i-spark"/></svg></span>
+            <span><strong>Plan con IA</strong><small>vacunas · desparasitación</small></span>
+          </div>
+          <svg class="hero-ring" viewBox="0 0 200 200" aria-hidden="true">
+            <defs><path id="ringpath" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0"/></defs>
+            <text><textPath href="#ringpath" textLength="498" lengthAdjust="spacing">AMIGO FIEL · CLÍNICA VETERINARIA · PERROS Y GATOS · </textPath></text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee-track">
+          <span>Consulta general</span><i>✦</i><span>Vacunación</span><i>✦</i><span>Cirugía</span><i>✦</i><span>Urgencias 24 h</span><i>✦</i><span>Odontología</span><i>✦</i><span>Peluquería</span><i>✦</i><span>Diagnóstico por imagen</span><i>✦</i><span>Medicina felina</span><i>✦</i>
+          <span>Consulta general</span><i>✦</i><span>Vacunación</span><i>✦</i><span>Cirugía</span><i>✦</i><span>Urgencias 24 h</span><i>✦</i><span>Odontología</span><i>✦</i><span>Peluquería</span><i>✦</i><span>Diagnóstico por imagen</span><i>✦</i><span>Medicina felina</span><i>✦</i>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SERVICIOS ===== -->
+    <section class="services light" id="servicios" aria-labelledby="serv-title">
+      <div class="container">
+        <header class="sec-head">
+          <p class="eyebrow"><span>01</span> Servicios</p>
+          <h2 id="serv-title" class="reveal">Todo lo que necesita, <em class="serif">bajo un mismo techo</em>.</h2>
+          <p class="sec-lead reveal">De la primera vacuna a una cirugía compleja. Sin derivaciones innecesarias, sin prisas y explicándote cada paso.</p>
+        </header>
+
+        <div class="serv-grid">
+          <article class="serv-card serv-feature tilt reveal">
+            <img src="assets/img/serv-consulta.webp" alt="Veterinaria auscultando a un perro en la consulta" loading="lazy" decoding="async" width="900" height="1100">
+            <div class="serv-feature-body">
+              <span class="serv-icon"><svg><use href="#i-steth"/></svg></span>
+              <h3>Consulta general</h3>
+              <p>Revisión completa, diagnóstico y un plan claro. Dedicamos el tiempo que haga falta, sin consultas exprés.</p>
+              <span class="serv-price">Desde 35 € <small>(orientativo)</small></span>
+            </div>
+          </article>
+          <article class="serv-card tilt reveal">
+            <span class="serv-icon"><svg><use href="#i-syringe"/></svg></span>
+            <h3>Vacunación y prevención</h3>
+            <p>Calendarios personalizados, desparasitación interna y externa, microchip y pasaporte para viajar.</p>
+            <span class="serv-price">Desde 35 €</span>
+          </article>
+          <article class="serv-card tilt reveal">
+            <span class="serv-icon"><svg><use href="#i-scalpel"/></svg></span>
+            <h3>Cirugía</h3>
+            <p>Esterilizaciones, tejidos blandos y traumatología con anestesia monitorizada y control del dolor.</p>
+            <span class="serv-price">Presupuesto cerrado</span>
+          </article>
+          <article class="serv-card tilt reveal">
+            <span class="serv-icon"><svg><use href="#i-tooth"/></svg></span>
+            <h3>Odontología</h3>
+            <p>Limpiezas con ultrasonidos, extracciones y revisión de encías. La salud empieza por la boca.</p>
+            <span class="serv-price">Limpieza desde 150 €</span>
+          </article>
+          <article class="serv-card tilt reveal">
+            <span class="serv-icon"><svg><use href="#i-scissors"/></svg></span>
+            <h3>Peluquería</h3>
+            <p>Baño, corte y arreglo con productos suaves, en un espacio tranquilo y sin estrés para perros y gatos.</p>
+            <span class="serv-price">Desde 25 €</span>
+          </article>
+          <article class="serv-card serv-urgent tilt reveal">
+            <span class="serv-icon"><svg><use href="#i-siren"/></svg></span>
+            <h3>Urgencias 24 h</h3>
+            <p>Un veterinario de guardia todos los días del año. Si es urgente, llama y ven: te estaremos esperando.</p>
+            <a class="serv-link" href="tel:+34600000000">Llamar ahora <svg><use href="#i-arrow"/></svg></a>
+          </article>
+          <article class="serv-card tilt reveal">
+            <span class="serv-icon"><svg><use href="#i-scan"/></svg></span>
+            <h3>Diagnóstico por imagen</h3>
+            <p>Radiografía digital, ecografía y laboratorio propio: resultados el mismo día en la mayoría de casos.</p>
+            <span class="serv-price">Ecografía desde 60 €</span>
+          </article>
+          <article class="serv-card tilt reveal">
+            <span class="serv-icon"><svg><use href="#i-heart"/></svg></span>
+            <h3>Cachorros y seniors</h3>
+            <p>Acompañamiento especial en las etapas que más lo necesitan: primeras semanas y edad avanzada.</p>
+            <span class="serv-price">Planes de salud</span>
+          </article>
+        </div>
+        <p class="note-demo">Precios orientativos de ejemplo. El precio final se confirma en consulta.</p>
+      </div>
+    </section>
+
+    <!-- ===== VENTAJAS / LA CLÍNICA ===== -->
+    <section class="why" id="clinica" aria-labelledby="why-title">
+      <div class="container why-grid">
+        <div class="why-media">
+          <figure class="why-photo reveal-img">
+            <img src="assets/img/equipo.webp" alt="Equipo veterinario de Amigo Fiel sonriendo junto a un perro" loading="lazy" decoding="async" width="1200" height="1500">
+          </figure>
+          <div class="why-sticker"><svg><use href="#logo-mark"/></svg><span>Trato <em>fiel</em><br>desde el primer día</span></div>
+        </div>
+        <div class="why-copy">
+          <p class="eyebrow"><span>02</span> Por qué Amigo Fiel</p>
+          <h2 id="why-title" class="reveal">Una clínica que se siente <em class="serif">como de la familia</em>.</h2>
+          <ul class="why-list">
+            <li class="reveal"><span class="why-n">01</span><div><h3>Tu veterinario de siempre</h3><p>Asignamos un veterinario de referencia a cada mascota, para que no tengas que contar su historia cada vez.</p></div></li>
+            <li class="reveal"><span class="why-n">02</span><div><h3>Precios claros antes de empezar</h3><p>Presupuesto por escrito antes de cualquier prueba o intervención. Nada de sorpresas en la factura.</p></div></li>
+            <li class="reveal"><span class="why-n">03</span><div><h3>Espacios sin estrés</h3><p>Sala de espera separada para gatos, feromonas calmantes y manejo amable (<em>Fear Free</em>).</p></div></li>
+            <li class="reveal"><span class="why-n">04</span><div><h3>Seguimiento de verdad</h3><p>Te llamamos tras una cirugía o tratamiento y te avisamos de cada vacuna y revisión pendiente.</p></div></li>
+          </ul>
+          <div class="why-stats">
+            <div><strong data-count="8">8</strong><span>veterinarios</span></div>
+            <div><strong data-count="15000" data-format="k">15.000</strong><span>mascotas atendidas</span></div>
+            <div><strong data-count="98" data-suffix="%">98%</strong><span>nos recomiendan</span></div>
+          </div>
+          <p class="note-demo dark">Cifras de ejemplo, se sustituirán por los datos reales de la clínica.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== INSTALACIONES (scroll horizontal) ===== -->
+    <section class="gallery" aria-labelledby="gal-title">
+      <div class="gallery-pin">
+        <div class="container gallery-head">
+          <p class="eyebrow"><span>03</span> Instalaciones</p>
+          <h2 id="gal-title">Dentro de <em class="serif">Amigo Fiel</em>.</h2>
+          <p class="gallery-hint"><svg><use href="#i-arrow"/></svg> Desliza</p>
+        </div>
+        <div class="gallery-track">
+          <figure class="g-card"><img src="assets/img/inst-recepcion.webp" alt="Recepción cálida y luminosa de la clínica" loading="lazy" decoding="async" width="900" height="1125"><figcaption><span>01</span> Recepción y sala de espera</figcaption></figure>
+          <figure class="g-card"><img src="assets/img/inst-consulta.webp" alt="Sala de consulta equipada" loading="lazy" decoding="async" width="900" height="1125"><figcaption><span>02</span> Consultas amplias</figcaption></figure>
+          <figure class="g-card"><img src="assets/img/inst-quirofano.webp" alt="Quirófano moderno con monitorización" loading="lazy" decoding="async" width="900" height="1125"><figcaption><span>03</span> Quirófano y monitorización</figcaption></figure>
+          <figure class="g-card"><img src="assets/img/inst-gatos.webp" alt="Zona tranquila pensada para gatos" loading="lazy" decoding="async" width="900" height="1125"><figcaption><span>04</span> Zona <em>cat friendly</em></figcaption></figure>
+          <figure class="g-card"><img src="assets/img/inst-peluqueria.webp" alt="Sala de peluquería canina y felina" loading="lazy" decoding="async" width="900" height="1125"><figcaption><span>05</span> Peluquería</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ETAPAS ===== -->
+    <section class="stages light" aria-labelledby="stages-title">
+      <div class="container">
+        <header class="sec-head center">
+          <p class="eyebrow"><span>04</span> Para cada etapa</p>
+          <h2 id="stages-title" class="reveal">Recién llegado o con <em class="serif">canas en el hocico</em>.</h2>
+        </header>
+        <div class="stage-tabs" role="tablist" aria-label="Etapas de vida">
+          <button role="tab" aria-selected="true" aria-controls="st-1" id="tab-1" class="is-active">Cachorro y gatito</button>
+          <button role="tab" aria-selected="false" aria-controls="st-2" id="tab-2" tabindex="-1">Adulto</button>
+          <button role="tab" aria-selected="false" aria-controls="st-3" id="tab-3" tabindex="-1">Senior</button>
+        </div>
+        <div class="stage-panels">
+          <div class="stage-panel is-active" role="tabpanel" id="st-1" aria-labelledby="tab-1">
+            <figure><img src="assets/img/etapa-cachorro.webp" alt="Cachorro y gatito jugando" loading="lazy" decoding="async" width="900" height="1000"></figure>
+            <div>
+              <h3>Su primer año, bien acompañado</h3>
+              <p>Las primeras semanas marcan su salud para siempre. Te guiamos con la familia nueva: qué comer, cuándo vacunar y cómo socializar.</p>
+              <ul class="checks">
+                <li><svg><use href="#i-check"/></svg> Primovacunación y desparasitación paso a paso</li>
+                <li><svg><use href="#i-check"/></svg> Microchip, cartilla y registro</li>
+                <li><svg><use href="#i-check"/></svg> Consejos de alimentación, educación y socialización</li>
+                <li><svg><use href="#i-check"/></svg> Valoración de esterilización en el momento adecuado</li>
+              </ul>
+            </div>
+          </div>
+          <div class="stage-panel" role="tabpanel" id="st-2" aria-labelledby="tab-2" hidden>
+            <figure><img src="assets/img/etapa-adulto.webp" alt="Perro adulto feliz corriendo" loading="lazy" decoding="async" width="900" height="1000"></figure>
+            <div>
+              <h3>Prevenir es la mejor medicina</h3>
+              <p>Una revisión anual y una buena rutina de prevención evitan la mayoría de sustos (y de gastos).</p>
+              <ul class="checks">
+                <li><svg><use href="#i-check"/></svg> Revisión anual completa y vacunas de refuerzo</li>
+                <li><svg><use href="#i-check"/></svg> Prevención de leishmania, pulgas y garrapatas</li>
+                <li><svg><use href="#i-check"/></svg> Control de peso y salud dental</li>
+                <li><svg><use href="#i-check"/></svg> Planes de salud con cuota mensual</li>
+              </ul>
+            </div>
+          </div>
+          <div class="stage-panel" role="tabpanel" id="st-3" aria-labelledby="tab-3" hidden>
+            <figure><img src="assets/img/etapa-senior.webp" alt="Perro mayor descansando tranquilo" loading="lazy" decoding="async" width="900" height="1000"></figure>
+            <div>
+              <h3>Sus años dorados, con calidad de vida</h3>
+              <p>A partir de los 7 años en perros y 10 en gatos, los controles frecuentes detectan a tiempo lo que más importa.</p>
+              <ul class="checks">
+                <li><svg><use href="#i-check"/></svg> Revisión senior cada 6 meses con analítica</li>
+                <li><svg><use href="#i-check"/></svg> Control de riñón, corazón, tiroides y articulaciones</li>
+                <li><svg><use href="#i-check"/></svg> Manejo del dolor y de la movilidad</li>
+                <li><svg><use href="#i-check"/></svg> Acompañamiento cercano y honesto en cada decisión</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CÓMO FUNCIONA ===== -->
+    <section class="steps" id="como-funciona" aria-labelledby="steps-title">
+      <div class="container">
+        <header class="sec-head">
+          <p class="eyebrow"><span>05</span> Cómo funciona</p>
+          <h2 id="steps-title" class="reveal">Tres pasos y <em class="serif">en buenas manos</em>.</h2>
+        </header>
+        <div class="steps-wrap">
+          <svg class="steps-line" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M20 60 C 180 -10, 320 130, 500 60 S 820 -10, 980 60"/>
+          </svg>
+          <ol class="steps-list">
+            <li class="step reveal">
+              <span class="step-n">1</span>
+              <span class="step-icon"><svg><use href="#i-cal"/></svg></span>
+              <h3>Pide cita</h3>
+              <p>Por teléfono, con el formulario o preguntando a nuestro asistente. Te confirmamos el hueco en minutos.</p>
+            </li>
+            <li class="step reveal">
+              <span class="step-n">2</span>
+              <span class="step-icon"><svg><use href="#i-steth"/></svg></span>
+              <h3>Primera visita</h3>
+              <p>Conocemos a tu mascota con calma, revisamos su historial y te explicamos qué necesita y cuánto cuesta.</p>
+            </li>
+            <li class="step reveal">
+              <span class="step-n">3</span>
+              <span class="step-icon"><svg><use href="#i-heart"/></svg></span>
+              <h3>Seguimiento</h3>
+              <p>Recordatorios de vacunas y revisiones, llamada tras tratamientos y tu veterinario siempre localizable.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PLANIFICADOR IA ===== -->
+    <section class="planner" id="planificador" aria-labelledby="planner-title">
+      <div class="planner-glow" aria-hidden="true"></div>
+      <div class="container">
+        <header class="sec-head center">
+          <p class="eyebrow"><span>06</span> Planificador de cuidados <span class="tag-ai">IA</span></p>
+          <h2 id="planner-title" class="reveal">Su plan de salud, <em class="serif">en 2 minutos</em>.</h2>
+          <p class="sec-lead reveal">Cuéntanos cómo es tu mascota y, si quieres, sube una foto de su cartilla o un informe previo: nuestra IA lo lee y te prepara su calendario de vacunas, desparasitaciones, revisiones y coste anual estimado.</p>
+        </header>
+
+        <div class="planner-card" data-planner>
+          <ol class="planner-progress" aria-hidden="true">
+            <li class="is-active"><span>1</span>Mascota</li>
+            <li><span>2</span>Estilo de vida</li>
+            <li><span>3</span>Cartilla</li>
+            <li><span>4</span>Tu plan</li>
+          </ol>
+
+          <form class="planner-form" novalidate>
+            <!-- Paso 1 -->
+            <fieldset class="p-step is-active" data-step="1">
+              <legend>¿Quién es tu compañero?</legend>
+              <div class="species">
+                <label class="species-opt">
+                  <input type="radio" name="especie" value="perro" checked>
+                  <span><svg><use href="#i-paw"/></svg> Perro</span>
+                </label>
+                <label class="species-opt">
+                  <input type="radio" name="especie" value="gato">
+                  <span><svg><use href="#i-paw"/></svg> Gato</span>
+                </label>
+              </div>
+              <div class="f-grid">
+                <label class="f">Nombre<input type="text" name="nombre" maxlength="40" placeholder="Ej. Luna" autocomplete="off"></label>
+                <label class="f">Raza<input type="text" name="raza" maxlength="60" placeholder="Ej. Mestizo, Labrador, Europeo común…" list="razas" autocomplete="off"></label>
+                <div class="f f-age">
+                  <span>Edad</span>
+                  <div class="f-inline">
+                    <input type="number" name="edad" min="0" max="30" step="1" inputmode="numeric" placeholder="3" aria-label="Edad">
+                    <select name="edadUnidad" aria-label="Unidad de edad"><option value="anos">años</option><option value="meses">meses</option><option value="semanas">semanas</option></select>
+                  </div>
+                </div>
+                <label class="f">Peso (kg)<input type="number" name="peso" min="0.2" max="100" step="0.1" inputmode="decimal" placeholder="12"></label>
+              </div>
+              <datalist id="razas">
+                <option value="Mestizo"><option value="Labrador Retriever"><option value="Golden Retriever"><option value="Pastor Alemán"><option value="Bulldog Francés"><option value="Chihuahua"><option value="Yorkshire Terrier"><option value="Caniche"><option value="Border Collie"><option value="Beagle"><option value="Podenco"><option value="Galgo"><option value="Teckel"><option value="Shih Tzu"><option value="Europeo común"><option value="Siamés"><option value="Persa"><option value="Maine Coon"><option value="British Shorthair"><option value="Ragdoll"><option value="Sphynx">
+              </datalist>
+              <p class="p-error" role="alert" hidden></p>
+              <div class="p-nav"><span></span><button type="button" class="btn btn-red" data-next>Continuar <svg><use href="#i-arrow"/></svg></button></div>
+            </fieldset>
+
+            <!-- Paso 2 -->
+            <fieldset class="p-step" data-step="2">
+              <legend>Su día a día y su salud</legend>
+              <p class="f-label">Estilo de vida <small>(marca todo lo que aplique)</small></p>
+              <div class="chips" data-life-dog>
+                <label class="chip"><input type="checkbox" name="vida" value="piso"><span>Vive en piso</span></label>
+                <label class="chip"><input type="checkbox" name="vida" value="jardin"><span>Casa con jardín</span></label>
+                <label class="chip"><input type="checkbox" name="vida" value="campo"><span>Sale al campo o monte</span></label>
+                <label class="chip"><input type="checkbox" name="vida" value="guarderia"><span>Guardería, residencia o parque con muchos perros</span></label>
+                <label class="chip"><input type="checkbox" name="vida" value="viaja"><span>Viaja con nosotros</span></label>
+                <label class="chip"><input type="checkbox" name="vida" value="ninos"><span>Convive con niños pequeños</span></label>
+              </div>
+              <div class="chips" data-life-cat hidden>
+                <label class="chip"><input type="checkbox" name="vida" value="interior"><span>Solo interior</span></label>
+                <label class="chip"><input type="checkbox" name="vida" value="exterior"><span>Sale al exterior</span></label>
+                <label class="chip"><input type="checkbox" name="vida" value="otrosgatos"><span>Convive con otros gatos</span></label>
+                <label class="chip"><input type="checkbox" name="vida" value="viaja"><span>Viaja o va a residencia</span></label>
+                <label class="chip"><input type="checkbox" name="vida" value="ninos"><span>Convive con niños pequeños</span></label>
+              </div>
+              <div class="f-grid">
+                <label class="f">¿Está esterilizado/a?
+                  <select name="esterilizado"><option value="">Selecciona…</option><option value="si">Sí</option><option value="no">No</option><option value="nose">No lo sé</option></select>
+                </label>
+                <label class="f">Estado de salud
+                  <select name="salud"><option value="sano">Sano, sin problemas conocidos</option><option value="cronico">Tiene una enfermedad crónica</option><option value="tratamiento">Está en tratamiento ahora</option><option value="nose">No lo sé / hace tiempo que no va al veterinario</option></select>
+                </label>
+                <label class="f f-wide">¿Algo más que debamos saber? <small>(opcional)</small>
+                  <textarea name="notas" rows="2" maxlength="400" placeholder="Ej. Tiene alergia alimentaria, toma medicación para el corazón…"></textarea>
+                </label>
+              </div>
+              <div class="p-nav"><button type="button" class="btn btn-ghost-dark" data-prev>Atrás</button><button type="button" class="btn btn-red" data-next>Continuar <svg><use href="#i-arrow"/></svg></button></div>
+            </fieldset>
+
+            <!-- Paso 3 -->
+            <fieldset class="p-step" data-step="3">
+              <legend>Su cartilla o informe <small>(opcional)</small></legend>
+              <p class="p-help">Sube una foto de la cartilla de vacunación o un PDF de un informe veterinario. La IA extrae las vacunas, fechas y tratamientos. Si prefieres, sáltate este paso y responde dos preguntas rápidas.</p>
+              <label class="drop" data-drop>
+                <input type="file" name="documento" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf">
+                <span class="drop-icon"><svg><use href="#i-upload"/></svg></span>
+                <span class="drop-title">Arrastra aquí la foto o el PDF</span>
+                <span class="drop-sub">o pulsa para elegir · JPG, PNG, HEIC o PDF · máx. 10 MB</span>
+              </label>
+              <div class="extract" data-extract hidden aria-live="polite"></div>
+              <div class="manual" data-manual>
+                <div class="f-grid">
+                  <label class="f">¿Tiene las vacunas al día?
+                    <select name="vacunasAlDia"><option value="nose">No lo sé</option><option value="si">Sí, al día</option><option value="no">No / alguna pendiente</option></select>
+                  </label>
+                  <label class="f">Última desparasitación interna
+                    <select name="ultimaDesp"><option value="nose">No lo sé</option><option value="reciente">Hace menos de 3 meses</option><option value="antigua">Hace más de 3 meses</option></select>
+                  </label>
+                </div>
+              </div>
+              <p class="p-privacy"><svg><use href="#i-shield"/></svg> El documento solo se usa para preparar tu plan y no se guarda en la web.</p>
+              <div class="p-nav"><button type="button" class="btn btn-ghost-dark" data-prev>Atrás</button><button type="button" class="btn btn-red" data-next>Continuar <svg><use href="#i-arrow"/></svg></button></div>
+            </fieldset>
+
+            <!-- Paso 4: email -->
+            <fieldset class="p-step" data-step="4">
+              <legend>¿A quién se lo enviamos?</legend>
+              <p class="p-help">Tu plan está listo. Déjanos tu email para mostrártelo y que el equipo de Amigo Fiel pueda ayudarte a confirmarlo en consulta.</p>
+              <div class="f-grid">
+                <label class="f">Tu nombre<input type="text" name="tutor" maxlength="60" autocomplete="name" placeholder="Ej. Marta"></label>
+                <label class="f">Email<input type="email" name="email" maxlength="160" autocomplete="email" placeholder="tu@email.com" required></label>
+                <label class="f">Teléfono <small>(opcional)</small><input type="tel" name="telefono" maxlength="20" autocomplete="tel" placeholder="600 000 000"></label>
+              </div>
+              <label class="consent"><input type="checkbox" name="consent" required><span>Acepto que Amigo Fiel guarde mis datos para enviarme este plan y contactarme sobre el cuidado de mi mascota. Puedo pedir que los borren cuando quiera.</span></label>
+              <p class="p-error" role="alert" hidden></p>
+              <div class="p-nav"><button type="button" class="btn btn-ghost-dark" data-prev>Atrás</button><button type="submit" class="btn btn-red" data-submit><svg><use href="#i-spark"/></svg> Ver su plan</button></div>
+            </fieldset>
+          </form>
+
+          <!-- Resultado -->
+          <div class="plan-result" data-result hidden aria-live="polite"></div>
+        </div>
+        <p class="planner-disclaimer"><svg><use href="#i-shield"/></svg> Estimación orientativa generada automáticamente. No sustituye a una consulta: el veterinario revisará y confirmará el plan en la visita.</p>
+      </div>
+    </section>
+
+    <!-- ===== TESTIMONIOS ===== -->
+    <section class="testi light" aria-labelledby="testi-title">
+      <div class="container">
+        <header class="sec-head">
+          <p class="eyebrow"><span>07</span> Familias Amigo Fiel</p>
+          <h2 id="testi-title" class="reveal">Lo que cuentan <em class="serif">en la sala de espera</em>.</h2>
+          <p class="demo-flag">Testimonios de ejemplo · se sustituirán por reseñas reales</p>
+        </header>
+      </div>
+      <div class="testi-rail">
+        <div class="testi-track">
+          <figure class="t-card"><div class="t-stars" aria-label="5 de 5"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>«Adoptamos a Kira con dos meses y no sabíamos nada. Nos explicaron todo con una paciencia enorme y ahora mis hijos se pelean por acompañarla a la revisión.»</blockquote><figcaption><span class="t-av">L</span><span><strong>Laura M.</strong><small>Kira · cachorra mestiza</small></span><em class="t-demo">Ejemplo</em></figcaption></figure>
+          <figure class="t-card"><div class="t-stars" aria-label="5 de 5"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>«Un domingo a las tres de la mañana Thor se comió algo que no debía. Llamamos, nos esperaban en la puerta y en una hora estaba fuera de peligro.»</blockquote><figcaption><span class="t-av">J</span><span><strong>Javier R.</strong><small>Thor · Labrador</small></span><em class="t-demo">Ejemplo</em></figcaption></figure>
+          <figure class="t-card"><div class="t-stars" aria-label="5 de 5"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>«Misi odia salir de casa, pero aquí tienen una sala solo para gatos y la tratan con muchísimo mimo. Por primera vez no volvió estresada.»</blockquote><figcaption><span class="t-av">C</span><span><strong>Carmen S.</strong><small>Misi · gata europea, 13 años</small></span><em class="t-demo">Ejemplo</em></figcaption></figure>
+          <figure class="t-card"><div class="t-stars" aria-label="5 de 5"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>«Con el plan de salud anual pago una cuota pequeña y me olvido: me avisan de cada vacuna y las revisiones de Bruno, que ya tiene 11 años, salen mucho mejor de precio.»</blockquote><figcaption><span class="t-av">A</span><span><strong>Antonio G.</strong><small>Bruno · Pastor alemán senior</small></span><em class="t-demo">Ejemplo</em></figcaption></figure>
+          <figure class="t-card"><div class="t-stars" aria-label="5 de 5"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><blockquote>«Me dieron el presupuesto de la limpieza dental por escrito antes de empezar y fue exactamente eso. Se agradece muchísimo la transparencia.»</blockquote><figcaption><span class="t-av">P</span><span><strong>Paula F.</strong><small>Coco · Caniche toy</small></span><em class="t-demo">Ejemplo</em></figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FAQ ===== -->
+    <section class="faq" id="faq" aria-labelledby="faq-title">
+      <div class="container faq-grid">
+        <header class="sec-head">
+          <p class="eyebrow"><span>08</span> Preguntas frecuentes</p>
+          <h2 id="faq-title" class="reveal">Lo que nos <em class="serif">preguntáis</em> más.</h2>
+          <p class="sec-lead">¿No encuentras tu duda? Pregúntale a nuestro asistente o llámanos.</p>
+          <button class="btn btn-ghost" type="button" data-open-chat><svg><use href="#i-chat"/></svg> Preguntar al asistente</button>
+        </header>
+        <div class="faq-list">
+          <details class="reveal" open><summary>¿Atendéis urgencias de noche y en festivos?<span class="faq-plus"></span></summary><div><p>Sí. Tenemos un veterinario de guardia las 24 horas, los 365 días del año. Si es una urgencia, llama al <a href="tel:+34600000000">600 000 000 (ejemplo)</a> mientras vienes de camino para que te estemos esperando.</p></div></details>
+          <details class="reveal"><summary>¿Cuándo hay que vacunar a un cachorro o a un gatito?<span class="faq-plus"></span></summary><div><p>Normalmente la primera vacuna se pone hacia las 6-8 semanas y se refuerza cada 3-4 semanas hasta los 4 meses aproximadamente; después, un refuerzo anual. La rabia se pone a partir de las 12 semanas. En la primera visita te damos un calendario personalizado.</p></div></details>
+          <details class="reveal"><summary>¿Cada cuánto debo desparasitar a mi mascota?<span class="faq-plus"></span></summary><div><p>Como norma general, desparasitación interna cada 3 meses en adultos y protección externa (pulgas, garrapatas y mosquitos) de forma continua. Depende mucho de su estilo de vida: si sale al campo o convive con niños, puede convenir hacerlo más a menudo.</p></div></details>
+          <details class="reveal"><summary>¿Cuánto cuesta una consulta?<span class="faq-plus"></span></summary><div><p>La consulta general cuesta desde 35 € (precio orientativo de ejemplo). Antes de cualquier prueba o tratamiento te damos un presupuesto por escrito. Con un plan de salud anual, las consultas están incluidas.</p></div></details>
+          <details class="reveal"><summary>¿Qué incluye el plan de salud anual?<span class="faq-plus"></span></summary><div><p>Consultas ilimitadas, vacunas anuales, desparasitación interna, analítica de control (dos al año en seniors) y descuentos en cirugía, dental y peluquería, por una cuota mensual. Usa nuestro planificador para ver cuánto ahorrarías en tu caso.</p></div></details>
+          <details class="reveal"><summary>¿Cuál es la mejor edad para esterilizar?<span class="faq-plus"></span></summary><div><p>Depende de la especie, el tamaño y la raza. En gatos suele hacerse hacia los 5-6 meses; en perros grandes a veces conviene esperar a que terminen de crecer. Lo valoramos juntos en consulta.</p></div></details>
+          <details class="reveal"><summary>¿Tenéis aparcamiento y se puede ir en transporte público?<span class="faq-plus"></span></summary><div><p>Sí, hay parking gratuito para clientes junto a la clínica y paradas de autobús y metro a menos de 5 minutos andando (datos de ejemplo).</p></div></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONTACTO ===== -->
+    <section class="contact light" id="contacto" aria-labelledby="contact-title">
+      <div class="container contact-grid">
+        <div class="contact-info">
+          <p class="eyebrow"><span>09</span> Contacto</p>
+          <h2 id="contact-title" class="reveal">Ven a <em class="serif">conocernos</em>.</h2>
+          <p class="demo-flag">Dirección, teléfono y horarios de ejemplo</p>
+          <ul class="contact-list">
+            <li><span class="ci"><svg><use href="#i-pin"/></svg></span><div><strong>Dirección</strong><p>Calle de la Amistad, 12 · 46001 Valencia</p></div></li>
+            <li><span class="ci"><svg><use href="#i-phone"/></svg></span><div><strong>Teléfono y WhatsApp</strong><p><a href="tel:+34600000000">600 000 000</a> · <a href="mailto:hola@amigofiel.example">hola@amigofiel.example</a></p></div></li>
+            <li><span class="ci"><svg><use href="#i-clock"/></svg></span><div><strong>Horario</strong>
+              <table class="hours">
+                <tr><th>Lunes a viernes</th><td>9:30 – 20:30</td></tr>
+                <tr><th>Sábados</th><td>10:00 – 14:00</td></tr>
+                <tr><th>Domingos y festivos</th><td>Solo urgencias</td></tr>
+                <tr class="h-urgent"><th>Urgencias</th><td>24 h · 365 días</td></tr>
+              </table>
+            </div></li>
+          </ul>
+          <div class="map">
+            <iframe title="Mapa de ubicación de la clínica (ubicación de ejemplo)" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=-0.3880%2C39.4650%2C-0.3650%2C39.4780&amp;layer=mapnik&amp;marker=39.4699%2C-0.3763"></iframe>
+            <a class="map-pin" href="https://www.openstreetmap.org/?mlat=39.4699&amp;mlon=-0.3763#map=16/39.4699/-0.3763" target="_blank" rel="noopener"><svg><use href="#logo-mark"/></svg> Cómo llegar</a>
+          </div>
+        </div>
+
+        <div class="contact-form-wrap">
+          <figure class="contact-photo"><img src="assets/img/cita.webp" alt="Veterinaria abrazando con cariño a un perro" loading="lazy" decoding="async" width="900" height="700"></figure>
+          <form class="appt" data-appt novalidate>
+            <h3>Pide tu cita</h3>
+            <p class="appt-sub">Te llamamos para confirmar el día y la hora.</p>
+            <div class="f-grid">
+              <label class="f">Tu nombre<input type="text" name="tutor" required maxlength="60" autocomplete="name"></label>
+              <label class="f">Teléfono<input type="tel" name="telefono" required maxlength="20" autocomplete="tel"></label>
+              <label class="f">Email<input type="email" name="email" required maxlength="160" autocomplete="email"></label>
+              <label class="f">Nombre de tu mascota<input type="text" name="mascota" maxlength="40"></label>
+              <label class="f">Motivo
+                <select name="motivo"><option>Consulta general</option><option>Vacunación / desparasitación</option><option>Primera visita (cachorro o gatito)</option><option>Revisión senior</option><option>Dental</option><option>Cirugía / esterilización</option><option>Peluquería</option><option>Otro</option></select>
+              </label>
+              <label class="f">Preferencia
+                <select name="preferencia"><option>Mañanas</option><option>Tardes</option><option>Sábado</option><option>Lo antes posible</option></select>
+              </label>
+              <label class="f f-wide">Comentarios <small>(opcional)</small><textarea name="comentarios" rows="2" maxlength="400"></textarea></label>
+            </div>
+            <label class="consent"><input type="checkbox" name="consent" required><span>Acepto que Amigo Fiel use estos datos para gestionar mi cita.</span></label>
+            <p class="p-error" role="alert" hidden></p>
+            <button class="btn btn-red btn-lg btn-block magnetic" type="submit">Solicitar cita <svg><use href="#i-arrow"/></svg></button>
+            <p class="appt-urgent"><svg><use href="#i-siren"/></svg> ¿Es una urgencia? No esperes: <a href="tel:+34600000000">llama al 600 000 000</a>.</p>
+            <div class="appt-ok" hidden>
+              <svg viewBox="0 0 52 52" class="appt-check"><circle cx="26" cy="26" r="24"/><path d="M15 27l7 7 15-15"/></svg>
+              <h4>¡Solicitud recibida!</h4>
+              <p>Te llamaremos en horario de clínica para confirmar tu cita. Gracias por confiar en Amigo Fiel.</p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== PIE ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <a class="logo" href="#top" aria-label="Amigo Fiel, volver arriba">
+          <span class="logo-badge"><svg><use href="#logo-mark"/></svg></span>
+          <span class="logo-word">Amigo <em>Fiel</em></span>
+        </a>
+        <p class="footer-claim">Cuidamos de quien siempre te espera.</p>
+        <a class="btn btn-red magnetic" href="#contacto">Pedir cita</a>
+      </div>
+      <div class="footer-cols">
+        <div><h4>Clínica</h4><a href="#servicios">Servicios</a><a href="#clinica">Por qué nosotros</a><a href="#como-funciona">Cómo funciona</a><a href="#faq">Preguntas frecuentes</a></div>
+        <div><h4>Herramientas</h4><a href="#planificador">Planificador de cuidados IA</a><button type="button" data-open-chat>Asistente Amigo Fiel</button></div>
+        <div><h4>Contacto <small>(ejemplo)</small></h4><a href="tel:+34600000000">600 000 000</a><a href="mailto:hola@amigofiel.example">hola@amigofiel.example</a><span>Calle de la Amistad, 12 · Valencia</span></div>
+        <div><h4>Urgencias</h4><a class="f-urgent" href="tel:+34600000000"><svg><use href="#i-siren"/></svg> 24 h · 365 días</a></div>
+      </div>
+      <div class="footer-giant" aria-hidden="true">Amigo <em>Fiel</em></div>
+      <div class="footer-bottom">
+        <span>© <span data-year>2026</span> Amigo Fiel · Clínica Veterinaria</span>
+        <span>Web de demostración: datos, cifras y testimonios de ejemplo. Imágenes generadas con IA.</span>
+        <span>Privacidad: los datos de los formularios solo los ve la clínica.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== ASISTENTE (chat) ===== -->
+  <button class="chat-fab" type="button" aria-label="Abrir el asistente de Amigo Fiel" aria-expanded="false" aria-controls="chat-panel" data-open-chat>
+    <span class="chat-fab-icon"><svg><use href="#logo-mark"/></svg></span>
+    <span class="chat-fab-label">¿Dudas sobre tu mascota?</span>
+    <span class="chat-fab-ping" aria-hidden="true"></span>
+  </button>
+  <section class="chat" id="chat-panel" role="dialog" aria-label="Asistente de Amigo Fiel" hidden>
+    <header class="chat-head">
+      <span class="chat-avatar"><svg><use href="#logo-mark"/></svg></span>
+      <div><strong>Fiel · Asistente de Amigo Fiel</strong><small><span class="dot-live"></span> Responde al momento</small></div>
+      <button class="chat-close" type="button" aria-label="Cerrar asistente"><svg><use href="#i-close"/></svg></button>
+    </header>
+    <div class="chat-urgent-bar">
+      <svg><use href="#i-siren"/></svg><span>¿Urgencia? Llama ya al <a href="tel:+34600000000">600 000 000</a></span>
+    </div>
+    <div class="chat-log" aria-live="polite">
+      <div class="msg bot"><p>¡Hola! Soy <strong>Fiel</strong>, el asistente de la clínica Amigo Fiel 🐾 Te ayudo con dudas sobre vacunas, desparasitación, alimentación, comportamiento, precios orientativos… y a pedir cita.</p><p class="msg-note">Te oriento, pero no sustituyo a una consulta veterinaria.</p></div>
+    </div>
+    <div class="chat-suggest">
+      <button type="button">¿Cuándo vacuno a mi cachorro?</button>
+      <button type="button">Mi gato vomita de vez en cuando</button>
+      <button type="button">¿Cuánto cuesta esterilizar?</button>
+    </div>
+    <form class="chat-form">
+      <label class="sr-only" for="chat-input">Escribe tu pregunta</label>
+      <input id="chat-input" type="text" maxlength="500" placeholder="Escribe tu pregunta…" autocomplete="off">
+      <button type="submit" aria-label="Enviar"><svg><use href="#i-send"/></svg></button>
+    </form>
+    <p class="chat-legal">Orientación general. No sustituye a la consulta con un veterinario.</p>
+  </section>
+
+  <script defer src="lib/gsap.min.js"></script>
+  <script defer src="lib/ScrollTrigger.min.js"></script>
+  <script defer src="lib/manifest.js?v=20261011"></script>
+  <script defer src="main.js?v=20261011"></script>
+</body>
+</html>

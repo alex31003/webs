@@ -1,0 +1,7 @@
+# Nunca subir claves ni contactos
+secret_config.php
+gemini_api_key.php
+datos/*.php
+datos/*.jsonl
+datos/*.csv
+*.jsonl

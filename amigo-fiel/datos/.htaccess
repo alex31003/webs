@@ -1,0 +1,3 @@
+# Carpeta privada: contactos y ajustes. Nadie puede verla desde el navegador.
+Require all denied
+Deny from all
