@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="es" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Makeup Jhada Beauty Studio · Maquillaje profesional en Guayaquil</title>
+  <meta name="description" content="Maquillaje profesional en Guayaquil por Dayana Peñafiel: novias, XV años, graduaciones, sesiones de fotos y clases de makeup avanzado con certificación oficial. Agenda por WhatsApp.">
+  <meta name="theme-color" content="#3D1C1C">
+  <meta property="og:title" content="Makeup Jhada Beauty Studio — Tu belleza, coronada">
+  <meta property="og:description" content="Maquillaje profesional en Guayaquil · Novias · XV Añeras · Graduaciones · Sesiones de fotos · Clases certificadas.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="assets/logo-mj.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Manrope:wght@300;400;500;600;700&family=Pinyon+Script&display=swap">
+  <link rel="stylesheet" href="styles.css?v=20261012">
+  <script defer src="lib/gsap.min.js"></script>
+  <script defer src="lib/ScrollTrigger.min.js"></script>
+  <script defer src="lib/manifest.js?v=20261012"></script>
+  <script defer src="main.js?v=20261012"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+
+  <!-- Logo (recreación vectorial provisional del monograma MJ con corona) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="mjGold" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#F3DE9A"/><stop offset=".45" stop-color="#C9A84C"/><stop offset="1" stop-color="#8E6B23"/>
+      </linearGradient>
+      <radialGradient id="mjBg" cx=".4" cy=".35" r=".75"><stop offset="0" stop-color="#5A2A28"/><stop offset="1" stop-color="#3D1C1C"/></radialGradient>
+    </defs>
+    <symbol id="mj-logo" viewBox="0 0 200 200">
+      <circle cx="100" cy="100" r="98" fill="url(#mjBg)"/>
+      <circle cx="100" cy="100" r="90" fill="none" stroke="url(#mjGold)" stroke-width="1.6"/>
+      <circle cx="100" cy="100" r="85" fill="none" stroke="url(#mjGold)" stroke-width=".6" opacity=".7"/>
+      <g fill="url(#mjGold)">
+        <path d="M70 66 L76 44 L88 58 L100 38 L112 58 L124 44 L130 66 Z"/>
+        <rect x="70" y="67" width="60" height="5" rx="2"/>
+        <circle cx="76" cy="42" r="3.2"/><circle cx="100" cy="35.5" r="3.6"/><circle cx="124" cy="42" r="3.2"/>
+      </g>
+      <text x="100" y="138" text-anchor="middle" font-family="'Cormorant Garamond',Georgia,serif" font-size="68" font-weight="600" font-style="italic" fill="url(#mjGold)" letter-spacing="-4">MJ</text>
+      <text x="100" y="162" text-anchor="middle" font-family="Manrope,Arial,sans-serif" font-size="8.5" letter-spacing="3.2" fill="#F5E6DA" opacity=".85">BEAUTY STUDIO</text>
+    </symbol>
+    <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></symbol>
+    <symbol id="i-ig" viewBox="0 0 24 24"><path fill="currentColor" d="M12 7.3A4.7 4.7 0 1 0 16.7 12 4.7 4.7 0 0 0 12 7.3Zm0 7.8a3.1 3.1 0 1 1 3.1-3.1 3.1 3.1 0 0 1-3.1 3.1Zm6-8a1.1 1.1 0 1 1-1.1-1.1A1.1 1.1 0 0 1 18 7.1ZM21.2 8.2a5.4 5.4 0 0 0-1.5-3.9 5.5 5.5 0 0 0-3.9-1.5C14.3 2.7 9.7 2.7 8.2 2.8a5.5 5.5 0 0 0-3.9 1.5 5.4 5.4 0 0 0-1.5 3.9c-.1 1.5-.1 6.1 0 7.6a5.4 5.4 0 0 0 1.5 3.9 5.5 5.5 0 0 0 3.9 1.5c1.5.1 6.1.1 7.6 0a5.4 5.4 0 0 0 3.9-1.5 5.5 5.5 0 0 0 1.5-3.9c.1-1.5.1-6.1 0-7.6Zm-2 9.4a3.1 3.1 0 0 1-1.8 1.8c-1.2.5-4.1.4-5.4.4s-4.2.1-5.4-.4a3.1 3.1 0 0 1-1.8-1.8c-.5-1.2-.4-4.1-.4-5.4s-.1-4.2.4-5.4a3.1 3.1 0 0 1 1.8-1.8c1.2-.5 4.1-.4 5.4-.4s4.2-.1 5.4.4a3.1 3.1 0 0 1 1.8 1.8c.5 1.2.4 4.1.4 5.4s.1 4.2-.4 5.4Z"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1.5 14 10l8.5 2-8.5 2L12 22.5 10 14l-8.5-2L10 10Z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="m5 12.5 4.2 4.2L19 7"/></symbol>
+  </svg>
+
+  <!-- Splash -->
+  <div class="splash" data-splash aria-hidden="true">
+    <svg class="splash-logo"><use href="#mj-logo"/></svg>
+    <span class="splash-line"></span>
+  </div>
+
+  <!-- Navegación -->
+  <header class="nav" data-nav>
+    <a class="nav-brand" href="#inicio" aria-label="Makeup Jhada — inicio">
+      <svg class="nav-logo"><use href="#mj-logo"/></svg>
+      <span class="nav-name">Makeup <em>Jhada</em><small>Beauty Studio</small></span>
+    </a>
+    <nav class="nav-links" aria-label="Principal" data-menu>
+      <a href="#servicios">Servicios</a>
+      <a href="#clases">Clases</a>
+      <a href="#planificador">Planifica tu look</a>
+      <a href="#testimonios">Clientas</a>
+      <a href="#faq">Preguntas</a>
+      <a href="#contacto">Contacto</a>
+      <a class="btn btn-gold nav-menu-cta" href="https://wa.me/593981943602?text=Hola%20Dayana%2C%20quiero%20agendar%20una%20cita%20%E2%9C%A8" target="_blank" rel="noopener">Agendar por WhatsApp</a>
+    </nav>
+    <a class="btn btn-gold nav-cta" href="https://wa.me/593981943602?text=Hola%20Dayana%2C%20quiero%20agendar%20una%20cita%20%E2%9C%A8" target="_blank" rel="noopener">
+      <svg class="ico"><use href="#i-wa"/></svg> Agendar
+    </a>
+    <button class="nav-toggle" type="button" aria-label="Abrir menú" aria-expanded="false" data-menu-toggle><span></span><span></span></button>
+  </header>
+
+  <main id="main">
+
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="inicio">
+      <canvas class="gold-dust" data-particles aria-hidden="true"></canvas>
+      <div class="hero-glow" aria-hidden="true"></div>
+      <svg class="hero-watermark" aria-hidden="true" data-speed="-0.15"><use href="#mj-logo"/></svg>
+
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="kicker reveal"><span class="kicker-line"></span>Guayaquil · Desde 2021</p>
+          <h1 class="hero-title">
+            <span class="line"><span>Tu belleza,</span></span>
+            <span class="line"><em>coronada.</em></span>
+          </h1>
+          <p class="hero-sub reveal">Maquillaje profesional para los momentos que merecen quedarse para siempre: novias, XV años, graduaciones y sesiones de fotos. Por <strong>Dayana Peñafiel</strong>.</p>
+          <div class="hero-ctas reveal">
+            <a class="btn btn-gold btn-lg" href="https://wa.me/593981943602?text=Hola%20Dayana%2C%20quiero%20agendar%20mi%20maquillaje%20%E2%9C%A8" target="_blank" rel="noopener">
+              <svg class="ico"><use href="#i-wa"/></svg> Agenda tu cita
+            </a>
+            <a class="btn btn-ghost btn-lg" href="#planificador">
+              <svg class="ico"><use href="#i-spark"/></svg> Diseña tu look con IA
+            </a>
+          </div>
+          <ul class="hero-proof reveal">
+            <li><b>Desde $25</b><span>paquetes completos</span></li>
+            <li><b>Piel blindada</b><span>resiste el calor de GYE</span></li>
+            <li><b>Certificación</b><span>en clases avanzadas</span></li>
+          </ul>
+        </div>
+
+        <div class="hero-visual">
+          <figure class="frame frame-hero" data-speed="0.12">
+            <div class="ph ph-portrait" aria-hidden="true"><svg><use href="#mj-logo"/></svg></div>
+            <img src="assets/img/hero.webp" alt="Mujer latina con maquillaje glam en tonos bronce y dorado" fetchpriority="high" onerror="this.remove()">
+            <figcaption>Glam bronce · Piel blindada</figcaption>
+          </figure>
+          <figure class="frame frame-float frame-eye" data-speed="0.28">
+            <div class="ph ph-eye" aria-hidden="true"></div>
+            <img src="assets/img/eyes.webp" alt="Detalle de ojo con sombra champagne y pestañas" loading="lazy" onerror="this.remove()">
+          </figure>
+          <figure class="frame frame-float frame-lips" data-speed="-0.1">
+            <div class="ph ph-lips" aria-hidden="true"></div>
+            <img src="assets/img/lips.webp" alt="Detalle de labios en tono vino satinado" loading="lazy" onerror="this.remove()">
+          </figure>
+          <p class="hero-vertical" aria-hidden="true">Makeup Jhada · Beauty Studio · Est. 2021</p>
+        </div>
+      </div>
+      <a class="scroll-cue" href="#estudio" aria-label="Bajar"><span></span></a>
+    </section>
+
+    <!-- Cinta -->
+    <div class="ribbon" aria-hidden="true">
+      <div class="ribbon-track">
+        <span>Novias</span><i>✦</i><span>XV Añeras</span><i>✦</i><span>Graduaciones</span><i>✦</i><span>Sesiones de fotos</span><i>✦</i><span>Glam & social</span><i>✦</i><span>Clases certificadas</span><i>✦</i>
+        <span>Novias</span><i>✦</i><span>XV Añeras</span><i>✦</i><span>Graduaciones</span><i>✦</i><span>Sesiones de fotos</span><i>✦</i><span>Glam & social</span><i>✦</i><span>Clases certificadas</span><i>✦</i>
+      </div>
+    </div>
+
+    <!-- ============ ESTUDIO / DAYANA ============ -->
+    <section class="studio" id="estudio">
+      <div class="container studio-grid">
+        <div class="studio-figs">
+          <figure class="frame frame-studio" data-speed="0.08">
+            <div class="ph ph-studio" aria-hidden="true"><svg><use href="#mj-logo"/></svg></div>
+            <img src="assets/img/studio.webp" alt="Maquilladora trabajando en el estudio con luz cálida" loading="lazy" onerror="this.remove()">
+          </figure>
+          <figure class="frame frame-brush" data-speed="-0.12">
+            <img src="assets/img/brushes.webp" alt="Pinceles profesionales de maquillaje" loading="lazy" onerror="this.remove()">
+          </figure>
+          <div class="studio-badge" data-speed="0.2"><b>2021</b><span>maquillando<br>con amor</span></div>
+        </div>
+        <div class="studio-copy">
+          <p class="kicker reveal"><span class="kicker-line"></span>El estudio</p>
+          <h2 class="title reveal">Detrás de cada look hay una <em>mujer</em> que quiere sentirse ella misma, pero en su mejor versión.</h2>
+          <p class="lead reveal dropcap">Soy <strong>Dayana Peñafiel</strong> y desde 2021 maquillo a mujeres de Guayaquil en los días más importantes de su vida. Mi trabajo empieza antes del primer pincel: escucho cómo te imaginas, estudio tu rostro y tu piel, y construyo un look que resiste el calor, las lágrimas de emoción y las horas de fiesta.</p>
+          <p class="reveal">Cada paquete incluye limpieza facial, pestañas y peinado. Sin sorpresas: precios claros y una experiencia de estudio, aunque te maquille en tu casa.</p>
+          <div class="sign reveal">Dayana Peñafiel<small>Maquilladora profesional · Fundadora</small></div>
+          <dl class="stats reveal">
+            <div><dt>2021</dt><dd>Desde</dd></div>
+            <div><dt>5</dt><dd>Servicios</dd></div>
+            <div><dt>12</dt><dd>Clases certificadas</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SERVICIOS ============ -->
+    <section class="services" id="servicios">
+      <div class="container">
+        <header class="section-head">
+          <p class="kicker reveal"><span class="kicker-line"></span>Servicios & precios</p>
+          <h2 class="title reveal">Un paquete para cada <em>gran momento</em></h2>
+          <p class="section-sub reveal">Todos incluyen limpieza facial, pestañas y peinado (ondas o planchado). Precios reales, sin letra pequeña.</p>
+        </header>
+
+        <div class="svc-grid">
+          <article class="svc reveal" data-tilt>
+            <figure class="svc-fig"><div class="ph ph-social" aria-hidden="true"></div><img src="assets/img/social.webp" alt="Joven latina con maquillaje de graduación" loading="lazy" onerror="this.remove()"></figure>
+            <div class="svc-body">
+              <p class="svc-num">01 <span>🌸</span></p>
+              <h3>Social o Graduación</h3>
+              <p class="price"><small>$</small>25</p>
+              <ul class="incl">
+                <li>Limpieza facial</li><li>Maquillaje</li><li>Pestañas</li><li>Peinado (ondas o planchado)</li>
+              </ul>
+              <p class="svc-note">A domicilio tiene costo adicional</p>
+              <a class="btn btn-line" href="https://wa.me/593981943602?text=Hola%20Dayana%2C%20quiero%20agendar%20el%20paquete%20Social%20o%20Graduaci%C3%B3n%20(%2425)" target="_blank" rel="noopener">Reservar <svg class="ico"><use href="#i-arrow"/></svg></a>
+            </div>
+          </article>
+
+          <article class="svc reveal" data-tilt>
+            <figure class="svc-fig"><div class="ph ph-xv" aria-hidden="true"></div><img src="assets/img/xv.webp" alt="Quinceañera con maquillaje glam y tiara" loading="lazy" onerror="this.remove()"></figure>
+            <div class="svc-body">
+              <p class="svc-num">02 <span>👑</span></p>
+              <h3>XV Añeras</h3>
+              <p class="price"><small>$</small>35</p>
+              <ul class="incl">
+                <li>Limpieza facial</li><li>Maquillaje</li><li>Piel blindada</li><li>Técnica de fondeo</li><li>Pestañas</li><li>Peinado (ondas o planchado)</li>
+              </ul>
+              <p class="svc-note">A domicilio tiene costo adicional</p>
+              <a class="btn btn-line" href="https://wa.me/593981943602?text=Hola%20Dayana%2C%20quiero%20agendar%20el%20paquete%20XV%20A%C3%B1eras%20(%2435)" target="_blank" rel="noopener">Reservar <svg class="ico"><use href="#i-arrow"/></svg></a>
+            </div>
+          </article>
+
+          <article class="svc svc-feature reveal" data-tilt>
+            <span class="svc-flag">Tu gran día</span>
+            <figure class="svc-fig"><div class="ph ph-novia" aria-hidden="true"></div><img src="assets/img/novia.webp" alt="Novia latina con maquillaje luminoso" loading="lazy" onerror="this.remove()"></figure>
+            <div class="svc-body">
+              <p class="svc-num">03 <span>💍</span></p>
+              <h3>Novias</h3>
+              <p class="price"><small>$</small>50</p>
+              <ul class="incl">
+                <li>Limpieza facial</li><li>Exfoliación</li><li>Hidratación</li><li>Maquillaje</li><li>Piel blindada</li><li>Pestañas</li><li>Peinado (ondas o planchado)</li>
+              </ul>
+              <p class="svc-note">A domicilio tiene costo adicional</p>
+              <a class="btn btn-gold" href="https://wa.me/593981943602?text=Hola%20Dayana%2C%20quiero%20agendar%20el%20paquete%20Novias%20(%2450)" target="_blank" rel="noopener">Reservar <svg class="ico"><use href="#i-arrow"/></svg></a>
+            </div>
+          </article>
+
+          <article class="svc reveal" data-tilt>
+            <figure class="svc-fig"><div class="ph ph-fotos" aria-hidden="true"></div><img src="assets/img/fotos.webp" alt="Modelo en sesión de fotos con maquillaje strobing" loading="lazy" onerror="this.remove()"></figure>
+            <div class="svc-body">
+              <p class="svc-num">04 <span>📸</span></p>
+              <h3>Sesión de Fotos</h3>
+              <p class="price"><small>$</small>60</p>
+              <ul class="incl">
+                <li>Limpieza facial</li><li>Maquillaje</li><li>Piel blindada</li><li>Técnica strobing</li><li>Backstage 2 h</li><li>Pestañas</li><li>Peinado (ondas o planchado)</li>
+              </ul>
+              <p class="svc-note">Te acompaño 2 horas en el backstage</p>
+              <a class="btn btn-line" href="https://wa.me/593981943602?text=Hola%20Dayana%2C%20quiero%20agendar%20la%20Sesi%C3%B3n%20de%20Fotos%20(%2460)" target="_blank" rel="noopener">Reservar <svg class="ico"><use href="#i-arrow"/></svg></a>
+            </div>
+          </article>
+        </div>
+
+        <p class="svc-help reveal">¿No sabes cuál elegir? <a href="#planificador">Diseña tu look con IA</a> o pregúntale a <button type="button" class="link-btn" data-open-chat>Jhada ✨</button>, nuestra asistente.</p>
+      </div>
+    </section>
+
+    <!-- ============ CLASES ============ -->
+    <section class="classes" id="clases">
+      <div class="classes-bg" aria-hidden="true" data-speed="-0.1"></div>
+      <div class="container classes-grid">
+        <div class="classes-copy">
+          <p class="kicker reveal"><span class="kicker-line"></span>Academia Jhada 🎓</p>
+          <h2 class="title reveal">Aprende a maquillar como <em>profesional</em></h2>
+          <p class="lead reveal">Clases de Makeup Avanzado para mujeres que quieren maquillarse mejor o convertir el maquillaje en su profesión. Práctica real con materiales incluidos y certificación oficial al terminar.</p>
+
+          <div class="class-price reveal">
+            <div><b>12</b><span>clases</span></div>
+            <div><b>$10</b><span>por clase</span></div>
+            <div><b>$15</b><span>matrícula</span></div>
+          </div>
+          <p class="class-total reveal">Inversión total del curso: <strong>$135</strong> <small>(12 × $10 + $15 de matrícula)</small></p>
+          <a class="btn btn-gold btn-lg reveal" href="https://wa.me/593981943602?text=Hola%20Dayana%2C%20quiero%20informaci%C3%B3n%20de%20las%20Clases%20de%20Makeup%20Avanzado%20%F0%9F%8E%93" target="_blank" rel="noopener"><svg class="ico"><use href="#i-wa"/></svg> Quiero inscribirme</a>
+        </div>
+
+        <div class="classes-side">
+          <figure class="frame frame-class reveal">
+            <div class="ph ph-class" aria-hidden="true"><svg><use href="#mj-logo"/></svg></div>
+            <img src="assets/img/clases.webp" alt="Alumnas practicando maquillaje en clase" loading="lazy" onerror="this.remove()">
+          </figure>
+          <div class="gift reveal">
+            <p class="gift-title">Incluye <em>gratis</em></p>
+            <ul class="gift-list">
+              <li><svg class="ico"><use href="#i-check"/></svg>Camiseta</li>
+              <li><svg class="ico"><use href="#i-check"/></svg>Paleta de sombras</li>
+              <li><svg class="ico"><use href="#i-check"/></svg>Plantillas</li>
+              <li><svg class="ico"><use href="#i-check"/></svg>Materiales faltantes por clase</li>
+              <li><svg class="ico"><use href="#i-check"/></svg>Refrigerios</li>
+              <li><svg class="ico"><use href="#i-check"/></svg>Sesión de fotos profesional</li>
+              <li><svg class="ico"><use href="#i-check"/></svg>Clases de peinado</li>
+              <li class="star"><svg class="ico"><use href="#i-spark"/></svg><strong>Certificación oficial</strong></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CÓMO FUNCIONA ============ -->
+    <section class="steps" id="proceso">
+      <div class="container">
+        <header class="section-head center">
+          <p class="kicker reveal"><span class="kicker-line"></span>Cómo funciona<span class="kicker-line"></span></p>
+          <h2 class="title reveal">Tres pasos hacia tu <em>transformación</em></h2>
+        </header>
+        <ol class="steps-list" data-steps>
+          <li class="step reveal">
+            <span class="step-n">I</span>
+            <h3>Elige tu servicio</h3>
+            <p>Revisa los paquetes o usa el planificador con IA para saber cuál va con tu evento y presupuesto.</p>
+          </li>
+          <li class="step reveal">
+            <span class="step-n">II</span>
+            <h3>Agenda por WhatsApp</h3>
+            <p>Escríbele a Dayana al <a href="https://wa.me/593981943602" target="_blank" rel="noopener">0981943602</a>, elige fecha y hora, y cuéntale tu idea del look.</p>
+          </li>
+          <li class="step reveal">
+            <span class="step-n">III</span>
+            <h3>Vive tu transformación</h3>
+            <p>Llega con la piel limpia e hidratada y déjate consentir. Sales lista para brillar… y para las fotos.</p>
+          </li>
+          <svg class="steps-line" viewBox="0 0 1000 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 20 C 250 0, 750 40, 1000 20" /></svg>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ PLANIFICADOR ============ -->
+    <section class="planner" id="planificador">
+      <canvas class="gold-dust gold-dust-soft" data-particles aria-hidden="true"></canvas>
+      <div class="container planner-grid">
+        <div class="planner-intro">
+          <p class="kicker reveal"><span class="kicker-line"></span>Planificador de Look · IA</p>
+          <h2 class="title reveal">Diseña tu look <em>en un minuto</em></h2>
+          <p class="lead reveal">Cuéntanos de tu evento y tu estilo. Nuestra inteligencia artificial te arma un plan personalizado: paquete ideal con su precio real, paleta de colores para tu tono de piel, técnicas y tiempo de sesión.</p>
+          <figure class="frame frame-palette reveal" data-speed="0.1">
+            <img src="assets/img/palette.webp" alt="Paleta de sombras y pinceles" loading="lazy" onerror="this.remove()">
+          </figure>
+          <p class="disclaimer reveal">✦ Es una recomendación orientativa. El look final se ajusta a tu rostro real en sesión.</p>
+        </div>
+
+        <div class="planner-card" data-planner>
+          <div class="planner-progress" aria-hidden="true"><span data-progress></span></div>
+          <form class="planner-form" data-planner-form novalidate>
+            <!-- Paso 1 -->
+            <fieldset class="pstep is-active" data-pstep="1">
+              <legend><span>Paso 1 de 3</span>¿Para qué ocasión es?</legend>
+              <div class="chips" role="radiogroup" aria-label="Tipo de evento">
+                <label class="chip"><input type="radio" name="evento" value="boda" required><span>💍 Boda</span></label>
+                <label class="chip"><input type="radio" name="evento" value="quinceanera"><span>👑 Quinceañera</span></label>
+                <label class="chip"><input type="radio" name="evento" value="graduacion"><span>🎓 Graduación</span></label>
+                <label class="chip"><input type="radio" name="evento" value="fotos"><span>📸 Fotos</span></label>
+                <label class="chip"><input type="radio" name="evento" value="social"><span>🌸 Social</span></label>
+                <label class="chip"><input type="radio" name="evento" value="glam"><span>✨ Glam</span></label>
+                <label class="chip"><input type="radio" name="evento" value="otro"><span>Otro</span></label>
+              </div>
+              <label class="field field-otro" hidden data-otro>
+                <span>Cuéntanos qué evento</span>
+                <input type="text" name="otro" maxlength="100" placeholder="Ej.: bautizo, cena de gala…">
+              </label>
+              <label class="field">
+                <span>Fecha del evento</span>
+                <input type="date" name="fecha" data-date>
+              </label>
+              <p class="pstep-error" data-error hidden>Elige un tipo de evento para continuar.</p>
+              <div class="pstep-nav"><button type="button" class="btn btn-gold" data-next>Continuar <svg class="ico"><use href="#i-arrow"/></svg></button></div>
+            </fieldset>
+
+            <!-- Paso 2 -->
+            <fieldset class="pstep" data-pstep="2">
+              <legend><span>Paso 2 de 3</span>Tu piel y tu estilo</legend>
+              <p class="field-label">Tono de piel</p>
+              <div class="tones" role="radiogroup" aria-label="Tono de piel">
+                <label class="tone"><input type="radio" name="tono" value="clara" required><span class="tone-dot" style="--t:#F1D3BC"></span><span>Clara</span></label>
+                <label class="tone"><input type="radio" name="tono" value="media"><span class="tone-dot" style="--t:#D9A77F"></span><span>Media</span></label>
+                <label class="tone"><input type="radio" name="tono" value="morena"><span class="tone-dot" style="--t:#A9714A"></span><span>Morena</span></label>
+                <label class="tone"><input type="radio" name="tono" value="oscura"><span class="tone-dot" style="--t:#6A4029"></span><span>Oscura</span></label>
+              </div>
+              <p class="field-label">Estilo preferido</p>
+              <div class="styles" role="radiogroup" aria-label="Estilo preferido">
+                <label class="style-opt"><input type="radio" name="estilo" value="natural" required><span><b>Natural</b><small>Piel fresca, tú pero mejor</small></span></label>
+                <label class="style-opt"><input type="radio" name="estilo" value="romantico"><span><b>Romántico</b><small>Rosados, suave y luminoso</small></span></label>
+                <label class="style-opt"><input type="radio" name="estilo" value="glam"><span><b>Glam</b><small>Brillo, pestañas y glow</small></span></label>
+                <label class="style-opt"><input type="radio" name="estilo" value="dramatico"><span><b>Dramático</b><small>Ahumados y mirada intensa</small></span></label>
+                <label class="style-opt"><input type="radio" name="estilo" value="novia_clasica"><span><b>Novia clásica</b><small>Elegante y atemporal</small></span></label>
+              </div>
+              <p class="pstep-error" data-error hidden>Elige tu tono de piel y un estilo.</p>
+              <div class="pstep-nav"><button type="button" class="btn btn-text" data-prev>Atrás</button><button type="button" class="btn btn-gold" data-next>Continuar <svg class="ico"><use href="#i-arrow"/></svg></button></div>
+            </fieldset>
+
+            <!-- Paso 3 -->
+            <fieldset class="pstep" data-pstep="3">
+              <legend><span>Paso 3 de 3</span>Los detalles</legend>
+              <label class="field">
+                <span>Presupuesto aproximado: <output data-budget-out>$50</output></span>
+                <input type="range" name="presupuesto" min="20" max="100" step="5" value="50" data-budget>
+                <span class="range-scale"><small>$20</small><small>$100+</small></span>
+              </label>
+              <div class="toggles">
+                <div class="toggle-group">
+                  <p class="field-label">¿Incluye peinado?</p>
+                  <div class="seg">
+                    <label><input type="radio" name="peinado" value="si" checked><span>Sí</span></label>
+                    <label><input type="radio" name="peinado" value="no"><span>No</span></label>
+                  </div>
+                </div>
+                <div class="toggle-group">
+                  <p class="field-label">¿Dónde?</p>
+                  <div class="seg">
+                    <label><input type="radio" name="lugar" value="estudio" checked><span>En estudio</span></label>
+                    <label><input type="radio" name="lugar" value="domicilio"><span>A domicilio</span></label>
+                  </div>
+                </div>
+              </div>
+              <label class="check"><input type="checkbox" name="clases" value="1"><span>También me interesa aprender a maquillarme 🎓</span></label>
+              <div class="pstep-nav"><button type="button" class="btn btn-text" data-prev>Atrás</button><button type="submit" class="btn btn-gold" data-submit><svg class="ico"><use href="#i-spark"/></svg> Crear mi plan de look</button></div>
+            </fieldset>
+          </form>
+
+          <!-- Cargando -->
+          <div class="planner-loading" data-loading hidden>
+            <svg class="loading-logo"><use href="#mj-logo"/></svg>
+            <p data-loading-text>Estudiando tu tono de piel…</p>
+          </div>
+
+          <!-- Resultado -->
+          <div class="plan" data-plan hidden tabindex="-1"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TESTIMONIOS ============ -->
+    <section class="testimonials" id="testimonios">
+      <div class="container">
+        <header class="section-head center">
+          <p class="kicker reveal"><span class="kicker-line"></span>Clientas felices<span class="kicker-line"></span></p>
+          <h2 class="title reveal">Lo que se siente <em>salir del estudio</em></h2>
+          <p class="demo-tag reveal">Testimonios de ejemplo · se reemplazarán por reseñas reales de clientas</p>
+        </header>
+        <div class="quotes">
+          <blockquote class="quote reveal">
+            <p>“Mi maquillaje de novia duró desde la ceremonia hasta el último baile, con el calor de Guayaquil y todo. Me sentí yo, pero en versión revista.”</p>
+            <footer><span class="avatar" aria-hidden="true">A</span><cite>Andrea M.<small>Novia · ejemplo</small></cite></footer>
+          </blockquote>
+          <blockquote class="quote quote-feature reveal">
+            <p>“Mi hija quería verse como una princesa sin perder lo juvenil, y Dayana lo logró. La piel blindada aguantó toda la fiesta de XV.”</p>
+            <footer><span class="avatar" aria-hidden="true">K</span><cite>Karla P.<small>Mamá de quinceañera · ejemplo</small></cite></footer>
+          </blockquote>
+          <blockquote class="quote reveal">
+            <p>“Hice las clases avanzadas y ahora maquillo a mis amigas en sus eventos. Los materiales, la sesión de fotos y el certificado… todo incluido.”</p>
+            <footer><span class="avatar" aria-hidden="true">D</span><cite>Daniela R.<small>Alumna · ejemplo</small></cite></footer>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section class="faq" id="faq">
+      <div class="container faq-grid">
+        <header class="faq-head">
+          <p class="kicker reveal"><span class="kicker-line"></span>Preguntas frecuentes</p>
+          <h2 class="title reveal">Todo lo que quieres <em>saber</em></h2>
+          <p class="reveal">¿Te queda alguna duda? Pregúntale a <button type="button" class="link-btn" data-open-chat>Jhada ✨</button> o escríbenos por <a href="https://wa.me/593981943602" target="_blank" rel="noopener">WhatsApp</a>.</p>
+          <figure class="frame frame-faq reveal" data-speed="0.08">
+            <img src="assets/img/brushes-mirror.webp" alt="Pinceles de maquillaje junto a un espejo" loading="lazy" onerror="this.remove()">
+          </figure>
+        </header>
+        <div class="faq-list">
+          <details class="qa reveal" open>
+            <summary>¿Cómo agendo mi cita?</summary>
+            <p>Escríbele a Dayana por WhatsApp al <a href="https://wa.me/593981943602" target="_blank" rel="noopener">0981943602</a> o por Instagram <a href="https://instagram.com/makeup_jhada" target="_blank" rel="noopener">@makeup_jhada</a>. Cuéntale tu evento, la fecha y la hora a la que necesitas estar lista.</p>
+          </details>
+          <details class="qa reveal">
+            <summary>¿Hacen maquillaje a domicilio?</summary>
+            <p>Sí. Los paquetes Social, XV Añeras y Novias pueden ser a domicilio con un costo adicional que depende de tu sector; se confirma al agendar por WhatsApp. Para la Sesión de Fotos, consulta disponibilidad.</p>
+          </details>
+          <details class="qa reveal">
+            <summary>¿Cómo debo preparar mi piel?</summary>
+            <p>Llega con el rostro limpio, hidratado y sin base ni maquillaje previo. Toma agua y descansa los días anteriores, y evita exfoliaciones fuertes o tratamientos nuevos 48 horas antes. Si tienes alergias o piel sensible, avísalo.</p>
+          </details>
+          <details class="qa reveal">
+            <summary>¿Cuánto dura cada sesión?</summary>
+            <p>De forma aproximada: Social o Graduación ~1 h 15 min, XV Añeras ~1 h 45 min, Novias ~2 h 30 min y Sesión de Fotos ~1 h 30 min de maquillaje más 2 horas de backstage. <small class="demo-inline">(tiempos de referencia)</small></p>
+          </details>
+          <details class="qa reveal">
+            <summary>¿Qué es la piel blindada?</summary>
+            <p>Es una preparación y sellado por capas que hace que tu maquillaje resista el calor, la humedad, las lágrimas y los abrazos durante horas. Está incluida en XV Añeras, Novias y Sesión de Fotos.</p>
+          </details>
+          <details class="qa reveal">
+            <summary>¿Qué diferencia hay entre strobing y fondeo?</summary>
+            <p>El <strong>fondeo</strong> construye la base en capas finas para una piel uniforme y duradera. El <strong>strobing</strong> ilumina los puntos altos del rostro para un glow que se ve increíble en cámara; por eso va en la Sesión de Fotos.</p>
+          </details>
+          <details class="qa reveal">
+            <summary>¿Cómo funcionan las clases de makeup?</summary>
+            <p>Son 12 clases a $10 cada una, más $15 de matrícula. Incluyen gratis camiseta, paleta de sombras, plantillas, materiales faltantes por clase, refrigerios, sesión de fotos profesional, clases de peinado y certificación oficial.</p>
+          </details>
+          <details class="qa reveal">
+            <summary>¿Y si no sé qué look me queda mejor?</summary>
+            <p>Usa el <a href="#planificador">planificador de look</a> para tener una idea y luego agenda una consulta previa con Dayana: ella ajusta todo a tu rostro, tu piel y tu vestido.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACTO ============ -->
+    <section class="contact" id="contacto">
+      <canvas class="gold-dust gold-dust-soft" data-particles aria-hidden="true"></canvas>
+      <div class="container contact-grid">
+        <div class="contact-copy">
+          <p class="kicker reveal"><span class="kicker-line"></span>Agenda tu cita</p>
+          <h2 class="title title-xl reveal">¿Lista para <em>brillar</em>?</h2>
+          <p class="lead reveal">Reserva con anticipación para asegurar tu fecha, sobre todo si tu evento es en fin de semana.</p>
+          <div class="contact-ctas reveal">
+            <a class="btn btn-gold btn-lg" href="https://wa.me/593981943602?text=Hola%20Dayana%2C%20quiero%20agendar%20una%20cita%20%E2%9C%A8" target="_blank" rel="noopener"><svg class="ico"><use href="#i-wa"/></svg> Agendar por WhatsApp</a>
+            <a class="btn btn-ghost btn-lg" href="https://instagram.com/makeup_jhada" target="_blank" rel="noopener"><svg class="ico"><use href="#i-ig"/></svg> @makeup_jhada</a>
+          </div>
+        </div>
+        <ul class="contact-cards">
+          <li class="ccard reveal">
+            <svg class="ico"><use href="#i-wa"/></svg>
+            <div><small>WhatsApp</small><a href="https://wa.me/593981943602" target="_blank" rel="noopener">0981 943 602</a></div>
+          </li>
+          <li class="ccard reveal">
+            <svg class="ico"><use href="#i-ig"/></svg>
+            <div><small>Instagram</small><a href="https://instagram.com/makeup_jhada" target="_blank" rel="noopener">@makeup_jhada</a></div>
+          </li>
+          <li class="ccard reveal">
+            <svg class="ico"><use href="#i-pin"/></svg>
+            <div><small>Estudio <em class="demo-pill">dato de ejemplo</em></small><span>Norte de Guayaquil, Ecuador<br>Dirección exacta al agendar</span></div>
+          </li>
+          <li class="ccard reveal">
+            <svg class="ico"><use href="#i-clock"/></svg>
+            <div><small>Horario <em class="demo-pill">dato de ejemplo</em></small><span>Lun a sáb · 08:00 – 19:00<br>Domingos con cita previa</span></div>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <svg class="footer-logo"><use href="#mj-logo"/></svg>
+        <p class="footer-script">Makeup Jhada</p>
+        <p>Beauty Studio · Guayaquil, Ecuador</p>
+      </div>
+      <nav class="footer-nav" aria-label="Pie de página">
+        <a href="#servicios">Servicios</a><a href="#clases">Clases</a><a href="#planificador">Planificador</a><a href="#faq">Preguntas</a><a href="#contacto">Contacto</a>
+      </nav>
+      <div class="footer-social">
+        <a href="https://wa.me/593981943602" target="_blank" rel="noopener" aria-label="WhatsApp"><svg class="ico"><use href="#i-wa"/></svg></a>
+        <a href="https://instagram.com/makeup_jhada" target="_blank" rel="noopener" aria-label="Instagram"><svg class="ico"><use href="#i-ig"/></svg></a>
+      </div>
+    </div>
+    <div class="container footer-legal">
+      <p>© <span data-year>2026</span> Makeup Jhada Beauty Studio · Dayana Peñafiel</p>
+      <p class="credits">Fotos de pinceles y paleta: natasia.causse (CC BY 2.0) y freestocks.org (CC0) vía Openverse.</p>
+    </div>
+  </footer>
+
+  <!-- ============ ASISTENTE JHADA ✨ ============ -->
+  <button class="chat-fab" type="button" data-chat-toggle aria-controls="chat" aria-expanded="false">
+    <svg class="chat-fab-logo"><use href="#mj-logo"/></svg>
+    <span class="chat-fab-label">Pregúntale a <b>Jhada ✨</b></span>
+    <span class="chat-fab-dot" aria-hidden="true"></span>
+  </button>
+  <section class="chat" id="chat" data-chat hidden aria-label="Asistente Jhada">
+    <header class="chat-head">
+      <svg class="chat-avatar"><use href="#mj-logo"/></svg>
+      <div><b>Jhada ✨</b><small><span class="online"></span>Asistente de Makeup Jhada</small></div>
+      <a class="chat-wa" href="https://wa.me/593981943602" target="_blank" rel="noopener" aria-label="Hablar con Dayana por WhatsApp"><svg class="ico"><use href="#i-wa"/></svg></a>
+      <button class="chat-close" type="button" data-chat-close aria-label="Cerrar">×</button>
+    </header>
+    <div class="chat-body" data-chat-body aria-live="polite">
+      <div class="msg msg-bot"><p>¡Hola, hermosa! 💛 Soy <b>Jhada</b>, la asistente de Makeup Jhada. Te ayudo a elegir tu paquete, te cuento precios, qué incluye cada servicio y cómo preparar tu piel. ¿Para qué evento te quieres maquillar?</p></div>
+    </div>
+    <div class="chat-suggest" data-chat-suggest>
+      <button type="button">¿Qué paquete me conviene para mi boda?</button>
+      <button type="button">¿Cuánto cuestan las clases?</button>
+      <button type="button">¿Qué es la piel blindada?</button>
+      <button type="button">¿Van a domicilio?</button>
+    </div>
+    <form class="chat-form" data-chat-form>
+      <input type="text" name="m" maxlength="500" placeholder="Escribe tu pregunta…" autocomplete="off" aria-label="Tu mensaje" required>
+      <button type="submit" aria-label="Enviar"><svg class="ico"><use href="#i-arrow"/></svg></button>
+    </form>
+    <p class="chat-foot">Asistente con IA · para agendar escribe a <a href="https://wa.me/593981943602" target="_blank" rel="noopener">WhatsApp</a></p>
+  </section>
+</body>
+</html>

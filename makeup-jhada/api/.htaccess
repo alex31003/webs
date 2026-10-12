@@ -1,0 +1,3 @@
+<FilesMatch "^(config|_base)\.php$|^composer\.(json|lock)$">
+  Require all denied
+</FilesMatch>
