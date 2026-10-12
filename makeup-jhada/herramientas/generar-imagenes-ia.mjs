@@ -6,6 +6,7 @@
 // Uso (Node 18+):
 //   node herramientas/generar-imagenes-ia.mjs --clave clave-openai.txt
 //   node herramientas/generar-imagenes-ia.mjs --clave clave-openai.txt --solo hero-dayana.jpg,galeria-2.jpg
+//   Opciones: --calidad low|medium|high (por defecto medium) · --paralelo 4 (imágenes a la vez)
 //
 // - Las fotos "despues-*.jpg" se generan a partir de su "antes-*.jpg" para que
 //   sea la MISMA mujer (edición con referencia).
@@ -22,7 +23,8 @@ const IMG = path.resolve(HERE, "..", "img");
 const arg = (n, d = null) => { const i = process.argv.indexOf("--" + n); return i > -1 ? process.argv[i + 1] : d; };
 const claveArchivo = arg("clave");
 const solo = (arg("solo", "") || "").split(",").map((s) => s.trim()).filter(Boolean);
-const calidad = arg("calidad", "high");
+const calidad = arg("calidad", "medium");
+const paralelo = Math.max(1, parseInt(arg("paralelo", "4"), 10) || 4);
 if (!claveArchivo || !fs.existsSync(claveArchivo)) {
   console.error("ERROR falta --clave <archivo con la clave de OpenAI>");
   process.exit(1);
@@ -36,9 +38,11 @@ const LATINA = "mujer latina ecuatoriana";
 const NEUTRO = "fondo neutro beige liso, luz frontal suave, retrato frontal de hombros hacia arriba, expresión serena";
 
 const IMAGENES = [
-  { f: "logo-mj.png", size: "1024x1024", fmt: "png", bg: "transparent",
-    p: "Logotipo de lujo: monograma 'MJ' en tipografía serif elegante dorada metálica con una pequeña corona dorada encima, dentro de un círculo color chocolate oscuro (#3D1C1C) con doble aro dorado fino, debajo la frase 'BEAUTY STUDIO' en mayúsculas espaciadas doradas. Fondo transparente, diseño plano vectorial, centrado." },
-  { f: "hero-dayana.jpg", size: "1536x1024",
+  // gpt-image-2 no admite fondo transparente: el logo incluido (diseñado aparte, PNG transparente)
+  // solo se regenera si lo pides con --solo logo-mj.png, y saldrá con fondo liso.
+  { f: "logo-mj.png", size: "1024x1024", fmt: "png", q: "high", manual: true,
+    p: "Logotipo de lujo: monograma 'MJ' en tipografía serif elegante dorada metálica con una pequeña corona dorada encima, dentro de un círculo color chocolate oscuro (#3D1C1C) con doble aro dorado fino, debajo la frase 'BEAUTY STUDIO' en mayúsculas espaciadas doradas. Fondo liso color nude claro, diseño plano vectorial, centrado." },
+  { f: "hero-dayana.jpg", size: "1536x1024", q: "high",
     p: `${LATINA} maquilladora profesional de unos 28 años, cabello largo castaño rojizo con ondas, sosteniendo un pincel de maquillaje con elegancia, mirada segura a cámara, fondo oscuro chocolate con destellos dorados bokeh, ubicada en el tercio derecho del encuadre dejando espacio vacío oscuro a la izquierda. ${ESTILO}` },
   { f: "dayana-trabajando.jpg", size: "1024x1536",
     p: `Maquilladora ${LATINA} de cabello castaño rojizo aplicando base con brocha a una clienta sentada, estudio de belleza premium con espejo iluminado, tonos dorados y madera oscura. ${ESTILO}` },
@@ -87,7 +91,7 @@ async function generar(img) {
     form.append("model", "gpt-image-2");
     form.append("prompt", img.p + " " + ESTILO);
     form.append("size", img.size);
-    form.append("quality", calidad);
+    form.append("quality", img.q || calidad);
     form.append("output_format", fmt);
     const refPath = path.join(IMG, img.ref);
     form.append("image[]", new Blob([fs.readFileSync(refPath)], { type: "image/jpeg" }), img.ref);
@@ -96,7 +100,7 @@ async function generar(img) {
     res = await fetch("https://api.openai.com/v1/images/generations", {
       method: "POST",
       headers: { Authorization: "Bearer " + KEY, "Content-Type": "application/json" },
-      body: JSON.stringify({ model: "gpt-image-2", prompt: img.p, size: img.size, quality: calidad, output_format: fmt, ...(img.bg ? { background: img.bg } : {}) }),
+      body: JSON.stringify({ model: "gpt-image-2", prompt: img.p, size: img.size, quality: img.q || calidad, output_format: fmt, ...(img.bg ? { background: img.bg } : {}) }),
     });
   }
   const data = await res.json().catch(() => ({}));
@@ -107,11 +111,25 @@ async function generar(img) {
   console.log("OK " + img.f);
 }
 
-const lista = solo.length ? IMAGENES.filter((i) => solo.includes(i.f)) : IMAGENES;
+const lista = solo.length ? IMAGENES.filter((i) => solo.includes(i.f)) : IMAGENES.filter((i) => !i.manual);
 // Primero las que no dependen de otra; luego las "despues-*" que usan su "antes-*"
 const orden = [...lista.filter((i) => !i.ref), ...lista.filter((i) => i.ref)];
 let fallos = 0;
-for (const img of orden) {
-  try { await generar(img); } catch (e) { fallos++; console.error("ERROR " + img.f + ": " + e.message); }
+async function conReintento(img) {
+  for (let intento = 1; intento <= 3; intento++) {
+    try { return await generar(img); } catch (e) {
+      if (intento === 3) { fallos++; console.error("ERROR " + img.f + ": " + e.message); return; }
+      await new Promise((r) => setTimeout(r, 4000 * intento));
+    }
+  }
 }
+// Varias a la vez; las "despues-*" esperan a que exista su "antes-*"
+async function enGrupos(lista) {
+  const cola = [...lista];
+  await Promise.all(Array.from({ length: paralelo }, async () => {
+    while (cola.length) await conReintento(cola.shift());
+  }));
+}
+await enGrupos(orden.filter((i) => !i.ref));
+await enGrupos(orden.filter((i) => i.ref));
 process.exit(fallos ? 1 : 0);

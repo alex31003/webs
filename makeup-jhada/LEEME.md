@@ -24,9 +24,8 @@ No subas `herramientas/` ni este `LEEME.md`.
 La lista completa de las 27 imágenes, con lo que debe mostrar cada una, está al final de `index.html`.
 Consejos: JPG de menos de 400 KB. Usa formato vertical 4:5 para servicios y antes/después. Cada pareja antes/después debe tener el mismo encuadre.
 
-> Las imágenes que trae ahora son **de muestra**, con la marca y la paleta del estudio, para que la web se vea completa desde el primer día.
-> Para generar fotos realistas con IA hay un script listo: `node herramientas/generar-imagenes-ia.mjs --clave clave-openai.txt`
-> (necesita una clave de OpenAI con saldo; genera las 27 con los mismos nombres).
+> Las 27 imágenes actuales fueron **generadas con IA** (OpenAI gpt-image-2) con la paleta del estudio. Son ilustrativas: lo ideal es ir reemplazándolas por fotos reales de los trabajos de Dayana.
+> Para regenerar alguna: `node herramientas/generar-imagenes-ia.mjs --clave clave-openai.txt --solo galeria-2.jpg`
 
 ## Activar el chat Jhada ✨ con Claude
 
