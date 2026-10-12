@@ -111,12 +111,37 @@
     window.addEventListener("resize", onScroll);
   }
 
-  /* ---------- Sliders antes / después ---------- */
+  /* ---------- Sliders antes / después ----------
+     Se mueven solos: antes completo → la barra cruza → después completo → regresa.
+     Si la clienta toca o arrastra, se pausa y vuelve a moverse solo a los 5 s. */
+  var BA_HOLD_BEFORE = 1300, BA_SWEEP = 2400, BA_HOLD_AFTER = 2200, BA_RESUME = 5000;
+  var BA_CYCLE = BA_HOLD_BEFORE + BA_SWEEP + BA_HOLD_AFTER + BA_SWEEP;
+
+  function easeInOut(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+
+  // Posición de la barra (100 = antes completo, 0 = después completo) en el instante t del ciclo
+  function baCyclePos(t) {
+    t = t % BA_CYCLE;
+    if (t < BA_HOLD_BEFORE) return 100;
+    t -= BA_HOLD_BEFORE;
+    if (t < BA_SWEEP) return 100 - 100 * easeInOut(t / BA_SWEEP);
+    t -= BA_SWEEP;
+    if (t < BA_HOLD_AFTER) return 0;
+    t -= BA_HOLD_AFTER;
+    return 100 * easeInOut(t / BA_SWEEP);
+  }
+
   function initBeforeAfter() {
-    $$("[data-ba]").forEach(function (slider) {
+    $$("[data-ba]").forEach(function (slider, index) {
       var handle = $(".ba-slider__handle", slider);
       var pos = 50;
       var dragging = false;
+      var visible = false;
+      var mode = "auto";       // auto | user | return
+      var cycleStart = 0;
+      var returnFrom = 0, returnStart = 0;
+      var lastTouch = 0;
+      var raf = null;
 
       function set(p) {
         pos = Math.max(0, Math.min(100, p));
@@ -128,15 +153,56 @@
         var x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
         set((x / r.width) * 100);
       }
+      function userTouched() {
+        mode = "user";
+        lastTouch = performance.now();
+        slider.classList.add("is-manual");
+      }
+
+      function frame(now) {
+        raf = null;
+        if (!visible) return;
+        if (mode === "user" && !dragging && now - lastTouch > BA_RESUME) {
+          // vuelve suavemente al "antes" y retoma el ciclo
+          mode = "return"; returnFrom = pos; returnStart = now;
+          slider.classList.remove("is-manual");
+        }
+        if (mode === "return") {
+          var k = Math.min(1, (now - returnStart) / 900);
+          set(returnFrom + (100 - returnFrom) * easeInOut(k));
+          if (k >= 1) { mode = "auto"; cycleStart = now; }
+        } else if (mode === "auto") {
+          set(baCyclePos(now - cycleStart));
+        }
+        raf = requestAnimationFrame(frame);
+      }
+      function play() { if (!raf) raf = requestAnimationFrame(frame); }
+
+      if (!reduced && "IntersectionObserver" in window) {
+        set(100);
+        new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            var wasVisible = visible;
+            visible = entry.isIntersecting;
+            if (visible && !wasVisible) {
+              if (mode === "auto") cycleStart = performance.now() + (index % 2) * 700 - BA_HOLD_BEFORE * 0.4;
+              play();
+            }
+          });
+        }, { threshold: 0.25 }).observe(slider);
+      } else {
+        set(50); // movimiento reducido: queda quieto a la mitad, se arrastra a mano
+      }
 
       slider.addEventListener("pointerdown", function (e) {
         dragging = true;
+        userTouched();
         slider.classList.add("is-dragging");
         if (slider.setPointerCapture) { try { slider.setPointerCapture(e.pointerId); } catch (_) {} }
         fromEvent(e);
       });
-      slider.addEventListener("pointermove", function (e) { if (dragging) fromEvent(e); });
-      function stop() { dragging = false; slider.classList.remove("is-dragging"); }
+      slider.addEventListener("pointermove", function (e) { if (dragging) { lastTouch = performance.now(); fromEvent(e); } });
+      function stop() { if (dragging) lastTouch = performance.now(); dragging = false; slider.classList.remove("is-dragging"); }
       slider.addEventListener("pointerup", stop);
       slider.addEventListener("pointercancel", stop);
       slider.addEventListener("lostpointercapture", stop);
@@ -144,10 +210,13 @@
       if (handle) {
         handle.addEventListener("keydown", function (e) {
           var step = e.shiftKey ? 10 : 4;
-          if (e.key === "ArrowLeft" || e.key === "ArrowDown") { set(pos - step); e.preventDefault(); }
-          else if (e.key === "ArrowRight" || e.key === "ArrowUp") { set(pos + step); e.preventDefault(); }
-          else if (e.key === "Home") { set(0); e.preventDefault(); }
-          else if (e.key === "End") { set(100); e.preventDefault(); }
+          var handled = true;
+          if (e.key === "ArrowLeft" || e.key === "ArrowDown") set(pos - step);
+          else if (e.key === "ArrowRight" || e.key === "ArrowUp") set(pos + step);
+          else if (e.key === "Home") set(0);
+          else if (e.key === "End") set(100);
+          else handled = false;
+          if (handled) { userTouched(); e.preventDefault(); }
         });
       }
     });
