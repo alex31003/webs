@@ -1,0 +1,63 @@
+BODEGA EN VIVO — INSTRUCCIONES DE CONFIGURACIÓN
+================================================
+
+Paso 1: Ve a supabase.com y crea una cuenta gratis
+Paso 2: Crea un nuevo proyecto, ponle cualquier nombre
+Paso 3: Ve a SQL Editor y ejecuta todo el contenido de setup.sql
+Paso 4: Ve a Settings > API y copia tu Project URL y tu anon public key
+Paso 5: Abre config.js y pega esos dos valores donde indica
+Paso 6: Ve a Authentication > Users y crea tus usuarios con email y contraseña
+Paso 7: Por cada usuario creado, ve a la tabla perfiles en Table Editor
+         y agrega una fila con su id, empresa_id, nombre y rol
+Paso 8: Sube la carpeta a Vercel.com arrastrándola — gratis, sin configuración
+Paso 9: Comparte la URL con tu cliente
+
+
+DETALLES ÚTILES
+---------------
+
+• Paso 3 — setup.sql crea las tablas, la seguridad por empresa (Row Level
+  Security), el tiempo real y los datos de ejemplo de "Distribuidora Demo".
+  Puedes ejecutarlo más de una vez sin duplicar nada.
+
+• Paso 4 — En proyectos nuevos, Supabase puede mostrar la clave como
+  "Publishable key" (empieza con sb_publishable_...). También funciona:
+  pégala en SUPABASE_ANON_KEY. NUNCA uses la "service_role" ni la
+  "secret key": esa clave salta toda la seguridad.
+
+• Paso 5 — config.js debe quedar así (con tus datos):
+      const SUPABASE_URL = "https://abcdxyz.supabase.co";
+      const SUPABASE_ANON_KEY = "eyJhbGciOi...";
+
+• Paso 6 — Al crear cada usuario marca "Auto Confirm User" para que pueda
+  entrar de inmediato.
+
+• Paso 7 — Valores de la fila en "perfiles":
+      id          → el User UID que aparece en Authentication > Users
+      empresa_id  → 11111111-1111-1111-1111-111111111111  (Distribuidora Demo)
+      nombre      → el nombre que se verá en la app (ej: Ana Torres)
+      rol         → dueño  |  encargado  |  trabajador   (escrito así, con ñ)
+  Atajo: al final de setup.sql hay consultas comentadas que crean los
+  perfiles usando solo el correo del usuario.
+
+• Qué ve cada rol:
+      dueño       → todo: dashboard, inventario, camiones, pedidos y
+                    configuración de bahías.
+      encargado   → dashboard, inventario, camiones y pedidos.
+      trabajador  → pantalla simple para el celular: toca un producto,
+                    ENTRADA o SALIDA, escribe la cantidad y confirma.
+
+• Para un cliente nuevo: crea su empresa en SQL Editor con
+      insert into empresas (nombre, color_primario)
+      values ('Nombre del Cliente', '#2563eb') returning id;
+  y usa ese id como empresa_id en los perfiles de sus usuarios. Cada
+  empresa solo ve sus propios datos. color_primario cambia el color de la
+  app para ese cliente.
+
+• Para probar en tu computador basta con abrir index.html en el navegador
+  (doble clic). Para clientes, súbelo a Vercel (Paso 8).
+
+• Si la app muestra "Falta conectar la base de datos", revisa config.js.
+  Si muestra "La base de datos no está configurada", vuelve a ejecutar
+  setup.sql. Si un usuario ve "no tiene un perfil asignado", falta su fila
+  en la tabla perfiles (Paso 7).
