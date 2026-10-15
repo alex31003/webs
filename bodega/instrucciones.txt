@@ -96,3 +96,43 @@ Qué trae cada mejora:
   Si muestra "La base de datos no está configurada", vuelve a ejecutar
   setup.sql. Si un usuario ve "no tiene un perfil asignado", falta su fila
   en la tabla perfiles (Paso 7).
+
+
+MEJORAS v3 (Exportar Excel, chat con canales, Red de Bodegas)
+---------------------------------------------------------------------------
+
+Paso A: En Supabase > SQL Editor > New query pega TODO el archivo
+        mejoras2.sql y presiona Run (después de setup.sql y mejoras.sql).
+        No borra ni cambia nada existente: solo agrega columnas, la tabla
+        "sucursales" (con 3 bodegas de ejemplo en Ecuador) y 2 funciones
+        seguras para el chat. Se puede ejecutar más de una vez.
+Paso B: Vuelve a subir la carpeta "bodega" a Vercel / Netlify como antes.
+        (No hay que tocar config.js.)
+
+Qué trae cada mejora:
+  • Exportar Excel    → botón en Dashboard e Inventario. Descarga
+                        Reporte_[Empresa]_[Fecha].xlsx con 4 hojas:
+                        Inventario, Movimientos (últimos 30 días),
+                        Camiones y Pedidos.
+  • Chat con canales  → #general, #camiones y #inventario. Escribe @ para
+                        mencionar a un compañero y # para un producto.
+                        ✓ = enviado, ✓✓ azul = leído. El número rojo en el
+                        botón 💬 son los mensajes sin leer. En el celular el
+                        chat ocupa toda la pantalla.
+  • Red de Bodegas    → nueva pestaña con el mapa de Ecuador (OpenStreetMap).
+                        Pin verde = activa sin alertas, rojo = alertas de
+                        stock, gris = inactiva. Toca un pin para ver stock,
+                        camiones y alertas, y "Ver Bodega 3D" para abrir esa
+                        sucursal en la Vista Bodega. A la derecha: totales de
+                        la red, buscador y lista de sucursales.
+  • Sucursales        → el dueño crea o edita sucursales desde la Red de
+                        Bodegas (botón "Nueva sucursal" o "Editar" en el pin).
+                        Al crear o editar un producto o camión puedes elegir
+                        su sucursal; si no eliges ninguna cuenta en la
+                        primera sucursal (la principal).
+  • Pedidos           → al crear un pedido puedes escribir sus productos;
+                        salen en el detalle del pedido y en el Excel.
+
+• Si no ejecutas mejoras2.sql la app sigue funcionando igual: el Excel
+  funciona, el chat queda en un solo canal y la Red de Bodegas muestra un
+  aviso para ejecutar el archivo.

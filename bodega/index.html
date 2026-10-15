@@ -18,6 +18,9 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="config.js"></script>
 <style>
 /* ═══════════════════════ TOKENS ═══════════════════════ */
@@ -956,8 +959,101 @@ html[data-theme="dark"] .msg .prod-chip { background: rgba(255,255,255,.06); }
 .pwa-banner .t strong { display: block; color: var(--text); font-size: 14px; }
 @keyframes sheetIn { from { transform: translateY(40px); opacity: .4; } }
 
+/* ── 10b. CHAT: canales, menciones y leído ── */
+.chat-rooms { display: flex; gap: 6px; padding: 0 10px 10px; background: var(--chat-head); overflow-x: auto; scrollbar-width: none; flex: none; }
+.chat-rooms::-webkit-scrollbar { display: none; }
+.chat-room { display: inline-flex; align-items: center; gap: 6px; flex: none; height: 30px; padding: 0 12px; border: 0; border-radius: 999px; background: rgba(255,255,255,.14); color: #fff; font-size: 13px; font-weight: 600; transition: background var(--t), color var(--t); }
+.chat-room:hover { background: rgba(255,255,255,.24); }
+.chat-room.active { background: #fff; color: #075e54; }
+html[data-theme="dark"] .chat-room.active { background: #00a884; color: #fff; }
+.chat-room .n { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: #25d366; color: #fff; font-size: 11px; font-weight: 800; display: grid; place-items: center; }
+.chat-room.active .n { background: #dc2626; }
+.msg .txt .men { color: #027eb5; font-weight: 600; }
+.msg .txt .men.yo { background: rgba(37, 211, 102, .22); border-radius: 4px; padding: 0 3px; color: #0b7a3e; }
+html[data-theme="dark"] .msg .txt .men { color: #53bdeb; }
+html[data-theme="dark"] .msg .txt .men.yo { color: #7ee2a8; }
+.msg.me-menciona { box-shadow: inset 3px 0 0 #25d366, 0 1px 1px rgba(0,0,0,.1); }
+.msg .hora .tick { margin-left: 4px; font-size: 11.5px; font-weight: 700; color: #8696a0; letter-spacing: -2px; }
+.msg .hora .tick.leido { color: #34b7f1; }
+.chat-mention .m-head { padding: 6px 10px 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.chat-mention .m-av { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--q, #0891b2); color: #fff; font-size: 11.5px; font-weight: 800; flex: none; }
+
+/* ── 13. RED DE BODEGAS ── */
+.red-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+.red-map-card { padding: 0; overflow: hidden; position: relative; }
+.red-mapa { position: relative; z-index: 0; height: calc(100dvh - 220px); min-height: 460px; background: #e5eef5; }
+.red-fallo { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 24px; color: var(--muted); background: var(--bg); }
+.red-fallo strong { color: var(--text); }
+.red-panel { display: flex; flex-direction: column; gap: 12px; padding: 14px; height: calc(100dvh - 220px); min-height: 460px; }
+.red-kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.red-kpi { padding: 10px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border); min-width: 0; }
+.red-kpi span { display: block; font-size: 11px; font-weight: 600; color: var(--muted); line-height: 1.25; }
+.red-kpi b { display: block; font-size: 19px; font-weight: 800; margin-top: 4px; color: var(--text); font-variant-numeric: tabular-nums; }
+.red-kpi.rojo b { color: var(--red); }
+.red-panel .search { max-width: none; flex: none; }
+.red-lista-head { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.red-lista { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin: 0 -4px; padding: 0 4px 4px; }
+.red-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); text-align: left; transition: border-color var(--t), box-shadow var(--t), transform var(--t); }
+.red-item:hover { border-color: var(--c); }
+.red-item.sel { border-color: var(--c); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 18%, transparent); }
+.red-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--c); flex: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 22%, transparent); }
+.red-item.alerta .red-dot { animation: redPulso 1.6s ease-in-out infinite; }
+@keyframes redPulso { 50% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--c) 0%, transparent); } }
+.red-item-txt { flex: 1; min-width: 0; }
+.red-item-txt b { display: block; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.red-item-txt span { display: block; font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.red-item-est { flex: none; font-size: 11.5px; font-weight: 700; color: var(--c); }
+.red-vacio { padding: 24px 8px; text-align: center; color: var(--muted); font-size: 13px; }
+.red-aviso { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 14px; margin-bottom: 14px; border-radius: var(--radius-sm); background: var(--primary-soft); border: 1px solid var(--border); color: var(--text); }
+.red-aviso > .ic { color: var(--primary); flex: none; }
+.red-aviso > div { flex: 1; min-width: 200px; }
+.red-aviso strong { display: block; font-size: 14px; }
+.red-aviso span { font-size: 13px; color: var(--muted); }
+.red-pin-wrap { background: none; border: 0; }
+.red-pin { position: relative; width: 32px; height: 44px; filter: drop-shadow(0 3px 4px rgba(15, 23, 42, .35)); transition: transform .15s ease; transform-origin: 50% 100%; }
+.red-pin svg { width: 100%; height: 100%; display: block; }
+.red-pin.sel { transform: scale(1.22); }
+.red-pin.alerta::after { content: ''; position: absolute; left: 50%; top: 15px; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; background: var(--c); opacity: .35; z-index: -1; animation: redOnda 1.6s ease-out infinite; }
+@keyframes redOnda { from { transform: scale(.6); opacity: .45; } to { transform: scale(2); opacity: 0; } }
+.red-popup .leaflet-popup-content-wrapper { border-radius: 12px; padding: 0; box-shadow: var(--shadow-lg); }
+.red-popup .leaflet-popup-content { margin: 0; width: auto !important; min-width: 230px; font-family: inherit; }
+.red-pop { padding: 14px 14px 12px; color: #0f172a; }
+.red-pop-head { display: flex; gap: 10px; align-items: flex-start; padding-right: 14px; }
+.red-pop-head .red-dot { margin-top: 5px; }
+.red-pop-head strong { display: block; font-size: 15px; }
+.red-pop-head span { display: block; font-size: 12px; color: #64748b; }
+.red-pop-estado { display: inline-block; margin: 8px 0 4px; padding: 2px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 700; color: var(--c); background: color-mix(in srgb, var(--c) 12%, transparent); }
+.red-pop dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; margin: 8px 0 12px; font-size: 13px; }
+.red-pop dt { color: #64748b; }
+.red-pop dd { margin: 0; text-align: right; font-weight: 700; white-space: nowrap; }
+.red-pop dd small { font-weight: 500; font-size: 11px; color: #64748b; }
+.red-pop dd.rojo { color: #dc2626; }
+.red-pop .btn { width: 100%; justify-content: center; }
+.red-pop .red-editar { margin-top: 6px; }
+html[data-theme="dark"] .red-mapa .leaflet-tile { filter: invert(1) hue-rotate(180deg) brightness(.92) contrast(.9) saturate(.6); }
+html[data-theme="dark"] .red-mapa { background: #0b1220; }
+html[data-theme="dark"] .red-popup .leaflet-popup-content-wrapper, html[data-theme="dark"] .red-popup .leaflet-popup-tip { background: #1e293b; }
+html[data-theme="dark"] .red-pop { color: #e2e8f0; }
+html[data-theme="dark"] .red-pop dt, html[data-theme="dark"] .red-pop-head span, html[data-theme="dark"] .red-pop dd small { color: #94a3b8; }
+.vb-suc { min-width: 210px; }
+.dd-pre { white-space: pre-wrap; }
+@media (max-width: 1100px) { .red-layout { grid-template-columns: minmax(0, 1fr) 300px; } }
+@media (max-width: 900px) {
+  .red-layout { grid-template-columns: minmax(0, 1fr); }
+  .red-mapa { height: 56vh; min-height: 300px; }
+  .red-panel { height: auto; min-height: 0; }
+  .red-lista { overflow: visible; }
+}
 @media (max-width: 767px) {
-  .bottom-nav { grid-template-columns: repeat(5, 1fr); }
+  .chat-panel { display: flex; }
+  .chat-panel .chat-head { padding-top: calc(12px + env(safe-area-inset-top, 0px)); }
+  body.chat-abierto { overflow: hidden; }
+  .vb-suc { min-width: 0; width: 100%; }
+  .red-kpi b { font-size: 17px; }
+}
+
+@media (max-width: 767px) {
+  .bottom-nav { grid-template-columns: repeat(6, 1fr); }
   .bn-link { font-size: 10.5px; }
   .tb-config { display: inline-grid; }
   .demo-pill { padding: 0 8px; height: 24px; font-size: 10.5px; }
@@ -1068,6 +1164,7 @@ html[data-theme="dark"] .link-btn { color: #00ff88; }
       <a class="sb-link" href="#/inventario" data-nav="inventario" title="Inventario"><i data-ic="package"></i><span class="lbl">Inventario</span><span class="sb-count" id="sb-count-inv" hidden></span></a>
       <a class="sb-link" href="#/camiones" data-nav="camiones" title="Camiones"><i data-ic="truck"></i><span class="lbl">Camiones</span></a>
       <a class="sb-link" href="#/bodega" data-nav="bodega" title="Vista Bodega"><i data-ic="map"></i><span class="lbl">Vista Bodega</span></a>
+      <a class="sb-link" href="#/red" data-nav="red" title="Red de Bodegas"><i data-ic="globe"></i><span class="lbl">Red de Bodegas</span></a>
       <a class="sb-link" href="#/pedidos" data-nav="pedidos" title="Pedidos"><i data-ic="clipboard"></i><span class="lbl">Pedidos</span><span class="sb-count" id="sb-count-ped" hidden></span></a>
     </nav>
     <div class="sb-foot">
@@ -1128,6 +1225,7 @@ html[data-theme="dark"] .link-btn { color: #00ff88; }
             <p id="dash-fecha">—</p>
           </div>
           <div class="page-actions">
+            <button class="btn" data-action="exportar-excel"><i data-ic="sheet"></i> Exportar Excel</button>
             <button class="btn" data-action="exportar-pdf"><i data-ic="download"></i> Exportar Reporte</button>
           </div>
         </div>
@@ -1193,6 +1291,7 @@ html[data-theme="dark"] .link-btn { color: #00ff88; }
             <p id="inv-resumen">—</p>
           </div>
           <div class="page-actions">
+            <button class="btn" data-action="exportar-excel"><i data-ic="sheet"></i> Exportar Excel</button>
             <button class="btn btn-primary" data-action="nuevo-producto"><i data-ic="plus"></i> Nuevo producto</button>
           </div>
         </div>
@@ -1254,6 +1353,9 @@ html[data-theme="dark"] .link-btn { color: #00ff88; }
             <h1>Vista Bodega</h1>
             <p id="vb-resumen">Bodega en 3D con el estado real de las bahías</p>
           </div>
+          <div class="page-actions" id="vb-suc-wrap" hidden>
+            <select class="select vb-suc" id="vb-sucursal" aria-label="Sucursal a mostrar"></select>
+          </div>
         </div>
         <div class="card vb-card">
           <div class="vb-wrap" id="vb-canvas-wrap">
@@ -1267,6 +1369,36 @@ html[data-theme="dark"] .link-btn { color: #00ff88; }
             <span style="--c:#6b7280"><i></i>Libre</span>
             <span class="vb-ayuda">👆 Toca un camión, un montacargas o una bahía para ver sus datos</span>
           </div>
+        </div>
+      </section>
+
+      <!-- ── RED DE BODEGAS (Leaflet + OpenStreetMap) ── -->
+      <section class="view" id="view-red" data-view="red" hidden>
+        <div class="page-head">
+          <div>
+            <h1>Red de Bodegas</h1>
+            <p id="red-resumen">Mapa de tus bodegas en Ecuador</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-primary" id="red-nueva" data-action="red-nueva" hidden><i data-ic="plus"></i> Nueva sucursal</button>
+          </div>
+        </div>
+        <div class="red-aviso" id="red-aviso" role="status" hidden></div>
+        <div class="red-layout">
+          <div class="card red-map-card">
+            <div class="red-mapa" id="red-mapa" aria-label="Mapa de sucursales"></div>
+            <div class="red-fallo" id="red-fallo" hidden></div>
+          </div>
+          <aside class="card red-panel" aria-label="Sucursales">
+            <div class="red-kpis" id="red-kpis"></div>
+            <label class="search">
+              <span class="sr-only">Buscar sucursal</span>
+              <i data-ic="search"></i>
+              <input id="red-q" class="input" type="search" placeholder="Buscar por nombre o ciudad" autocomplete="off">
+            </label>
+            <div class="red-lista-head"><span>Sucursales</span><span id="red-cuenta">0</span></div>
+            <div class="red-lista" id="red-lista"></div>
+          </aside>
         </div>
       </section>
 
@@ -1315,6 +1447,7 @@ html[data-theme="dark"] .link-btn { color: #00ff88; }
     <a class="bn-link" href="#/inventario" data-nav="inventario"><i data-ic="package"></i>Inventario</a>
     <a class="bn-link" href="#/camiones" data-nav="camiones"><i data-ic="truck"></i>Camiones</a>
     <a class="bn-link" href="#/bodega" data-nav="bodega"><i data-ic="map"></i>Bodega</a>
+    <a class="bn-link" href="#/red" data-nav="red"><i data-ic="globe"></i>Red</a>
     <a class="bn-link" href="#/pedidos" data-nav="pedidos"><i data-ic="clipboard"></i>Pedidos<span class="bn-dot" id="bn-count-ped" hidden></span></a>
   </nav>
 </div>
@@ -1356,10 +1489,11 @@ html[data-theme="dark"] .link-btn { color: #00ff88; }
     <div class="t"><strong>Chat del equipo</strong><span class="company-name">—</span></div>
     <button class="btn-icon" data-action="chat-toggle" aria-label="Cerrar chat"><i data-ic="x"></i></button>
   </header>
+  <div class="chat-rooms" id="chat-rooms" role="tablist" aria-label="Canales del chat"></div>
   <div class="chat-body" id="chat-body" aria-live="polite"></div>
   <form class="chat-form" id="chat-form">
     <div class="chat-mention" id="chat-mention" role="listbox" hidden></div>
-    <textarea id="chat-input" rows="1" maxlength="2000" placeholder="Mensaje · usa # para un producto" aria-label="Escribe un mensaje"></textarea>
+    <textarea id="chat-input" rows="1" maxlength="2000" placeholder="Mensaje · @persona · #producto" aria-label="Escribe un mensaje"></textarea>
     <button class="chat-send" id="chat-send" type="submit" aria-label="Enviar mensaje"><i data-ic="send"></i></button>
   </form>
 </section>
@@ -1381,6 +1515,7 @@ const VISTAS = {
   inventario: { titulo: 'Inventario' },
   camiones:   { titulo: 'Camiones' },
   bodega:     { titulo: 'Vista Bodega' },
+  red:        { titulo: 'Red de Bodegas' },
   pedidos:    { titulo: 'Pedidos' },
 };
 const EST_CAMION = {
@@ -1442,6 +1577,8 @@ const ICONS = {
   settings: '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
   eye: '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
   eyeOff: '<path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/>',
+  globe: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+  sheet: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/><path d="M14 17h2"/>',
   map: '<path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/>',
   download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>',
   chart: '<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/>',
@@ -1863,6 +2000,7 @@ async function resincronizar() {
       if (S.pedidoAbierto) renderDrawer();
       cargarGrafica();
       cargarMensajes();
+      cargarSucursales();
     } else {
       await cargarProductosTrabajador();
       renderWorkerLista();
@@ -1940,6 +2078,7 @@ function onCambio(tabla, payload) {
     if (tipo === 'DELETE') quitarPedido(vieja?.id); else if (fila) aplicarPedido(fila);
   } else if (tabla === 'alertas') {
     if (tipo === 'DELETE') quitarAlerta(vieja?.id); else if (fila) aplicarAlerta(fila, tipo === 'INSERT');
+    renderRed();
   }
 }
 
@@ -2125,6 +2264,7 @@ function aplicarRuta() {
   window.scrollTo({ top: 0 });
   if (S.vista === 'dashboard') animarKPIs();
   actualizarVisibilidadBodega3D();
+  actualizarVisibilidadRed();
 }
 
 /* ═══════════════ KPIs ═══════════════ */
@@ -2187,6 +2327,7 @@ function renderKPIs(animar) {
   ['#sb-count-ped', '#bn-count-ped'].forEach(s => { const el = $(s); el.hidden = !k.vencidos; el.textContent = k.vencidos; });
   const elInv = $('#sb-count-inv'); elInv.hidden = !k.bajos; elInv.textContent = k.bajos;
   renderVistaBodega();
+  renderRed();
 }
 
 /* ═══════════════ ALERTAS ═══════════════ */
@@ -2644,6 +2785,7 @@ function renderDrawer(soloInfo) {
       <dt>Camión</dt><dd>${cam ? `${esc(cam.placa || 'Sin placa')} · ${esc(cam.conductor || 'Sin conductor')}<span class="t-sub">${esc(EST_CAMION[cam.estado]?.label || cam.estado)}${cam.bahia ? ' · ' + esc(cam.bahia) : ''}</span>` : 'Sin asignar'}</dd>
       <dt>Creado</dt><dd>${esc(p.created_at ? new Date(p.created_at).toLocaleString('es', { dateStyle: 'medium', timeStyle: 'short' }) : '—')}</dd>
       <dt>Entregado</dt><dd>${esc(p.entregado_at ? new Date(p.entregado_at).toLocaleString('es', { dateStyle: 'medium', timeStyle: 'short' }) : '—')}</dd>
+      ${'productos_detalle' in p ? `<dt>Productos</dt><dd class="dd-pre">${esc(p.productos_detalle || '—')}</dd>` : ''}
     </dl>`;
   const dr = $('#drawer');
   if (soloInfo && $('#dr-info', dr)) {
@@ -2969,6 +3111,8 @@ function formProducto(id) {
     { name: 'cantidad_minima', label: 'Cantidad mínima', type: 'number', min: 0, max: MAX_CANTIDAD, value: p?.cantidad_minima ?? 10, required: true, help: 'Bajo esta cantidad se genera una alerta.' },
     { name: 'ubicacion', label: 'Ubicación', value: p?.ubicacion, maxlength: 80, placeholder: 'Ej: Pasillo A · Rack 1' },
   ];
+  const conSucursal = S.sucursales.length > 0;
+  if (conSucursal) campos.push({ name: 'sucursal_id', label: 'Sucursal', type: 'select', value: p?.sucursal_id || '', options: opcionesSucursalCampo() });
   if (!p) campos.push({ name: 'inicial', label: 'Stock inicial', type: 'number', min: 0, max: MAX_CANTIDAD, value: 0, help: 'Se registrará como una entrada.' });
   abrirFormulario({
     titulo: p ? 'Editar producto' : 'Nuevo producto',
@@ -2977,6 +3121,7 @@ function formProducto(id) {
     textoBoton: p ? 'Guardar cambios' : 'Crear producto',
     alGuardar: async v => {
       const datos = { nombre: v.nombre, codigo: v.codigo, unidad: v.unidad || 'unidades', cantidad_minima: v.cantidad_minima ?? 0, ubicacion: v.ubicacion };
+      if (conSucursal) datos.sucursal_id = v.sucursal_id || null;
       if (p) {
         const { data, error } = await S.sb.from('productos').update(datos).eq('id', p.id).select().single();
         if (error) throw error;
@@ -3008,6 +3153,8 @@ function formCamion(id) {
     { name: 'pallets_cargados', label: 'Pallets cargados', type: 'number', min: 0, max: 999, value: c?.pallets_cargados ?? 0 },
     { name: 'hora_llegada', label: 'Hora estimada de llegada', type: 'datetime', value: aInputFecha(c?.hora_llegada), full: true, help: 'Para camiones en ruta se muestra una cuenta regresiva.' },
   ];
+  const conSucursal = S.sucursales.length > 0;
+  if (conSucursal) campos.push({ name: 'sucursal_id', label: 'Sucursal', type: 'select', value: c?.sucursal_id || '', options: opcionesSucursalCampo(), full: true });
   abrirFormulario({
     titulo: c ? `Editar camión ${c.placa || ''}` : 'Nuevo camión',
     campos,
@@ -3018,6 +3165,7 @@ function formCamion(id) {
         bahia: v.estado === 'en_ruta' ? null : v.bahia, pallets_total: v.pallets_total ?? 0,
         pallets_cargados: v.pallets_cargados ?? 0, hora_llegada: v.hora_llegada,
       };
+      if (conSucursal) datos.sucursal_id = v.sucursal_id || null;
       if (datos.pallets_cargados > datos.pallets_total) throw errorUsuario('Los pallets cargados no pueden superar los pallets totales.');
       const ocupa = bahiaOcupadaPor(datos.bahia, c?.id);
       if (ocupa) throw errorUsuario(`${datos.bahia} ya está ocupada por ${ocupa.placa || 'otro camión'}.`);
@@ -3045,13 +3193,21 @@ function formPedido() {
       { name: 'fecha_limite', label: 'Fecha límite de entrega', type: 'datetime', required: true, value: aInputFecha(manana.toISOString()) },
       { name: 'estado', label: 'Estado', type: 'select', value: 'confirmado', options: Object.entries(EST_PEDIDO).filter(([k]) => k !== 'entregado' && k !== 'tarde').map(([k, v]) => ({ value: k, label: v.label })) },
       { name: 'camion_id', label: 'Camión asignado', type: 'select', value: '', full: true, options: [{ value: '', label: 'Sin asignar' }, ...[...S.camiones.values()].map(c => ({ value: c.id, label: `${c.placa || 'Sin placa'} · ${c.conductor || 'Sin conductor'}` }))] },
+      { name: 'productos_detalle', label: 'Productos del pedido', type: 'textarea', full: true, placeholder: 'Ej: 20 sacos Arroz 5 kg, 10 cajas Aceite 1 L', help: 'Opcional. Aparece en el detalle del pedido y en el Excel.' },
     ],
     textoBoton: 'Crear pedido',
     alGuardar: async v => {
-      const { data, error } = await S.sb.from('pedidos').insert({ ...v, empresa_id: S.perfil.empresa_id }).select().single();
-      if (error) throw error;
-      aplicarPedido(data);
-      toast(`Pedido ${data.numero} creado.`, 'success', 2500);
+      const fila = { ...v, empresa_id: S.perfil.empresa_id };
+      if (!fila.productos_detalle) delete fila.productos_detalle;
+      let r = await S.sb.from('pedidos').insert(fila).select().single();
+      if (r.error && 'productos_detalle' in fila && esColumnaFaltante(r.error)) {
+        delete fila.productos_detalle;
+        r = await S.sb.from('pedidos').insert(fila).select().single();
+        if (!r.error) toast('El pedido se creó sin el detalle de productos: ejecuta mejoras2.sql en Supabase para activarlo.', 'warning', 7000);
+      }
+      if (r.error) throw r.error;
+      aplicarPedido(r.data);
+      toast(`Pedido ${r.data.numero} creado.`, 'success', 2500);
     },
   });
 }
@@ -3401,6 +3557,11 @@ function manejarAccion(accion, el, ev) {
     case 'chat-toggle': return alternarChat();
     case 'chat-producto': return irAProducto(id);
     case 'vb-cerrar': return vbCerrarPanel();
+    case 'exportar-excel': return exportarExcel(el);
+    case 'chat-room': return cambiarRoomChat(el.dataset.room);
+    case 'red-sucursal': return enfocarSucursal(id);
+    case 'red-nueva': return formSucursal(null);
+    case 'red-demo': return crearSucursalesDemo(el);
     default: return undefined;
   }
 }
@@ -3995,7 +4156,8 @@ function vbArbol(esc, x, z, s = 1) {
 const VB_COLOR_ESTADO = { cargando: '#22c55e', descargando: '#16a34a', esperando: '#eab308', listo: '#3b82f6', libre: '#6b7280' };
 const VB_TEXTO_ESTADO = { cargando: 'Cargando', descargando: 'Descargando', esperando: 'Esperando', listo: 'Listo', libre: 'Libre' };
 function vbBahias() { const conf = bahiasConfig(); return [0, 1, 2].map(i => conf[i] || `Bahía ${i + 1}`); }
-function vbCamionEnBahia(i) { return ocupantesBahia(vbBahias()[i])[0] || null; }
+function vbCamiones() { return [...S.camiones.values()].filter(c => enSucursal(c, S.sucursalVista)); }
+function vbCamionEnBahia(i) { return ocupantesBahia(vbBahias()[i]).filter(c => enSucursal(c, S.sucursalVista))[0] || null; }
 function vbEstadoBahia(i) { const c = vbCamionEnBahia(i); return c ? c.estado : 'libre'; }
 function vbActualizarMarcadores() {
   VB.marcadores.forEach((spr, i) => {
@@ -4304,7 +4466,7 @@ function vbTiempoEnBahia(c) {
 }
 function vbTiempoEstimado(c) {
   if (!c) {
-    const prox = [...S.camiones.values()].filter(x => x.estado === 'en_ruta').sort(ordenRuta)[0];
+    const prox = vbCamiones().filter(x => x.estado === 'en_ruta').sort(ordenRuta)[0];
     return prox ? `Próximo: ${prox.placa || 'camión'}, ${textoEta(prox).txt}` : 'Sin camiones en camino';
   }
   if (c.estado === 'listo') return 'Listo para salir';
@@ -4318,10 +4480,10 @@ function vbTiempoEstimado(c) {
 }
 function vbCamionReal(id) {
   if (id === 0) {
-    return vbCamionEnBahia(0) || [...S.camiones.values()].filter(c => c.estado === 'en_ruta').sort(ordenRuta)[0] || null;
+    return vbCamionEnBahia(0) || vbCamiones().filter(c => c.estado === 'en_ruta').sort(ordenRuta)[0] || null;
   }
   if (id === 1) return vbCamionEnBahia(1);
-  return vbCamionEnBahia(2) || [...S.camiones.values()].find(c => c.estado === 'listo') || null;
+  return vbCamionEnBahia(2) || vbCamiones().find(c => c.estado === 'listo') || null;
 }
 function vbRenderPanel() {
   const panel = $('#vb-panel');
@@ -4365,11 +4527,12 @@ function vbRenderPanel() {
       + vbFila('📦', 'Pallets', c ? `${fmtNum(c.pallets_cargados)} / ${fmtNum(c.pallets_total)}` : '—')
       + vbFila('⏳', 'Tiempo estimado', esc(vbTiempoEstimado(c)));
   } else if (s.tipo === 'almacen') {
-    const k = calcularKPIs();
-    color = '#2563eb'; titulo = 'Almacén trasero'; sub = 'Resumen de inventario';
-    cuerpo = vbFila('📦', 'Productos', fmtNum(S.productos.size))
-      + vbFila('🔢', 'Stock total', fmtNum(k.stock))
-      + vbFila('⚠️', 'Bajo mínimo', fmtNum(k.bajos));
+    const prods = [...S.productos.values()].filter(p => enSucursal(p, S.sucursalVista));
+    const suc = S.sucursales.find(x => x.id === S.sucursalVista);
+    color = '#2563eb'; titulo = 'Almacén trasero'; sub = suc ? `Inventario · ${suc.nombre}` : 'Resumen de inventario';
+    cuerpo = vbFila('📦', 'Productos', fmtNum(prods.length))
+      + vbFila('🔢', 'Stock total', fmtNum(prods.reduce((t, p) => t + (Number(p.cantidad_actual) || 0), 0)))
+      + vbFila('⚠️', 'Bajo mínimo', fmtNum(prods.filter(p => nivelStock(p) === 'bajo').length));
   }
   ponerHTML(panel, `
     <div class="vb-panel-head" style="--c:${color}">
@@ -4385,9 +4548,10 @@ function ponerHTML(el, html) { if (el && el._html !== html) { el.innerHTML = htm
 function renderVistaBodega() {
   if (!esGestor() || !$('#view-bodega')) return;
   const todas = bahiasConfig();
-  const ocupadas = todas.filter(b => ocupantesBahia(b).length).length;
+  const ocupadas = todas.filter(b => ocupantesBahia(b).some(c => enSucursal(c, S.sucursalVista))).length;
+  const suc = S.sucursales.find(x => x.id === S.sucursalVista);
   const res = $('#vb-resumen');
-  if (res) res.textContent = `${todas.length} bahías · ${ocupadas} ocupadas · ${[...S.camiones.values()].filter(c => c.estado === 'en_ruta').length} camiones en ruta`;
+  if (res) res.textContent = `${suc ? `${suc.nombre}${suc.ciudad ? ' (' + suc.ciudad + ')' : ''} · ` : ''}${todas.length} bahías · ${ocupadas} ocupadas · ${vbCamiones().filter(c => c.estado === 'en_ruta').length} camiones en ruta`;
   if (!VB.iniciado) return;
   vbActualizarMarcadores();
   if (VB.sel) vbRenderPanel();
@@ -4453,14 +4617,35 @@ function datosDemo() {
     mov7.push({ id: `demo-e${i}`, tipo: 'entrada', cantidad: ent7[i], created_at: t.toISOString() });
     mov7.push({ id: `demo-s${i}`, tipo: 'salida', cantidad: sal7[i], created_at: t.toISOString() });
   }
+  const yo = S.session?.user?.id || 'yo', miNombre = S.perfil?.nombre || 'Yo';
+  const X = (n, uid, nombre, room, texto, minutos, extra = {}) => ({
+    id: `demo-x${n}`, usuario_id: uid, usuario_nombre: nombre, room, texto, producto_id: null, menciones_usuarios: [], menciones_productos: [],
+    leido_por: uid === yo ? ['demo-u1'] : [yo], created_at: iso(ahora - minutos * MIN), ...extra,
+  });
   const mensajes = [
-    { id: 'demo-x1', usuario_id: 'demo-u1', usuario_nombre: 'Marcela Vidal', texto: 'Llegó el camión PLMX-17, ya estamos descargando en la Bahía 2 🚚', producto_id: null, created_at: iso(ahora - 52 * MIN) },
-    { id: 'demo-x2', usuario_id: 'demo-u2', usuario_nombre: 'Tomás Reyes', texto: 'Ojo que queda poco #Café en grano 1 kg', producto_id: 'demo-p4', created_at: iso(ahora - 31 * MIN) },
-    { id: 'demo-x3', usuario_id: S.session?.user?.id || 'yo', usuario_nombre: S.perfil?.nombre || 'Yo', texto: 'Gracias, ya pedí reposición al proveedor 👍', producto_id: null, created_at: iso(ahora - 28 * MIN) },
-    { id: 'demo-x4', usuario_id: 'demo-u3', usuario_nombre: 'Camila Fuentes', texto: 'PED-2042 listo para cargar en KJTR-42', producto_id: null, created_at: iso(ahora - 9 * MIN) },
+    X(1, 'demo-u1', 'Marcela Vidal', 'camiones', 'Llegó el camión PLMX-17, ya estamos descargando en la Bahía 2 🚚', 52),
+    X(2, 'demo-u2', 'Tomás Reyes', 'inventario', 'Ojo que queda poco #Café en grano 1 kg', 31, { producto_id: 'demo-p4', menciones_productos: ['demo-p4'] }),
+    X(3, yo, miNombre, 'inventario', 'Gracias @Tomás Reyes, ya pedí reposición al proveedor 👍', 28, { menciones_usuarios: ['demo-u2'] }),
+    X(4, 'demo-u3', 'Camila Fuentes', 'camiones', 'PED-2042 listo para cargar en KJTR-42', 9),
+    X(5, 'demo-u1', 'Marcela Vidal', 'general', 'Buenos días equipo ☀️ Hoy llegan 2 camiones a Bodega Quito.', 120),
+    X(6, 'demo-u3', 'Camila Fuentes', 'general', `@${miNombre} ¿revisas el stock de #Leche descremada 1 L antes del mediodía?`, 4,
+      { producto_id: 'demo-p8', menciones_productos: ['demo-p8'], menciones_usuarios: [yo], leido_por: [] }),
   ];
+  const SU = (n, nombre, ciudad, direccion, latitud, longitud, activa = true) => ({ id: `demo-s${n}`, empresa_id: emp, nombre, ciudad, direccion, latitud, longitud, activa, created_at: iso(ahora - (10 - n) * D) });
+  const sucursales = [
+    SU(1, 'Bodega Norte', 'Guayaquil', 'Av. Francisco de Orellana, Kennedy Norte', -2.1894, -79.8891),
+    SU(2, 'Bodega Sur', 'Guayaquil', 'Av. 25 de Julio, sector Puerto Marítimo', -2.2100, -79.9200),
+    SU(3, 'Bodega Quito', 'Quito', 'Av. Amazonas y Naciones Unidas', -0.1807, -78.4678),
+    SU(4, 'Bodega Cuenca', 'Cuenca', 'Av. de las Américas y Ordóñez Lasso', -2.9001, -79.0059, false),
+  ];
+  const sucDe = { 'demo-p1': 1, 'demo-p2': 1, 'demo-p3': 2, 'demo-p4': 1, 'demo-p5': 2, 'demo-p6': 2, 'demo-p7': 3, 'demo-p8': 1, 'demo-p9': 3, 'demo-p10': 3,
+    'demo-c1': 1, 'demo-c2': 1, 'demo-c3': 1, 'demo-c4': 3, 'demo-c5': 2 };
+  productos.forEach(x => { x.sucursal_id = `demo-s${sucDe[x.id]}`; });
+  camiones.forEach(x => { x.sucursal_id = `demo-s${sucDe[x.id]}`; });
+  const detalles = ['48 packs Bebida cola 1,5 L', '12 cajas Galletas surtidas, 6 cajas Aceite de oliva', '30 bandejas Huevos', '20 fardos Arroz integral', '10 bolsas Café en grano', '8 packs Papel higiénico', '15 cajas Leche descremada', '24 unidades Detergente líquido'];
+  pedidos.forEach((x, i) => { x.productos_detalle = detalles[i % detalles.length]; });
   const empresa = { ...(S.empresaReal || S.empresa || {}), nombre: 'Comercial Los Andes', logo_texto: 'CA', bahias: ['Bahía 1', 'Bahía 2', 'Bahía 3', 'Bahía 4'] };
-  return { empresa, productos, camiones, pedidos, alertas, movimientos, mov7, mensajes };
+  return { empresa, productos, camiones, pedidos, alertas, movimientos, mov7, mensajes, sucursales };
 }
 async function activarDemo(activar) {
   if (!esDueno()) return;
@@ -4478,6 +4663,11 @@ async function activarDemo(activar) {
     S.movimientos = d.movimientos;
     S.mov7 = d.mov7;
     chat.mensajes = d.mensajes;
+    chat.usuarios = usuariosDemo();
+    S.sucursalesReal = S.sucursales;
+    S.sucursales = d.sucursales;
+    S.sucursalVista = '';
+    renderSelectorSucursal();
     cerrarDrawer(true);
     aplicarMarca();
     renderTodo();
@@ -4493,6 +4683,10 @@ async function activarDemo(activar) {
     await resincronizar();
     await cargarGrafica();
     await cargarMensajes();
+    cargarUsuariosChat();
+    S.sucursales = S.sucursalesReal || [];
+    S.sucursalVista = '';
+    await cargarSucursales();
     if (S.vista === 'dashboard') animarKPIs();
     toast('Modo Demo desactivado: volviste a tus datos reales.', 'success', 3000);
   }
@@ -4788,28 +4982,55 @@ function limpiarTokenUrl() {
   try { history.replaceState(null, '', location.pathname + location.hash); } catch (_) { /* sin history */ }
 }
 
-/* ═══════════════ 10. CHAT INTERNO ═══════════════ */
-const chat = { canal: null, mensajes: [], abierto: false, disponible: true, productoId: null, mencion: null, sel: 0 };
+/* ═══════════════ 10. CHAT INTERNO (canales, @personas, #productos, ✓✓) ═══════════════
+   Tiempo real con supabase.channel('chat_<empresa_id>'). Si no se ejecutó
+   mejoras2.sql el chat sigue funcionando en un solo canal (modo básico). */
+const CHAT_ROOMS = [
+  { id: 'general', label: '#general' },
+  { id: 'camiones', label: '#camiones' },
+  { id: 'inventario', label: '#inventario' },
+];
+const chat = {
+  canal: null, mensajes: [], abierto: false, disponible: true, v2: true, room: 'general',
+  usuarios: [], mencion: null, sel: 0, enviando: false, leyendo: {},
+};
 const COLORES_NOMBRE = ['#0891b2', '#7c3aed', '#db2777', '#ea580c', '#16a34a', '#2563eb', '#ca8a04'];
 function colorNombre(n) { let h = 0; for (const c of String(n)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return COLORES_NOMBRE[h % COLORES_NOMBRE.length]; }
 function miId() { return S.session?.user?.id; }
 function claveChatLeido() { return 'chatLeido.' + (miId() || 'anon'); }
+function roomDe(m) { return CHAT_ROOMS.some(r => r.id === m.room) ? m.room : 'general'; }
+function usuariosDemo() {
+  return [
+    { id: 'demo-u1', nombre: 'Marcela Vidal', rol: 'encargado' },
+    { id: 'demo-u2', nombre: 'Tomás Reyes', rol: 'trabajador' },
+    { id: 'demo-u3', nombre: 'Camila Fuentes', rol: 'trabajador' },
+    { id: miId() || 'yo', nombre: S.perfil?.nombre || 'Yo', rol: S.perfil?.rol || 'dueño' },
+  ];
+}
 async function iniciarChat() {
   $('#chat-fab').hidden = false;
   $('#chat-fab').classList.toggle('sin-nav', !esGestor());
   await cargarMensajes();
+  cargarUsuariosChat();
   if (chat.canal) { try { S.sb.removeChannel(chat.canal); } catch (_) { /* nada */ } }
-  chat.canal = S.sb.channel('mensajes')
-    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes', filter: `empresa_id=eq.${S.perfil.empresa_id}` },
-      payload => { if (!S.demo && payload.new) agregarMensaje(payload.new, true); })
-    .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'mensajes', filter: `empresa_id=eq.${S.perfil.empresa_id}` },
-      payload => { if (!S.demo && payload.old?.id) { chat.mensajes = chat.mensajes.filter(m => m.id !== payload.old.id); renderChat(); } })
+  const emp = S.perfil.empresa_id;
+  const filtro = { schema: 'public', table: 'mensajes', filter: `empresa_id=eq.${emp}` };
+  chat.canal = S.sb.channel('chat_' + emp)
+    .on('postgres_changes', { event: 'INSERT', ...filtro }, payload => { if (!S.demo && payload.new) agregarMensaje(payload.new, true); })
+    .on('postgres_changes', { event: 'UPDATE', ...filtro }, payload => { if (!S.demo && payload.new?.id) actualizarMensaje(payload.new); })
+    .on('postgres_changes', { event: 'DELETE', ...filtro }, payload => {
+      if (!S.demo && payload.old?.id) { chat.mensajes = chat.mensajes.filter(m => m.id !== payload.old.id); renderChat(); }
+    })
     .subscribe();
 }
 async function cargarMensajes() {
-  if (S.demo) { chat.mensajes = datosDemo().mensajes; renderChat(); return; }
-  const { data, error } = await S.sb.from('mensajes').select('*').eq('empresa_id', S.perfil.empresa_id)
-    .order('created_at', { ascending: false }).limit(150);
+  if (S.demo) { chat.mensajes = datosDemo().mensajes; chat.v2 = true; chat.usuarios = usuariosDemo(); renderChat(); return; }
+  const emp = S.perfil.empresa_id;
+  const [res, prueba] = await Promise.all([
+    S.sb.from('mensajes').select('*').eq('empresa_id', emp).order('created_at', { ascending: false }).limit(300),
+    S.sb.from('mensajes').select('id, room, leido_por, menciones_usuarios, menciones_productos').eq('empresa_id', emp).limit(1),
+  ]);
+  const { data, error } = res;
   if (error) {
     chat.disponible = false;
     chat.error = (error.code === '42P01' || error.code === 'PGRST205' || /mensajes/.test(error.message || ''))
@@ -4819,30 +5040,186 @@ async function cargarMensajes() {
     return;
   }
   chat.disponible = true;
+  chat.v2 = !prueba.error;
+  if (!chat.v2) chat.room = 'general';
   chat.mensajes = (data || []).reverse();
   renderChat();
 }
+async function cargarUsuariosChat() {
+  if (S.demo) { chat.usuarios = usuariosDemo(); return; }
+  const { data, error } = await S.sb.rpc('usuarios_empresa');
+  if (!error && Array.isArray(data)) { chat.usuarios = data; return; }
+  const vistos = new Map();
+  const per = await S.sb.from('perfiles').select('id, nombre, rol').eq('empresa_id', S.perfil.empresa_id);
+  if (!per.error) (per.data || []).forEach(u => vistos.set(u.id, { id: u.id, nombre: u.nombre || 'Usuario', rol: u.rol }));
+  chat.mensajes.forEach(m => { if (m.usuario_id && m.usuario_nombre && !vistos.has(m.usuario_id)) vistos.set(m.usuario_id, { id: m.usuario_id, nombre: m.usuario_nombre, rol: '' }); });
+  if (S.perfil && miId()) vistos.set(miId(), { id: miId(), nombre: S.perfil.nombre || 'Yo', rol: S.perfil.rol });
+  chat.usuarios = [...vistos.values()];
+}
+
+/* ── Leído / no leído ── */
+function esNoLeido(m) {
+  if (m.usuario_id === miId()) return false;
+  if (chat.v2 && Array.isArray(m.leido_por)) return !m.leido_por.includes(miId());
+  const leido = leerPref(claveChatLeido(), null);
+  return !leido || new Date(m.created_at) > new Date(leido);
+}
+function noLeidosPorRoom() {
+  const n = { general: 0, camiones: 0, inventario: 0 };
+  chat.mensajes.forEach(m => { if (esNoLeido(m)) n[roomDe(m)]++; });
+  return n;
+}
+function marcarChatLeido() {
+  const ult = chat.mensajes[chat.mensajes.length - 1];
+  if (!chat.v2) {
+    if (ult) guardarPref(claveChatLeido(), ult.created_at);
+    actualizarBadgeChat();
+    return;
+  }
+  const yo = miId();
+  const room = chat.room;
+  const pendientes = chat.mensajes.filter(m => roomDe(m) === room && esNoLeido(m));
+  if (!pendientes.length) { actualizarBadgeChat(); return; }
+  pendientes.forEach(m => { m.leido_por = [...(m.leido_por || []), yo]; });
+  if (ult) guardarPref(claveChatLeido(), ult.created_at);
+  actualizarBadgeChat();
+  renderRoomsChat();
+  if (S.demo || chat.leyendo[room]) return;
+  chat.leyendo[room] = true;
+  S.sb.rpc('marcar_mensajes_leidos', { p_room: room }).then(({ error }) => {
+    chat.leyendo[room] = false;
+    if (error && !esFuncionFaltante(error)) console.warn('No se pudo marcar el chat como leído', error);
+  });
+}
+function esFuncionFaltante(err) {
+  const m = String(err?.message || '').toLowerCase();
+  return err?.code === 'PGRST202' || err?.code === '42883' || m.includes('could not find the function');
+}
+function actualizarBadgeChat() {
+  const porRoom = noLeidosPorRoom();
+  const total = porRoom.general + porRoom.camiones + porRoom.inventario;
+  const n = chat.abierto ? total - porRoom[chat.room] : total;
+  const b = $('#chat-badge');
+  if (!b) return;
+  b.hidden = n <= 0;
+  b.textContent = n > 99 ? '99+' : String(n);
+}
+function renderRoomsChat() {
+  const cont = $('#chat-rooms');
+  if (!cont) return;
+  cont.hidden = !chat.v2 || (!chat.disponible && !S.demo);
+  if (cont.hidden) return;
+  const n = noLeidosPorRoom();
+  cont.innerHTML = CHAT_ROOMS.map(r => {
+    const activo = r.id === chat.room;
+    const cuenta = activo && chat.abierto ? 0 : n[r.id];
+    return `<button type="button" class="chat-room ${activo ? 'active' : ''}" role="tab" aria-selected="${activo}" data-action="chat-room" data-room="${r.id}">${esc(r.label)}${cuenta ? `<span class="n">${cuenta > 99 ? '99+' : cuenta}</span>` : ''}</button>`;
+  }).join('');
+}
+function cambiarRoomChat(room) {
+  if (!CHAT_ROOMS.some(r => r.id === room) || room === chat.room) return;
+  chat.room = room;
+  cerrarMencion();
+  renderChat();
+  $('#chat-input').focus();
+}
+
+/* ── Llegada y actualización de mensajes ── */
 function agregarMensaje(m, nuevo) {
   if (chat.mensajes.some(x => x.id === m.id)) return;
   chat.mensajes.push(m);
   chat.mensajes.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  if (chat.mensajes.length > 500) chat.mensajes = chat.mensajes.slice(-500);
+  const deOtro = m.usuario_id !== miId();
+  if (nuevo && deOtro && m.usuario_id && !chat.usuarios.some(u => u.id === m.usuario_id)) {
+    chat.usuarios.push({ id: m.usuario_id, nombre: m.usuario_nombre || 'Usuario', rol: '' });
+  }
   renderChat(nuevo ? m.id : null);
-  if (nuevo && m.usuario_id !== miId() && !chat.abierto) {
-    toast(`💬 ${m.usuario_nombre || 'Alguien'}: ${String(m.texto).slice(0, 80)}`, 'info', 4000);
+  if (!nuevo || !deOtro) return;
+  sonarMensaje();
+  const visible = chat.abierto && roomDe(m) === chat.room && !document.hidden;
+  if (!visible) {
+    const meMenciona = (m.menciones_usuarios || []).includes(miId());
+    const donde = chat.v2 ? ` en #${roomDe(m)}` : '';
+    toast(meMenciona
+      ? `💬 ${m.usuario_nombre || 'Alguien'} te mencionó${donde}: ${String(m.texto).slice(0, 80)}`
+      : `💬 ${m.usuario_nombre || 'Alguien'}${donde}: ${String(m.texto).slice(0, 80)}`, 'info', 4000);
   }
 }
+function actualizarMensaje(nuevo) {
+  const i = chat.mensajes.findIndex(x => x.id === nuevo.id);
+  if (i < 0) return;
+  const previo = chat.mensajes[i];
+  const yo = miId();
+  const leido = [...new Set([...(nuevo.leido_por || []), ...((previo.leido_por || []).includes(yo) ? [yo] : [])])];
+  chat.mensajes[i] = { ...previo, ...nuevo, leido_por: leido };
+  if (previo.usuario_id === yo) {
+    const tick = $(`#chat-body .msg[data-id="${CSS.escape(nuevo.id)}"] .tick`);
+    if (tick) { tick.outerHTML = tickHTML(chat.mensajes[i]); return; }
+  }
+  actualizarBadgeChat();
+  renderRoomsChat();
+}
+
+/* ── Sonido suave de mensaje (distinto al de alertas) ── */
+function sonarMensaje() {
+  if (!sonido.interactuo || !sonido.ctx) return;
+  try {
+    const ctx = sonido.ctx;
+    if (ctx.state === 'suspended') ctx.resume();
+    const t0 = ctx.currentTime;
+    [[784, 0], [1046.5, 0.11]].forEach(([f, d]) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(f, t0 + d);
+      g.gain.setValueAtTime(0.0001, t0 + d);
+      g.gain.exponentialRampToValueAtTime(0.07, t0 + d + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + d + 0.32);
+      osc.connect(g).connect(ctx.destination);
+      osc.start(t0 + d);
+      osc.stop(t0 + d + 0.34);
+    });
+  } catch (_) { /* audio no disponible */ }
+}
+
+/* ── Render ── */
+function productosDeMensaje(m) {
+  const ids = [...new Set([...(m.menciones_productos || []), ...(m.producto_id ? [m.producto_id] : [])])];
+  return ids.map(id => S.productos.get(id)).filter(Boolean);
+}
+function usuariosDeMensaje(m) {
+  return (m.menciones_usuarios || []).map(id => chat.usuarios.find(u => u.id === id)).filter(Boolean);
+}
 function textoMensajeHTML(m) {
-  let html = esc(m.texto);
-  const p = m.producto_id ? S.productos.get(m.producto_id) : null;
-  if (p) {
-    const tag = esc('#' + p.nombre);
-    html = html.split(tag).join(`<span class="tag">${tag}</span>`);
+  const marcas = [];
+  productosDeMensaje(m).forEach(p => marcas.push({ txt: '#' + p.nombre, cls: 'tag' }));
+  const yo = miId();
+  usuariosDeMensaje(m).forEach(u => marcas.push({ txt: '@' + u.nombre, cls: u.id === yo ? 'men yo' : 'men' }));
+  marcas.sort((a, b) => b.txt.length - a.txt.length);
+  const texto = String(m.texto || '');
+  let html = '';
+  let i = 0;
+  while (i < texto.length) {
+    const hit = marcas.find(x => texto.startsWith(x.txt, i));
+    if (hit) { html += `<span class="${hit.cls}">${esc(hit.txt)}</span>`; i += hit.txt.length; }
+    else { html += esc(texto[i]); i++; }
   }
   return html;
+}
+function tickHTML(m) {
+  const otros = (m.leido_por || []).filter(id => id !== m.usuario_id);
+  if (!chat.v2) return '<span class="tick" title="Enviado">✓</span>';
+  if (otros.length) {
+    const nombres = otros.map(id => chat.usuarios.find(u => u.id === id)?.nombre).filter(Boolean);
+    return `<span class="tick leido" title="Leído${nombres.length ? ' por ' + esc(nombres.join(', ')) : ''}">✓✓</span>`;
+  }
+  return '<span class="tick" title="Enviado">✓</span>';
 }
 function renderChat(idNuevo) {
   const body = $('#chat-body');
   if (!body) return;
+  renderRoomsChat();
   if (!chat.disponible && !S.demo) {
     body.innerHTML = `<div class="chat-aviso">${ic('info')}<p>${esc(chat.error || 'Chat no disponible.')}</p></div>`;
     $('#chat-input').disabled = true;
@@ -4850,14 +5227,16 @@ function renderChat(idNuevo) {
     return;
   }
   $('#chat-input').disabled = false;
-  if (!chat.mensajes.length) {
-    body.innerHTML = `<div class="chat-aviso"><div style="font-size:34px">💬</div><p><strong>Aún no hay mensajes</strong></p><p>Escribe al equipo. Usa <b>#</b> para mencionar un producto.</p></div>`;
+  const yo = miId();
+  const lista = chat.v2 ? chat.mensajes.filter(m => roomDe(m) === chat.room) : chat.mensajes;
+  if (!lista.length) {
+    const sala = chat.v2 ? ` en #${chat.room}` : '';
+    body.innerHTML = `<div class="chat-aviso"><div style="font-size:34px">💬</div><p><strong>Aún no hay mensajes${esc(sala)}</strong></p><p>Escribe al equipo. Usa <b>@</b> para mencionar a una persona y <b>#</b> para un producto.</p></div>`;
     actualizarBadgeChat();
     return;
   }
   let ultimoDia = '';
-  const yo = miId();
-  body.innerHTML = chat.mensajes.map(m => {
+  body.innerHTML = lista.map(m => {
     const d = new Date(m.created_at);
     const dia = claveDia(d);
     let sep = '';
@@ -4868,67 +5247,71 @@ function renderChat(idNuevo) {
       sep = `<div class="chat-dia">${esc(txt)}</div>`;
     }
     const mio = m.usuario_id === yo;
-    const p = m.producto_id ? S.productos.get(m.producto_id) : null;
-    const n = p ? nivelStock(p) : null;
-    const chip = p ? `<button class="prod-chip nivel-${n}" data-action="chat-producto" data-id="${esc(p.id)}">📦<div><b>${esc(p.nombre)}</b><span>Stock: ${fmtNum(p.cantidad_actual)} ${esc(p.unidad || '')} · ${NIVEL_LABEL[n]}</span></div></button>` : '';
-    return `${sep}<div class="msg ${mio ? 'mio' : ''} ${m.id === idNuevo ? 'nuevo' : ''}" data-id="${esc(m.id)}">
+    const meMenciona = !mio && (m.menciones_usuarios || []).includes(yo);
+    const chips = productosDeMensaje(m).slice(0, 3).map(p => {
+      const n = nivelStock(p);
+      return `<button class="prod-chip nivel-${n}" data-action="chat-producto" data-id="${esc(p.id)}">📦<div><b>${esc(p.nombre)}</b><span>Stock: ${fmtNum(p.cantidad_actual)} ${esc(p.unidad || '')} · ${NIVEL_LABEL[n]}</span></div></button>`;
+    }).join('');
+    return `${sep}<div class="msg ${mio ? 'mio' : ''} ${meMenciona ? 'me-menciona' : ''} ${m.id === idNuevo ? 'nuevo' : ''}" data-id="${esc(m.id)}">
       ${mio ? '' : `<span class="quien" style="--q:${colorNombre(m.usuario_nombre || '')}">${esc(m.usuario_nombre || 'Usuario')}</span>`}
-      <span class="txt">${textoMensajeHTML(m)}</span>${chip}
-      <span class="hora">${esc(fmtHoraCorta(m.created_at))}</span>
+      <span class="txt">${textoMensajeHTML(m)}</span>${chips}
+      <span class="hora">${esc(fmtHoraCorta(m.created_at))}${mio ? tickHTML(m) : ''}</span>
     </div>`;
   }).join('');
-  if (chat.abierto) { body.scrollTop = body.scrollHeight; marcarChatLeido(); }
+  if (chat.abierto) { body.scrollTop = body.scrollHeight; if (!document.hidden) marcarChatLeido(); }
   actualizarBadgeChat();
-}
-function marcarChatLeido() {
-  const ult = chat.mensajes[chat.mensajes.length - 1];
-  if (ult) guardarPref(claveChatLeido(), ult.created_at);
-  actualizarBadgeChat();
-}
-function actualizarBadgeChat() {
-  const leido = leerPref(claveChatLeido(), null);
-  const yo = miId();
-  const n = chat.abierto ? 0 : chat.mensajes.filter(m => m.usuario_id !== yo && (!leido || new Date(m.created_at) > new Date(leido))).length;
-  const b = $('#chat-badge');
-  if (!b) return;
-  b.hidden = n === 0;
-  b.textContent = n > 99 ? '99+' : n;
 }
 function alternarChat(abrir) {
   chat.abierto = abrir === undefined ? !chat.abierto : abrir;
   $('#chat-panel').hidden = !chat.abierto;
   $('#chat-fab').setAttribute('aria-expanded', String(chat.abierto));
+  document.body.classList.toggle('chat-abierto', chat.abierto);
   if (chat.abierto) {
     renderChat();
+    if (!chat.usuarios.length) cargarUsuariosChat();
     setTimeout(() => $('#chat-input').focus(), 60);
   } else cerrarMencion();
   actualizarBadgeChat();
+  renderRoomsChat();
+}
+
+/* ── Envío ── */
+function mencionesDeTexto(texto) {
+  const usuarios = chat.usuarios.filter(u => u.nombre && texto.includes('@' + u.nombre)).map(u => u.id);
+  const productos = [...S.productos.values()].filter(p => p.nombre && texto.includes('#' + p.nombre)).map(p => p.id);
+  return { usuarios: [...new Set(usuarios)], productos: [...new Set(productos)] };
 }
 async function enviarMensaje() {
   const input = $('#chat-input');
   const texto = input.value.trim();
   if (!texto || chat.enviando) return;
   if (texto.length > 2000) return toast('El mensaje es muy largo (máximo 2000 caracteres).', 'warning');
-  let productoId = chat.productoId;
-  const p = productoId ? S.productos.get(productoId) : null;
-  if (!p || !texto.includes('#' + p.nombre)) productoId = null;
+  const men = mencionesDeTexto(texto);
+  const productoId = men.productos[0] || null;
+  const limpiar = () => { input.value = ''; ajustarAlturaChat(); cerrarMencion(); };
   if (S.demo) {
-    agregarMensaje({ id: 'demo-x' + Date.now(), usuario_id: miId(), usuario_nombre: S.perfil?.nombre || 'Yo', texto, producto_id: productoId, created_at: new Date().toISOString() }, true);
-    input.value = ''; chat.productoId = null; ajustarAlturaChat();
+    agregarMensaje({
+      id: 'demo-x' + Date.now(), usuario_id: miId(), usuario_nombre: S.perfil?.nombre || 'Yo', texto, producto_id: productoId,
+      room: chat.room, menciones_usuarios: men.usuarios, menciones_productos: men.productos, leido_por: [], created_at: new Date().toISOString(),
+    }, true);
+    limpiar();
     return;
   }
   chat.enviando = true;
   $('#chat-send').disabled = true;
-  const { data, error } = await S.sb.from('mensajes')
-    .insert({ empresa_id: S.perfil.empresa_id, usuario_id: miId(), texto, producto_id: productoId })
+  const base = { empresa_id: S.perfil.empresa_id, usuario_id: miId(), texto, producto_id: productoId };
+  let r = await S.sb.from('mensajes')
+    .insert(chat.v2 ? { ...base, room: chat.room, menciones_usuarios: men.usuarios, menciones_productos: men.productos } : base)
     .select().single();
+  if (r.error && chat.v2 && esColumnaFaltante(r.error)) {
+    chat.v2 = false; chat.room = 'general';
+    r = await S.sb.from('mensajes').insert(base).select().single();
+  }
   chat.enviando = false;
   $('#chat-send').disabled = false;
-  if (error) { toast('No se pudo enviar el mensaje: ' + traducirError(error), 'error'); return; }
-  input.value = '';
-  chat.productoId = null;
-  ajustarAlturaChat();
-  agregarMensaje(data, true);
+  if (r.error) { toast('No se pudo enviar el mensaje: ' + traducirError(r.error), 'error'); return; }
+  limpiar();
+  agregarMensaje(r.data, true);
   input.focus();
 }
 function ajustarAlturaChat() {
@@ -4936,21 +5319,34 @@ function ajustarAlturaChat() {
   t.style.height = 'auto';
   t.style.height = Math.min(120, t.scrollHeight) + 'px';
 }
+
+/* ── Menciones: @ personas y # productos ── */
 function detectarMencion() {
   const t = $('#chat-input');
   const antes = t.value.slice(0, t.selectionStart);
-  const m = antes.match(/(^|\s)#([^\n#]{0,40})$/);
+  const m = antes.match(/(^|\s)([#@])([^\n#@]{0,40})$/);
   if (!m) return cerrarMencion();
-  const q = norm(m[2]);
-  const lista = productosOrdenados().filter(p => !q || norm(p.nombre).includes(q) || norm(p.codigo).includes(q)).slice(0, 6);
+  const tipo = m[2] === '@' ? 'usuario' : 'producto';
+  const q = norm(m[3]);
+  let lista;
+  if (tipo === 'usuario') {
+    lista = chat.usuarios.filter(u => u.id !== miId() && (!q || norm(u.nombre).includes(q)))
+      .sort((a, b) => String(a.nombre).localeCompare(String(b.nombre), 'es')).slice(0, 6);
+  } else {
+    lista = productosOrdenados().filter(p => !q || norm(p.nombre).includes(q) || norm(p.codigo).includes(q)).slice(0, 6);
+  }
   if (!lista.length) return cerrarMencion();
-  chat.mencion = { inicio: antes.length - m[2].length - 1, fin: t.selectionStart, lista };
+  if (chat.mencion?.tipo !== tipo) chat.sel = 0;
+  chat.mencion = { tipo, inicio: antes.length - m[3].length - 1, fin: t.selectionStart, lista };
   chat.sel = Math.min(chat.sel, lista.length - 1);
   const box = $('#chat-mention');
   box.hidden = false;
-  box.innerHTML = lista.map((p, i) => {
-    const n = nivelStock(p);
-    return `<button type="button" role="option" class="${i === chat.sel ? 'sel' : ''} nivel-${n}" data-i="${i}"><span class="m-ic">${ic('package')}</span><span class="m-txt"><b>${esc(p.nombre)}</b><span>${esc(p.codigo || 'Sin código')} · ${fmtNum(p.cantidad_actual)} ${esc(p.unidad || '')}</span></span></button>`;
+  box.innerHTML = (tipo === 'usuario' ? '<div class="m-head">Personas de la empresa</div>' : '<div class="m-head">Productos</div>') + lista.map((x, i) => {
+    if (tipo === 'usuario') {
+      return `<button type="button" role="option" class="${i === chat.sel ? 'sel' : ''}" data-i="${i}"><span class="m-av" style="--q:${colorNombre(x.nombre || '')}">${esc(iniciales(x.nombre))}</span><span class="m-txt"><b>${esc(x.nombre)}</b><span>${esc(x.rol ? x.rol.charAt(0).toUpperCase() + x.rol.slice(1) : 'Equipo')}</span></span></button>`;
+    }
+    const n = nivelStock(x);
+    return `<button type="button" role="option" class="${i === chat.sel ? 'sel' : ''} nivel-${n}" data-i="${i}"><span class="m-ic">${ic('package')}</span><span class="m-txt"><b>${esc(x.nombre)}</b><span>${esc(x.codigo || 'Sin código')} · ${fmtNum(x.cantidad_actual)} ${esc(x.unidad || '')}</span></span></button>`;
   }).join('');
 }
 function cerrarMencion() {
@@ -4961,13 +5357,12 @@ function cerrarMencion() {
 function elegirMencion(i) {
   const m = chat.mencion;
   if (!m || !m.lista[i]) return;
-  const p = m.lista[i];
+  const x = m.lista[i];
   const t = $('#chat-input');
-  const insertar = '#' + p.nombre + ' ';
+  const insertar = (m.tipo === 'usuario' ? '@' : '#') + x.nombre + ' ';
   t.value = t.value.slice(0, m.inicio) + insertar + t.value.slice(m.fin);
   const pos = m.inicio + insertar.length;
   t.setSelectionRange(pos, pos);
-  chat.productoId = p.id;
   cerrarMencion();
   ajustarAlturaChat();
   t.focus();
@@ -4988,7 +5383,9 @@ function irAProducto(id) {
 }
 function detenerChat() {
   if (chat.canal) { try { S.sb.removeChannel(chat.canal); } catch (_) { /* nada */ } }
-  chat.canal = null; chat.mensajes = []; chat.abierto = false; chat.productoId = null; chat.disponible = true;
+  chat.canal = null; chat.mensajes = []; chat.abierto = false; chat.disponible = true; chat.v2 = true;
+  chat.room = 'general'; chat.usuarios = []; chat.leyendo = {};
+  document.body.classList.remove('chat-abierto');
   const fab = $('#chat-fab'); if (fab) fab.hidden = true;
   const pan = $('#chat-panel'); if (pan) pan.hidden = true;
   cerrarMencion();
@@ -5012,6 +5409,445 @@ function enlazarChat() {
     const b = e.target.closest('button[data-i]');
     if (b) { e.preventDefault(); elegirMencion(parseInt(b.dataset.i, 10)); }
   });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && chat.abierto) marcarChatLeido(); });
+}
+
+/* ═══════════════ 12. EXPORTAR A EXCEL (SheetJS) ═══════════════ */
+function nombreArchivoEmpresa(nombre) {
+  return String(nombre || 'Bodega').normalize('NFC').replace(/[\\/:*?"<>|#%&{}$!'`=+@]+/g, '').trim().replace(/\s+/g, '_').slice(0, 60) || 'Bodega';
+}
+function hojaExcel(XLSX, filas, anchos) {
+  const ws = XLSX.utils.aoa_to_sheet(filas, { cellDates: true, dateNF: 'dd/mm/yyyy hh:mm' });
+  ws['!cols'] = anchos.map(w => ({ wch: w }));
+  if (filas.length > 1) ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: filas.length - 1, c: filas[0].length - 1 } }) };
+  Object.keys(ws).forEach(k => { if (k[0] !== '!' && ws[k].t === 'd') ws[k].z = 'dd/mm/yyyy hh:mm'; });
+  return ws;
+}
+const aFecha = iso => (iso ? new Date(iso) : '');
+async function movimientosExcel() {
+  const desde = new Date(Date.now() - 30 * 86400000);
+  if (S.demo) return S.movimientos.filter(m => new Date(m.created_at) >= desde);
+  const filas = [];
+  const paso = 1000;
+  for (let i = 0; i < 20; i++) {
+    const { data, error } = await S.sb.from('movimientos').select('*').eq('empresa_id', S.perfil.empresa_id)
+      .gte('created_at', desde.toISOString()).order('created_at', { ascending: false }).range(i * paso, i * paso + paso - 1);
+    if (error) throw error;
+    filas.push(...data);
+    if (data.length < paso) break;
+  }
+  return filas;
+}
+function tiempoEnSitio(c) {
+  if (c.estado === 'en_ruta') return 'En ruta · ' + textoEta(c).txt;
+  if (c.estado === 'listo') return 'Listo para salir';
+  const desde = c.hora_llegada && new Date(c.hora_llegada) < new Date() ? c.hora_llegada : c.estado_desde;
+  return desde ? fmtDuracion(Date.now() - new Date(desde).getTime()) : '—';
+}
+async function exportarExcel(btn) {
+  const XLSX = window.XLSX;
+  if (!XLSX || !XLSX.utils) return toast('No se pudo cargar el generador de Excel. Revisa tu conexión a internet y recarga la página.', 'error', 7000);
+  const html = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Generando…'; }
+  try {
+    const movs = await movimientosExcel();
+    const prodNombre = id => S.productos.get(id)?.nombre || 'Producto eliminado';
+    const hayRed = (S.demo || red.disponible) && S.sucursales.length > 0;
+    const wb = XLSX.utils.book_new();
+    wb.Props = { Title: 'Reporte de bodega', Company: S.empresa?.nombre || APP_NOMBRE, CreatedDate: new Date() };
+
+    const inv = [['Producto', 'Código', 'Cantidad', 'Mínimo', 'Estado', 'Unidad', 'Ubicación', ...(hayRed ? ['Sucursal'] : []), 'Última actualización']];
+    productosOrdenados().forEach(p => inv.push([
+      p.nombre, p.codigo || '', Number(p.cantidad_actual) || 0, Number(p.cantidad_minima) || 0, NIVEL_LABEL[nivelStock(p)],
+      p.unidad || '', p.ubicacion || '', ...(hayRed ? [sucursalDe(p)?.nombre || ''] : []), aFecha(p.updated_at),
+    ]));
+    XLSX.utils.book_append_sheet(wb, hojaExcel(XLSX, inv, [34, 12, 10, 10, 16, 11, 22, ...(hayRed ? [18] : []), 18]), 'Inventario');
+
+    const mov = [['Fecha', 'Producto', 'Tipo', 'Cantidad', 'Usuario', 'Motivo']];
+    movs.forEach(m => mov.push([aFecha(m.created_at), prodNombre(m.producto_id), m.tipo === 'entrada' ? 'Entrada' : 'Salida', Number(m.cantidad) || 0, m.usuario_nombre || '', m.motivo || '']));
+    XLSX.utils.book_append_sheet(wb, hojaExcel(XLSX, mov, [18, 34, 10, 10, 22, 26]), 'Movimientos');
+
+    const cam = [['Placa', 'Estado', 'Bahía', 'Pallets', 'Tiempo en sitio', 'Conductor', 'Destino', ...(hayRed ? ['Sucursal'] : [])]];
+    [...S.camiones.values()].sort((a, b) => String(a.placa || '').localeCompare(String(b.placa || ''), 'es')).forEach(c => cam.push([
+      c.placa || '', EST_CAMION[c.estado]?.label || c.estado, c.bahia || '', `${fmtNum(c.pallets_cargados)} / ${fmtNum(c.pallets_total)}`,
+      tiempoEnSitio(c), c.conductor || '', c.destino || '', ...(hayRed ? [sucursalDe(c)?.nombre || ''] : []),
+    ]));
+    XLSX.utils.book_append_sheet(wb, hojaExcel(XLSX, cam, [12, 13, 12, 10, 26, 22, 24, ...(hayRed ? [18] : [])]), 'Camiones');
+
+    const ped = [['Número', 'Cliente', 'Estado', 'Fecha', 'Fecha límite', 'Productos', 'Camión']];
+    [...S.pedidos.values()].sort(ordenarPedidos).forEach(p => ped.push([
+      p.numero || '', p.cliente || '', esVencido(p) && p.estado !== 'tarde' ? 'Tarde (vencido)' : (EST_PEDIDO[p.estado]?.label || p.estado),
+      aFecha(p.created_at), aFecha(p.fecha_limite), p.productos_detalle || '', S.camiones.get(p.camion_id)?.placa || '',
+    ]));
+    XLSX.utils.book_append_sheet(wb, hojaExcel(XLSX, ped, [12, 30, 16, 18, 18, 44, 12]), 'Pedidos');
+
+    const nombre = `Reporte_${nombreArchivoEmpresa(S.empresa?.nombre)}_${claveDia(new Date())}.xlsx`;
+    XLSX.writeFile(wb, nombre, { compression: true });
+    toast(`Excel descargado: ${nombre}`, 'success', 3000);
+  } catch (err) {
+    toast('No se pudo generar el Excel: ' + traducirError(err), 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = html; }
+  }
+}
+
+/* ═══════════════ 13. RED DE BODEGAS (sucursales + mapa Leaflet) ═══════════════ */
+const RED_CENTRO = [-1.8312, -78.1834];
+const RED_ZOOM = 7;
+const SUCURSALES_DEMO = [
+  { nombre: 'Bodega Norte', ciudad: 'Guayaquil', direccion: 'Av. Francisco de Orellana, Kennedy Norte', latitud: -2.1894, longitud: -79.8891 },
+  { nombre: 'Bodega Sur', ciudad: 'Guayaquil', direccion: 'Av. 25 de Julio, sector Puerto Marítimo', latitud: -2.2100, longitud: -79.9200 },
+  { nombre: 'Bodega Quito', ciudad: 'Quito', direccion: 'Av. Amazonas y Naciones Unidas', latitud: -0.1807, longitud: -78.4678 },
+];
+const RED_COLOR = { ok: '#16a34a', alerta: '#dc2626', inactiva: '#94a3b8' };
+const RED_Z = { alerta: 1000, ok: 500, inactiva: 0 };
+const red = { disponible: false, error: '', canal: null, mapa: null, marcadores: new Map(), sel: null, q: '', abierta: null };
+S.sucursales = [];
+S.sucursalVista = '';
+
+async function cargarSucursales() {
+  if (S.demo) return;
+  const { data, error } = await S.sb.from('sucursales').select('*').eq('empresa_id', S.perfil.empresa_id).order('created_at').order('nombre');
+  if (error) {
+    red.disponible = false;
+    const falta = error.code === '42P01' || error.code === 'PGRST205' || /sucursales/.test(error.message || '');
+    red.error = falta ? 'La Red de Bodegas aún no está activada. El dueño debe ejecutar mejoras2.sql en Supabase.' : 'No se pudieron cargar las sucursales: ' + traducirError(error);
+    S.sucursales = [];
+  } else {
+    red.disponible = true;
+    red.error = '';
+    S.sucursales = data || [];
+  }
+  if (S.sucursalVista && !S.sucursales.some(s => s.id === S.sucursalVista)) S.sucursalVista = '';
+  renderSelectorSucursal();
+  renderVistaBodega();
+  renderRed();
+}
+function conectarSucursales() {
+  if (red.canal) { try { S.sb.removeChannel(red.canal); } catch (_) { /* nada */ } }
+  red.canal = null;
+  if (!red.disponible) return;
+  const emp = S.perfil.empresa_id;
+  red.canal = S.sb.channel('sucursales_' + emp)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'sucursales', filter: `empresa_id=eq.${emp}` }, payload => {
+      if (S.demo) return;
+      const fila = payload.new && Object.keys(payload.new).length ? payload.new : null;
+      if (payload.eventType === 'DELETE') S.sucursales = S.sucursales.filter(s => s.id !== payload.old?.id);
+      else if (fila) {
+        const i = S.sucursales.findIndex(s => s.id === fila.id);
+        if (i >= 0) S.sucursales[i] = fila; else S.sucursales.push(fila);
+        S.sucursales.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      }
+      if (S.sucursalVista && !S.sucursales.some(s => s.id === S.sucursalVista)) S.sucursalVista = '';
+      renderSelectorSucursal();
+      renderVistaBodega();
+      renderRed();
+    })
+    .subscribe();
+}
+async function iniciarRed() {
+  await cargarSucursales();
+  conectarSucursales();
+}
+function detenerRed() {
+  if (red.canal) { try { S.sb.removeChannel(red.canal); } catch (_) { /* nada */ } }
+  red.canal = null;
+  if (red.mapa) { try { red.mapa.remove(); } catch (_) { /* nada */ } }
+  red.mapa = null; red.marcadores = new Map(); red.sel = null; red.q = ''; red.abierta = null; red.centrado = false;
+  red.disponible = false; red.error = '';
+  S.sucursales = []; S.sucursalVista = '';
+  const q = $('#red-q'); if (q) q.value = '';
+}
+
+/* ── Asignación de productos / camiones a sucursales ── */
+function sucursalPrincipal() { return S.sucursales[0] || null; }
+function sucursalDe(item) {
+  if (!item) return null;
+  return S.sucursales.find(s => s.id === item.sucursal_id) || sucursalPrincipal();
+}
+function enSucursal(item, sucId) {
+  if (!sucId) return true;
+  return sucursalDe(item)?.id === sucId;
+}
+function sucursalDeAlerta(a) {
+  const ref = a.referencia_id;
+  if (S.productos.has(ref)) return sucursalDe(S.productos.get(ref));
+  if (S.camiones.has(ref)) return sucursalDe(S.camiones.get(ref));
+  if (S.pedidos.has(ref)) {
+    const p = S.pedidos.get(ref);
+    return p.camion_id && S.camiones.has(p.camion_id) ? sucursalDe(S.camiones.get(p.camion_id)) : sucursalPrincipal();
+  }
+  return sucursalPrincipal();
+}
+function statsSucursal(s) {
+  const prods = [...S.productos.values()].filter(p => enSucursal(p, s.id));
+  const cams = [...S.camiones.values()].filter(c => enSucursal(c, s.id));
+  const stockIds = new Set(prods.filter(p => nivelStock(p) === 'bajo').map(p => p.id));
+  let otras = 0;
+  S.alertas.forEach(a => {
+    if (sucursalDeAlerta(a)?.id !== s.id) return;
+    if (a.tipo === 'stock_bajo' && S.productos.has(a.referencia_id)) stockIds.add(a.referencia_id);
+    else if (a.tipo !== 'stock_bajo') otras++;
+  });
+  const alertasStock = stockIds.size;
+  const estado = !s.activa ? 'inactiva' : alertasStock ? 'alerta' : 'ok';
+  return {
+    productos: prods.length,
+    stock: prods.reduce((t, p) => t + (Number(p.cantidad_actual) || 0), 0),
+    activos: cams.filter(c => c.estado !== 'listo').length,
+    enRuta: cams.filter(c => c.estado === 'en_ruta').length,
+    alertasStock, alertas: alertasStock + otras, estado,
+  };
+}
+function opcionesSucursalCampo() {
+  const principal = sucursalPrincipal();
+  return [
+    { value: '', label: `Sin asignar (cuenta en ${principal ? principal.nombre : 'la principal'})` },
+    ...S.sucursales.map(s => ({ value: s.id, label: `${s.nombre}${s.ciudad ? ' · ' + s.ciudad : ''}${s.activa ? '' : ' (inactiva)'}` })),
+  ];
+}
+
+/* ── Vista Bodega por sucursal ── */
+function renderSelectorSucursal() {
+  const wrap = $('#vb-suc-wrap'), sel = $('#vb-sucursal');
+  if (!wrap || !sel) return;
+  wrap.hidden = !S.sucursales.length;
+  if (!S.sucursales.length) return;
+  const html = `<option value="">Todas las sucursales</option>` + S.sucursales.map(s => `<option value="${esc(s.id)}">${esc(s.nombre)}${s.ciudad ? ' · ' + esc(s.ciudad) : ''}</option>`).join('');
+  if (sel._html !== html) { sel.innerHTML = html; sel._html = html; }
+  sel.value = S.sucursalVista || '';
+}
+function verSucursalEn3D(id) {
+  if (!S.sucursales.some(s => s.id === id)) return toast('Esa sucursal ya no existe.', 'warning');
+  S.sucursalVista = id;
+  renderSelectorSucursal();
+  if (red.mapa) red.mapa.closePopup();
+  location.hash = '#/bodega';
+  renderVistaBodega();
+}
+
+/* ── Mapa ── */
+function iconoSucursal(estado, sel) {
+  const c = RED_COLOR[estado];
+  return window.L.divIcon({
+    className: 'red-pin-wrap',
+    html: `<div class="red-pin ${estado} ${sel ? 'sel' : ''}" style="--c:${c}"><svg viewBox="0 0 32 44" aria-hidden="true"><path d="M16 1C7.7 1 1 7.6 1 15.8 1 27 16 43 16 43s15-16 15-27.2C31 7.6 24.3 1 16 1z" fill="${c}" stroke="#fff" stroke-width="2"/><circle cx="16" cy="15.5" r="6" fill="#fff"/></svg></div>`,
+    iconSize: [32, 44], iconAnchor: [16, 43], popupAnchor: [0, -38],
+  });
+}
+function popupSucursal(s, st) {
+  const etiqueta = { ok: 'Operativa · sin alertas', alerta: 'Con alertas de stock', inactiva: 'Inactiva' }[st.estado];
+  return `<div class="red-pop" data-suc="${esc(s.id)}">
+    <div class="red-pop-head" style="--c:${RED_COLOR[st.estado]}"><span class="red-dot"></span><div><strong>${esc(s.nombre)}</strong><span>${esc(s.ciudad || '—')}${s.direccion ? ' · ' + esc(s.direccion) : ''}</span></div></div>
+    <div class="red-pop-estado" style="--c:${RED_COLOR[st.estado]}">${esc(etiqueta)}</div>
+    <dl>
+      <dt>📦 Stock total</dt><dd>${fmtNum(st.stock)} <small>(${fmtNum(st.productos)} productos)</small></dd>
+      <dt>🚛 Camiones activos</dt><dd>${fmtNum(st.activos)} <small>(${fmtNum(st.enRuta)} en ruta)</small></dd>
+      <dt>⚠️ Alertas</dt><dd class="${st.alertas ? 'rojo' : ''}">${fmtNum(st.alertas)}</dd>
+    </dl>
+    <button type="button" class="btn btn-primary btn-sm red-ver3d" data-red-3d="${esc(s.id)}">${ic('warehouse')} Ver Bodega 3D</button>
+    ${esDueno() && !S.demo ? `<button type="button" class="btn btn-ghost btn-sm red-editar" data-red-editar="${esc(s.id)}">${ic('pencil')} Editar</button>` : ''}
+  </div>`;
+}
+// Zoom 7 (todo Ecuador continental); en pantallas angostas 6 para que entren Guayaquil y Quito
+function zoomInicialRed() { const el = $('#red-mapa'); return el && el.clientWidth && el.clientWidth < 600 ? RED_ZOOM - 1 : RED_ZOOM; }
+function iniciarMapaRed() {
+  if (red.mapa || !window.L || !$('#red-mapa')) return;
+  const mapa = window.L.map('red-mapa', { center: RED_CENTRO, zoom: zoomInicialRed(), zoomControl: true, attributionControl: true, tap: true });
+  window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
+  }).addTo(mapa);
+  mapa.getContainer().addEventListener('click', ev => {
+    const b3d = ev.target.closest('[data-red-3d]');
+    if (b3d) { ev.preventDefault(); verSucursalEn3D(b3d.getAttribute('data-red-3d')); return; }
+    const bed = ev.target.closest('[data-red-editar]');
+    if (bed) { ev.preventDefault(); formSucursal(bed.dataset.redEditar); }
+  });
+  mapa.on('popupopen', e => {
+    const el = e.popup.getElement();
+    if (!el) return;
+    const suc = $('.red-pop', el)?.dataset.suc;
+    red.abierta = suc || null;
+    if (suc && red.sel !== suc) { red.sel = suc; renderListaRed(); }
+  });
+  mapa.on('popupclose', () => { red.abierta = null; });
+  red.mapa = mapa;
+}
+function renderMarcadoresRed() {
+  if (!red.mapa) return;
+  const vivos = new Set();
+  S.sucursales.forEach(s => {
+    const lat = Number(s.latitud), lng = Number(s.longitud);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+    vivos.add(s.id);
+    const st = statsSucursal(s);
+    const clave = `${st.estado}|${red.sel === s.id}`;
+    let mk = red.marcadores.get(s.id);
+    if (!mk) {
+      mk = window.L.marker([lat, lng], { icon: iconoSucursal(st.estado, red.sel === s.id), title: s.nombre, riseOnHover: true, keyboard: true, zIndexOffset: RED_Z[st.estado] });
+      mk.bindPopup(popupSucursal(s, st), { maxWidth: 280, minWidth: 230, className: 'red-popup', autoPanPadding: [24, 24] });
+      mk.on('click', () => { red.sel = s.id; renderListaRed(); });
+      mk.addTo(red.mapa);
+      mk._clave = clave;
+      red.marcadores.set(s.id, mk);
+    } else {
+      const ll = mk.getLatLng();
+      if (ll.lat !== lat || ll.lng !== lng) mk.setLatLng([lat, lng]);
+      if (mk._clave !== clave) { mk.setIcon(iconoSucursal(st.estado, red.sel === s.id)); mk.setZIndexOffset(RED_Z[st.estado] + (red.sel === s.id ? 2000 : 0)); mk._clave = clave; }
+      const html = popupSucursal(s, st);
+      if (mk._popupHtml !== html) { mk._popupHtml = html; mk.setPopupContent(html); }
+    }
+    if (!mk._popupHtml) mk._popupHtml = popupSucursal(s, st);
+  });
+  red.marcadores.forEach((mk, id) => { if (!vivos.has(id)) { mk.remove(); red.marcadores.delete(id); } });
+}
+function renderKpisRed() {
+  const cont = $('#red-kpis');
+  if (!cont) return;
+  const total = S.sucursales.reduce((acc, s) => {
+    const st = statsSucursal(s);
+    acc.stock += st.stock; acc.alertas += st.alertas; acc.enRuta += st.enRuta;
+    return acc;
+  }, { stock: 0, alertas: 0, enRuta: 0 });
+  const html = `
+    <div class="red-kpi"><span>Stock total</span><b>${fmtNum(total.stock)}</b></div>
+    <div class="red-kpi"><span>Camiones en ruta</span><b>${fmtNum(total.enRuta)}</b></div>
+    <div class="red-kpi ${total.alertas ? 'rojo' : ''}"><span>Alertas activas</span><b>${fmtNum(total.alertas)}</b></div>`;
+  ponerHTML(cont, html);
+}
+function renderListaRed() {
+  const lista = $('#red-lista');
+  if (!lista) return;
+  const q = norm(red.q);
+  const filtradas = S.sucursales.filter(s => !q || norm(s.nombre).includes(q) || norm(s.ciudad).includes(q));
+  $('#red-cuenta').textContent = q ? `${filtradas.length} de ${S.sucursales.length}` : `${S.sucursales.length}`;
+  if (!filtradas.length) {
+    ponerHTML(lista, `<div class="red-vacio">${S.sucursales.length ? 'Ninguna sucursal coincide con la búsqueda.' : 'Aún no hay sucursales.'}</div>`);
+    return;
+  }
+  ponerHTML(lista, filtradas.map(s => {
+    const st = statsSucursal(s);
+    const extra = st.estado === 'inactiva' ? 'Inactiva' : st.alertas ? `${st.alertas} alerta${st.alertas === 1 ? '' : 's'}` : 'Sin alertas';
+    return `<button type="button" class="red-item ${red.sel === s.id ? 'sel' : ''} ${st.estado}" data-action="red-sucursal" data-id="${esc(s.id)}" style="--c:${RED_COLOR[st.estado]}">
+      <span class="red-dot"></span>
+      <span class="red-item-txt"><b>${esc(s.nombre)}</b><span>${esc(s.ciudad || '—')} · ${fmtNum(st.stock)} en stock · ${fmtNum(st.activos)} ${st.activos === 1 ? 'camión' : 'camiones'}</span></span>
+      <span class="red-item-est">${esc(extra)}</span>
+    </button>`;
+  }).join(''));
+}
+function renderRed() {
+  if (!esGestor() || !$('#view-red')) return;
+  const aviso = $('#red-aviso');
+  const sinTabla = !S.demo && !red.disponible;
+  const vacia = !sinTabla && !S.sucursales.length;
+  aviso.hidden = !(sinTabla || vacia);
+  if (sinTabla) {
+    ponerHTML(aviso, `${ic('info')}<div><strong>Red de Bodegas no activada</strong><span>${esc(red.error || 'Ejecuta mejoras2.sql en Supabase.')}</span></div>`);
+  } else if (vacia) {
+    ponerHTML(aviso, `${ic('mapPin')}<div><strong>Aún no hay sucursales</strong><span>${esDueno() ? 'Crea tu primera sucursal o agrega las 3 bodegas de ejemplo de Ecuador.' : 'El dueño debe crear las sucursales.'}</span></div>${esDueno() ? '<button class="btn btn-primary btn-sm" data-action="red-demo">Agregar bodegas de ejemplo</button>' : ''}`);
+  }
+  $('#red-nueva').hidden = !esDueno() || S.demo || sinTabla;
+  const res = $('#red-resumen');
+  if (res) {
+    const activas = S.sucursales.filter(s => s.activa).length;
+    const ciudades = new Set(S.sucursales.map(s => norm(s.ciudad)).filter(Boolean)).size;
+    res.textContent = S.sucursales.length ? `${S.sucursales.length} sucursales · ${activas} activas · ${ciudades} ${ciudades === 1 ? 'ciudad' : 'ciudades'}` : 'Mapa de tus bodegas en Ecuador';
+  }
+  renderKpisRed();
+  renderListaRed();
+  if (S.vista !== 'red') return;
+  if (!window.L) {
+    const f = $('#red-fallo');
+    f.hidden = false;
+    ponerHTML(f, `<div class="empty-ic">${ic('wifiOff')}</div><strong>No se pudo cargar el mapa</strong><span>Revisa tu conexión a internet y recarga la página.</span>`);
+    return;
+  }
+  iniciarMapaRed();
+  renderMarcadoresRed();
+}
+function actualizarVisibilidadRed() {
+  if (S.vista !== 'red') return;
+  renderRed();
+  if (red.mapa) setTimeout(() => {
+    if (!red.mapa) return;
+    red.mapa.invalidateSize({ pan: false });
+    if (!red.centrado) { red.mapa.setView(RED_CENTRO, zoomInicialRed(), { animate: false }); red.centrado = true; }
+  }, 60);
+}
+function enfocarSucursal(id) {
+  const s = S.sucursales.find(x => x.id === id);
+  if (!s) return;
+  red.sel = id;
+  renderListaRed();
+  if (!red.mapa) return;
+  renderMarcadoresRed();
+  const mk = red.marcadores.get(id);
+  if (!mk) return;
+  const destino = mk.getLatLng();
+  const zoom = Math.max(red.mapa.getZoom(), 12);
+  const abrir = () => { if (red.marcadores.get(id) === mk && !mk.isPopupOpen()) mk.openPopup(); };
+  if (red.mapa.getCenter().distanceTo(destino) < 50 && red.mapa.getZoom() === zoom) abrir();
+  else {
+    red.mapa.flyTo(destino, zoom, { duration: 0.8 });
+    red.mapa.once('moveend', abrir);
+    setTimeout(abrir, 1300);
+  }
+  if (window.matchMedia('(max-width: 900px)').matches) $('#red-mapa').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function formSucursal(id) {
+  if (!esDueno()) return;
+  if (S.demo) return avisoDemo();
+  const s = id ? S.sucursales.find(x => x.id === id) : null;
+  if (red.mapa) red.mapa.closePopup();
+  const centro = red.mapa ? red.mapa.getCenter() : { lat: RED_CENTRO[0], lng: RED_CENTRO[1] };
+  abrirFormulario({
+    titulo: s ? `Editar ${s.nombre}` : 'Nueva sucursal',
+    subtitulo: 'Tip: en Google Maps haz clic derecho sobre el lugar para copiar latitud y longitud.',
+    campos: [
+      { name: 'nombre', label: 'Nombre', required: true, value: s?.nombre, maxlength: 80, placeholder: 'Ej: Bodega Cuenca' },
+      { name: 'ciudad', label: 'Ciudad', value: s?.ciudad, maxlength: 60, placeholder: 'Ej: Cuenca' },
+      { name: 'direccion', label: 'Dirección', value: s?.direccion, maxlength: 140, full: true },
+      { name: 'latitud', label: 'Latitud', required: true, value: s?.latitud ?? centro.lat.toFixed(4), maxlength: 14, placeholder: '-2.1894' },
+      { name: 'longitud', label: 'Longitud', required: true, value: s?.longitud ?? centro.lng.toFixed(4), maxlength: 14, placeholder: '-79.8891' },
+      { name: 'activa', label: 'Estado', type: 'select', value: s ? String(!!s.activa) : 'true', options: [{ value: 'true', label: 'Activa' }, { value: 'false', label: 'Inactiva' }] },
+    ],
+    textoBoton: s ? 'Guardar cambios' : 'Crear sucursal',
+    alGuardar: async v => {
+      const lat = Number(String(v.latitud).replace(',', '.')), lng = Number(String(v.longitud).replace(',', '.'));
+      if (!Number.isFinite(lat) || lat < -90 || lat > 90) throw errorUsuario('La latitud debe ser un número entre -90 y 90 (ej: -2.1894).');
+      if (!Number.isFinite(lng) || lng < -180 || lng > 180) throw errorUsuario('La longitud debe ser un número entre -180 y 180 (ej: -79.8891).');
+      const datos = { nombre: v.nombre, ciudad: v.ciudad, direccion: v.direccion, latitud: lat, longitud: lng, activa: v.activa !== 'false' };
+      const q = s ? S.sb.from('sucursales').update(datos).eq('id', s.id) : S.sb.from('sucursales').insert({ ...datos, empresa_id: S.perfil.empresa_id });
+      const { data, error } = await q.select().single();
+      if (error) throw error;
+      const i = S.sucursales.findIndex(x => x.id === data.id);
+      if (i >= 0) S.sucursales[i] = data; else S.sucursales.push(data);
+      red.sel = data.id;
+      renderSelectorSucursal();
+      renderRed();
+      toast(s ? 'Sucursal actualizada.' : `Sucursal "${data.nombre}" creada.`, 'success', 2500);
+    },
+  });
+}
+async function crearSucursalesDemo(btn) {
+  if (!esDueno() || S.demo) return;
+  if (btn) btn.disabled = true;
+  const base = Date.now();
+  const filas = SUCURSALES_DEMO.map((s, i) => ({ ...s, empresa_id: S.perfil.empresa_id, activa: true, created_at: new Date(base + i * 1000).toISOString() }));
+  const { data, error } = await S.sb.from('sucursales').insert(filas).select();
+  if (btn) btn.disabled = false;
+  if (error) return toast('No se pudieron crear las sucursales: ' + traducirError(error), 'error');
+  (data || []).forEach(d => { if (!S.sucursales.some(x => x.id === d.id)) S.sucursales.push(d); });
+  S.sucursales.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  renderSelectorSucursal();
+  renderRed();
+  toast('Se agregaron 3 bodegas de ejemplo en Ecuador.', 'success');
+}
+function enlazarRed() {
+  const q = $('#red-q');
+  if (q) q.addEventListener('input', debounce(e => { red.q = e.target.value; renderListaRed(); }, 100));
+  const sel = $('#vb-sucursal');
+  if (sel) sel.addEventListener('change', e => { S.sucursalVista = e.target.value; renderVistaBodega(); });
 }
 
 /* ═══════════════ 11. PWA ═══════════════ */
@@ -5059,6 +5895,7 @@ function iniciarMejorasGestor() {
   aplicarLogo();
   cargarGrafica();
   iniciarChat();
+  iniciarRed();
   if (esDueno() && !leerPref(claveOnboarding(), false)) setTimeout(() => { if (!modalActual && !S.demo && esDueno()) abrirOnboarding(); }, 900);
 }
 function iniciarMejorasTrabajador() {
@@ -5068,6 +5905,7 @@ function iniciarMejorasTrabajador() {
 function detenerMejoras() {
   detenerVistaBodega();
   detenerChat();
+  detenerRed();
   if (S.demo) { S.demo = false; $('#screen-app').classList.remove('modo-demo'); $('#demo-pill').hidden = true; $$('.demo-toggle').forEach(t => { t.checked = false; }); }
   S.empresaReal = null;
   S.mov7 = [];
@@ -5078,6 +5916,7 @@ function detenerMejoras() {
 function enlazarMejoras() {
   ['pointerdown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, desbloquearAudio, { passive: true }));
   enlazarChat();
+  enlazarRed();
   $$('.demo-toggle').forEach(t => t.addEventListener('change', e => activarDemo(e.target.checked)));
   $('#toggle-registro').addEventListener('click', () => cambiarModoRegistro(!S.modoRegistro));
   iniciarPWA();

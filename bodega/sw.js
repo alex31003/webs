@@ -1,7 +1,7 @@
 // Service worker de BodegaApp: permite abrir la app sin conexión.
 // Estrategia "red primero": siempre intenta la versión más nueva y, si no hay
 // internet, usa la copia guardada. Nunca guarda datos de Supabase (API/Realtime).
-const CACHE = 'bodegaapp-v2';
+const CACHE = 'bodegaapp-v3';
 const ARCHIVOS = ['./', './index.html', './config.js', './manifest.json', './icon.svg', './icon-maskable.svg', './icon-192.png', './icon-512.png'];
 const CDN_PERMITIDOS = ['cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 
