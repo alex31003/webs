@@ -827,176 +827,41 @@ html[data-theme="dark"] .w-ok { background: #15803d; }
 .chart-msg { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 13.5px; text-align: center; padding: 20px; }
 
 /* ── 1. VISTA BODEGA 3D (Three.js) ── */
-.wt { position: relative; }
-.wt-stage {
-  position: relative; overflow: hidden; border-radius: 18px; border: 1px solid var(--border); box-shadow: var(--shadow);
-  height: max(580px, calc(100dvh - var(--topbar-h) - 48px));
-  background: linear-gradient(180deg, #e0f2fe 0%, #f0f9ff 100%);
-}
-#wt-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; -webkit-tap-highlight-color: transparent; }
-.wt-pop {
-  position: absolute; left: 0; top: 0; z-index: 6; width: 268px; max-width: calc(100% - 16px);
-  background: #ffffff; color: #0f172a; border-radius: 12px; border: 1px solid #e2e8f0;
-  box-shadow: 0 14px 34px rgba(15, 23, 42, .16), 0 2px 6px rgba(15, 23, 42, .08);
+.vb-card { overflow: hidden; }
+.vb-wrap { position: relative; width: 100%; height: 520px; background: #dbeafe; }
+#vb-canvas { display: block; width: 100%; height: 520px; touch-action: pan-y; -webkit-tap-highlight-color: transparent; }
+.vb-panel {
+  position: absolute; left: 0; top: 0; z-index: 5; width: 220px; padding: 16px;
+  background: #ffffff; color: #0f172a; border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, .16), 0 2px 6px rgba(15, 23, 42, .08);
   will-change: transform; --ax: 50%;
 }
-.wt-pop.entra { animation: wtPopIn 200ms ease-out; }
-@keyframes wtPopIn { from { opacity: 0; margin-top: 10px; } to { opacity: 1; margin-top: 0; } }
-.wt-pop-head { display: flex; align-items: flex-start; gap: 8px; padding: 12px 10px 8px 14px; border-bottom: 1px solid #f1f5f9; border-top: 4px solid var(--tc, #94a3b8); border-radius: 12px 12px 0 0; }
-.wt-pop-head > div { flex: 1; min-width: 0; }
-.wt-pop-head strong { display: block; font-size: 15px; font-weight: 800; letter-spacing: -.01em; overflow-wrap: anywhere; }
-.wt-pop-tipo { display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #64748b; }
-.wt-pop .btn-icon { color: #64748b; }
-.wt-pop .btn-icon:hover { background: #f1f5f9; color: #0f172a; }
-.wt-pop-body { padding: 8px 14px 10px; display: flex; flex-direction: column; gap: 7px; }
-.wt-pop-fila { display: grid; grid-template-columns: 20px auto minmax(0, 1fr); align-items: center; gap: 6px; font-size: 12.5px; }
-.wt-pop-fila .e { font-size: 14px; line-height: 1; }
-.wt-pop-fila .l { color: #64748b; }
-.wt-pop-fila .v { text-align: right; font-weight: 700; overflow-wrap: anywhere; }
-.wt-pop-fila .progress { grid-column: 2 / -1; height: 6px; background: #f1f5f9; }
-.wt-pop-fila .progress > span { background: var(--tc, #2563eb); }
-.wt-pop-fila .badge { height: 22px; font-size: 11px; }
-.wt-pop-nota { font-size: 11.5px; color: #64748b; line-height: 1.4; }
-.wt-pop-pie { display: flex; gap: 6px; padding: 0 14px 12px; }
-.wt-pop-pie > * { flex: 1; }
-.wt-pop-pie .select { background-color: #fff; color: #0f172a; border-color: #e2e8f0; }
-.wt-pop-flecha { position: absolute; left: var(--ax); bottom: -7px; width: 14px; height: 14px; margin-left: -7px; background: #fff; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; transform: rotate(45deg); }
-.wt-pop.abajo .wt-pop-flecha { bottom: auto; top: -7px; transform: rotate(225deg); }
-.wt-labels { position: absolute; inset: 0; pointer-events: none; }
-.wt-glass {
-  background: color-mix(in srgb, var(--card) 90%, transparent); color: var(--text);
-  -webkit-backdrop-filter: blur(12px) saturate(160%); backdrop-filter: blur(12px) saturate(160%);
-  border: 1px solid color-mix(in srgb, var(--border) 85%, transparent); border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, .1), 0 1px 3px rgba(15, 23, 42, .06);
-}
-.wt-fallback { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 24px; color: var(--muted); }
-.wt-fallback .empty-ic { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #fff; color: #2563eb; }
-.wt-fallback strong { color: #0f172a; font-size: 16px; }
-
-/* Etiquetas proyectadas desde la escena */
-.wt-tag, .wt-pin { position: absolute; left: 0; top: 0; pointer-events: auto; border: 0; cursor: pointer; will-change: transform; font-family: inherit; }
-.wt-tag:not([class*="tone-"]) { --tc: #64748b; }
-.wt-tag {
-  display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 5px 10px 6px; border-radius: 10px; white-space: nowrap;
-  background: #ffffff; color: #0f172a; box-shadow: 0 6px 16px rgba(15, 23, 42, .16); border: 2px solid var(--tc); font-size: 11px; font-weight: 600; line-height: 1.25;
-  transition: box-shadow var(--t), border-width var(--t);
-}
-.wt-tag b { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--tc); }
-.wt-tag::after { content: ''; position: absolute; left: 50%; bottom: -7px; margin-left: -6px; border: 6px solid transparent; border-bottom: 0; border-top-color: var(--tc); }
-.wt-tag.sel { box-shadow: 0 0 0 4px color-mix(in srgb, var(--tc) 28%, transparent), 0 8px 20px rgba(15, 23, 42, .2); }
-.wt-pin {
-  --tc: #2563eb;
-  display: flex; align-items: center; gap: 0; padding: 0; border-radius: 999px; background: var(--tc); color: #fff;
-  box-shadow: 0 6px 14px color-mix(in srgb, var(--tc) 45%, transparent); height: 34px; min-width: 34px; transition: gap var(--t), padding var(--t);
-}
-.wt-pin.nivel-bajo { --tc: #dc2626; }
-.wt-pin.nivel-medio { --tc: #ca8a04; }
-.wt-pin.nivel-ok { --tc: #2563eb; }
-.wt-pin::after { content: ''; position: absolute; left: 50%; bottom: -8px; margin-left: -7px; border: 7px solid transparent; border-bottom: 0; border-top-color: var(--tc); }
-.wt-pin .pin-ic { width: 34px; height: 34px; display: grid; place-items: center; flex: none; }
-.wt-pin .pin-ic .ic { width: 17px; height: 17px; }
-.wt-pin .pin-txt { max-width: 0; overflow: hidden; white-space: nowrap; font-size: 12px; font-weight: 700; transition: max-width 250ms ease, padding 250ms ease; }
-.wt-pin:hover .pin-txt, .wt-pin.sel .pin-txt, .wt-pin:focus-visible .pin-txt { max-width: 200px; padding-right: 12px; }
-.wt-pin.sel { box-shadow: 0 0 0 4px color-mix(in srgb, var(--tc) 30%, transparent), 0 6px 14px rgba(15, 23, 42, .2); }
-
-/* KPIs flotantes (arriba a la izquierda) */
-.wt-kpis { position: absolute; top: 14px; left: 14px; display: flex; gap: 10px; flex-wrap: wrap; max-width: calc(100% - 360px); }
-.wt-kpi { display: flex; align-items: center; gap: 10px; padding: 10px 14px 10px 10px; min-width: 168px; }
-.wt-kpi-ic { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: var(--ts); color: var(--tc); flex: none; }
-.wt-kpi-lbl { display: block; font-size: 11.5px; font-weight: 600; color: var(--muted); }
-.wt-kpi strong { display: block; font-size: 21px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; font-variant-numeric: tabular-nums; }
-.wt-kpi small { display: block; font-size: 11px; font-weight: 600; color: var(--tc); }
-
-/* Detalle del objeto seleccionado (arriba a la derecha) */
-.wt-detalle { position: absolute; top: 14px; right: 14px; width: 310px; max-height: calc(100% - 270px); min-height: 0; overflow: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
-.wt-det-head { display: flex; align-items: flex-start; gap: 10px; }
-.wt-det-head > div { flex: 1; min-width: 0; }
-.wt-det-head h4 { font-size: 16px; font-weight: 800; letter-spacing: -.01em; overflow-wrap: anywhere; }
-.wt-det-kind { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
-.wt-det-ic { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: var(--ts); color: var(--tc); flex: none; }
-.wt-detalle .badge { align-self: flex-start; }
-.wt-prog .progress > span { background: var(--tc, var(--primary)); }
-.wt-dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; margin: 0; font-size: 12.5px; }
-.wt-dl dt { color: var(--muted); }
-.wt-dl dd { margin: 0; font-weight: 600; text-align: right; overflow-wrap: anywhere; }
-.wt-libre { display: flex; align-items: center; gap: 8px; color: var(--green); font-weight: 600; font-size: 13px; }
-.wt-stock { display: flex; align-items: baseline; gap: 8px; }
-.wt-stock strong { font-size: 30px; font-weight: 800; letter-spacing: -.03em; line-height: 1; color: var(--tc); font-variant-numeric: tabular-nums; }
-.wt-stock .stock-label { margin-left: auto; }
-.wt-detalle .stockbar { flex: none; }
-
-/* Seguimiento de pedido (abajo a la izquierda) y lista con pestañas (abajo a la derecha) */
-.wt-panel { padding: 12px 14px; }
-.wt-tracking { position: absolute; left: 14px; bottom: 14px; width: min(560px, calc(100% - 420px)); }
-.wt-lista { position: absolute; right: 14px; bottom: 14px; width: 370px; max-height: 240px; display: flex; flex-direction: column; padding: 8px; }
-.wt-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
-.wt-head h4 { font-size: 13.5px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-.wt-head h4 .ic { color: var(--primary); }
-.wt-nav { display: flex; align-items: center; gap: 2px; font-size: 12px; }
-.wt-nav .muted { margin-right: 4px; }
-.wt-flip .ic { transform: scaleX(-1); }
-.wt-track { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 200px); gap: 14px; align-items: center; }
-.wt-steps { list-style: none; margin: 0; padding: 0; display: flex; }
-.wt-steps li { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; position: relative; font-size: 11px; font-weight: 600; color: var(--muted); text-align: center; }
-.wt-steps li::before { content: ''; position: absolute; top: 15px; left: -50%; width: 100%; height: 3px; background: var(--border); z-index: 0; }
-.wt-steps li:first-child::before { display: none; }
-.wt-steps li.ok::before, .wt-steps li.now::before { background: #2563eb; }
-.wt-steps .st-ic { position: relative; z-index: 1; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--card); border: 2px solid var(--border); color: var(--muted-2); }
-.wt-steps .st-ic .ic { width: 15px; height: 15px; }
-.wt-steps li.ok .st-ic { background: #2563eb; border-color: #2563eb; color: #fff; }
-.wt-steps li.now .st-ic { background: #2563eb; border-color: #2563eb; color: #fff; box-shadow: 0 0 0 5px rgba(37, 99, 235, .18); }
-.wt-steps li.now { color: var(--text); }
-.wt-steps li.now.late .st-ic { background: var(--red); border-color: var(--red); box-shadow: 0 0 0 5px var(--red-soft); }
-.wt-steps li.now.late::before { background: var(--red); }
-.wt-ship { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; align-items: center; padding: 10px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); text-align: left; transition: border-color var(--t), box-shadow var(--t); }
-.wt-ship:hover { border-color: #93c5fd; box-shadow: 0 4px 12px rgba(37, 99, 235, .12); }
-.wt-ship-ic { grid-row: span 2; width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: var(--blue-soft); color: var(--blue); }
-.wt-ship-txt { display: flex; flex-direction: column; min-width: 0; gap: 2px; }
-.wt-ship-txt b { font-size: 13px; }
-.wt-ship-txt > span:not(.badge) { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.wt-ship-txt .badge { align-self: flex-start; height: 20px; font-size: 11px; }
-.wt-ship-meta { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 8px; font-size: 11.5px; color: var(--muted); border-top: 1px dashed var(--border); padding-top: 6px; margin-top: 2px; }
-.wt-ship-meta .restante { font-size: 11.5px; }
-.wt-tabs { display: flex; gap: 4px; padding: 2px; margin-bottom: 4px; border-bottom: 1px solid var(--border-2); }
-.wt-tabs button { flex: 1; border: 0; background: transparent; padding: 8px 6px; border-radius: 8px; font-size: 12.5px; font-weight: 600; color: var(--muted); transition: background var(--t), color var(--t); }
-.wt-tabs button span { font-size: 11px; padding: 1px 6px; border-radius: 999px; background: var(--border-2); margin-left: 3px; }
-.wt-tabs button.on { background: var(--blue-soft); color: var(--blue); }
-.wt-tabs button.on span { background: color-mix(in srgb, var(--blue) 16%, transparent); }
-.wt-rows { list-style: none; margin: 0; padding: 0; overflow: auto; min-height: 0; }
-.wt-row { display: grid; grid-template-columns: 74px minmax(0, 1fr) auto; gap: 8px; align-items: center; width: 100%; padding: 8px; border: 0; border-radius: 8px; background: transparent; text-align: left; font-size: 12.5px; transition: background var(--t); }
-.wt-row:hover { background: var(--surface-2); }
-.wt-row-id { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.wt-row-txt { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.wt-row .badge { height: 22px; font-size: 11px; }
-.wt-vacio { display: flex; align-items: center; gap: 8px; padding: 12px; color: var(--muted); font-size: 13px; }
-.wt-vacio .ic { color: var(--green); }
-
-@media (max-width: 1179px) {
-  .wt-stage { height: max(460px, 66dvh); }
-  .wt-kpis { max-width: calc(100% - 28px); }
-  .wt-detalle { top: auto; bottom: 12px; right: 12px; max-height: 60%; }
-  .wt-tracking, .wt-lista { position: static; width: auto; max-height: none; margin-top: 14px; }
-  .wt-lista .wt-rows { max-height: 320px; }
-}
-.wt-tag .n { display: none; }
+.vb-panel.entra { animation: vbEntra 200ms ease-out; }
+@keyframes vbEntra { from { opacity: 0; margin-top: 10px; } to { opacity: 1; margin-top: 0; } }
+.vb-panel-head { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 10px; padding-left: 10px; border-left: 4px solid var(--c, #94a3b8); }
+.vb-panel-head > div { flex: 1; min-width: 0; }
+.vb-panel-head strong { display: block; font-size: 15px; font-weight: 800; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.vb-sub { display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #64748b; }
+.vb-panel .btn-icon { width: 28px; height: 28px; margin: -6px -8px 0 0; color: #64748b; }
+.vb-panel .btn-icon:hover { background: #f1f5f9; color: #0f172a; }
+.vb-panel-body { display: flex; flex-direction: column; gap: 8px; }
+.vb-fila { display: grid; grid-template-columns: 18px auto minmax(0, 1fr); align-items: center; gap: 6px; font-size: 12.5px; }
+.vb-fila .e { font-size: 14px; line-height: 1; }
+.vb-fila .l { color: #64748b; }
+.vb-fila .v { text-align: right; font-weight: 700; overflow-wrap: anywhere; }
+.vb-pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; color: #fff; background: var(--c); }
+.vb-nota { font-size: 11.5px; color: #64748b; line-height: 1.4; margin-top: 2px; }
+.vb-flecha { position: absolute; left: var(--ax); bottom: -7px; width: 14px; height: 14px; margin-left: -7px; background: #fff; transform: rotate(45deg); box-shadow: 3px 3px 6px rgba(15, 23, 42, .06); }
+.vb-panel.abajo .vb-flecha { bottom: auto; top: -7px; box-shadow: none; }
+.vb-leyenda { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 12px 16px; border-top: 1px solid var(--border-2); font-size: 12.5px; color: var(--muted); }
+.vb-leyenda span { display: inline-flex; align-items: center; gap: 6px; }
+.vb-leyenda i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+.vb-leyenda .vb-ayuda { margin-left: auto; }
+.vb-fallo { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 24px; color: #475569; }
+.vb-fallo .empty-ic { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #fff; color: #2563eb; }
+.vb-fallo strong { color: #0f172a; font-size: 16px; }
 @media (max-width: 767px) {
-  .wt-stage { height: 350px; border-radius: 14px; }
-  .wt-pop { width: 236px; }
-  .wt-pop-fila { font-size: 12px; }
-  .wt-tag { width: 24px; height: 24px; padding: 0; border-radius: 50%; background: var(--tc); justify-content: center; border-color: #fff; }
-  .wt-tag b, .wt-tag span { display: none; }
-  .wt-tag .n { display: block; font-style: normal; color: #fff; font-size: 12px; font-weight: 800; }
-  .wt-tag::after { bottom: -6px; border-width: 5px; margin-left: -5px; border-top-color: var(--tc); }
-  .wt-kpis { top: 8px; left: 8px; right: 8px; max-width: none; flex-wrap: nowrap; gap: 6px; }
-  .wt-kpi { flex: 1; min-width: 0; padding: 6px 8px; gap: 6px; }
-  .wt-kpi-ic { display: none; }
-  .wt-kpi strong { font-size: 16px; }
-  .wt-kpi-lbl, .wt-kpi small { font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .wt-detalle { left: 8px; right: 8px; bottom: 8px; width: auto; max-height: 58%; padding: 12px; }
-  .wt-pin { height: 28px; min-width: 28px; }
-  .wt-pin .pin-ic { width: 28px; height: 28px; }
-  .wt-track { grid-template-columns: minmax(0, 1fr); }
-  .wt-steps li { font-size: 10px; }
+  .vb-leyenda .vb-ayuda { margin-left: 0; width: 100%; }
 }
 
 /* ── 10. CHAT INTERNO ── */
@@ -1384,17 +1249,24 @@ html[data-theme="dark"] .link-btn { color: #00ff88; }
 
       <!-- ── VISTA BODEGA (Three.js) ── -->
       <section class="view" id="view-bodega" data-view="bodega" hidden>
-        <div class="wt" id="wt">
-          <div class="wt-stage" id="wt-stage">
-            <canvas id="wt-canvas" aria-label="Vista 3D de la bodega con camiones, montacargas y bahías"></canvas>
-            <div class="wt-labels" id="wt-labels"></div>
-            <div class="wt-pop" id="wt-pop" role="dialog" aria-label="Detalle del objeto" hidden></div>
-            <div class="wt-kpis" id="wt-kpis"></div>
-            <div class="wt-detalle wt-glass" id="wt-detalle" hidden></div>
-            <div class="wt-fallback" id="wt-fallback" hidden></div>
+        <div class="page-head">
+          <div>
+            <h1>Vista Bodega</h1>
+            <p id="vb-resumen">Bodega en 3D con el estado real de las bahías</p>
           </div>
-          <div class="wt-panel wt-tracking wt-glass" id="wt-tracking"></div>
-          <div class="wt-panel wt-lista wt-glass" id="wt-lista"></div>
+        </div>
+        <div class="card vb-card">
+          <div class="vb-wrap" id="vb-canvas-wrap">
+            <div class="vb-panel" id="vb-panel" role="dialog" aria-label="Detalle del objeto seleccionado" hidden></div>
+            <div class="vb-fallo" id="vb-fallo" hidden></div>
+          </div>
+          <div class="vb-leyenda">
+            <span style="--c:#22c55e"><i></i>Cargando</span>
+            <span style="--c:#eab308"><i></i>Esperando</span>
+            <span style="--c:#3b82f6"><i></i>Listo</span>
+            <span style="--c:#6b7280"><i></i>Libre</span>
+            <span class="vb-ayuda">👆 Toca un camión, un montacargas o una bahía para ver sus datos</span>
+          </div>
         </div>
       </section>
 
@@ -3528,18 +3400,7 @@ function manejarAccion(accion, el, ev) {
     case 'abrir-config': return abrirConfiguracion();
     case 'chat-toggle': return alternarChat();
     case 'chat-producto': return irAProducto(id);
-    case 'wt-sel': return seleccionarBodega3D(el.dataset.tipo, el.dataset.id, el.dataset.bahia);
-    case 'wt-cerrar': bodega3D.seleccion = null; return renderVistaBodega();
-    case 'wt-pop-cerrar': return cerrarPop3D();
-    case 'wt-tab': bodega3D.tab = el.dataset.tab; return renderVistaBodega();
-    case 'wt-pedido': bodega3D.pedidoIdx += parseInt(el.dataset.delta, 10) || 0; return renderVistaBodega();
-    case 'wt-camion': {
-      const c = S.camiones.get(id);
-      const i = c ? bahiasEscena3D().indexOf(c.bahia) : -1;
-      if (c && c.estado !== 'en_ruta' && c.bahia) return seleccionarBodega3D('bahia', i >= 0 ? String(i) : '', c.bahia);
-      location.hash = '#/camiones';
-      return undefined;
-    }
+    case 'vb-cerrar': return vbCerrarPanel();
     default: return undefined;
   }
 }
@@ -3843,877 +3704,693 @@ function exportarPDF() {
 }
 
 /* ═══════════════ 1. VISTA BODEGA 3D (Three.js) ═══════════════
-   Escena isométrica fija + paneles flotantes con datos reales de Supabase.
-   El 3D es decorativo-animado; etiquetas, pines y paneles muestran el
-   estado real (bahías, camiones, productos, pedidos) y se actualizan en vivo. */
-const W3 = {
-  AZ: 45, EL: 35,                       // cámara: 45° horizontal, 35° vertical
-  PUERTAS_X: [-6, 0, 6],                // bahías 1, 2 y 3 en la fachada
-  FACHADA_Z: -2,                        // fachada frontal del edificio
-  ANDEN_Z: 2.2,                         // centro del camión estacionado en el andén
-  CALLE_Z: 11,                          // carril por donde llegan los camiones
-  PILAS: [
-    { x: -16.5, z: 7.6, capas: 4 }, { x: -9, z: 7.6, capas: 2 },
-    { x: 3, z: 7.8, capas: 3 }, { x: 11.5, z: 7.8, capas: 1 },
-  ],
-  ARBOLES: [[-20, -12, 1.15], [-20.5, 1.5, 1], [19.5, -12, 1.2], [20, 2.5, 0.95], [8, -13.6, 1.05]],
-  LIMITES: { x: [-15, 15], y: [0, 5], z: [-10.5, 11.5] },
-  LIMITES_MOVIL: { x: [-12.5, 12.5], y: [0, 4.5], z: [-10, 9.5] },
-};
-const bodega3D = {
-  iniciado: false, fallo: null, activo: false, raf: null,
-  renderer: null, escena: null, camara: null, raycaster: null, objetivo: null,
-  puertas: [], camion1: null, camiones: [], montacargas: [], pilas: [], clicables: [], etiquetas: [], pop: null,
-  seleccion: null, tab: 'bahias', pedidoIdx: 0, reducido: false,
+   Escena 3D completa: bodega, almacén trasero, 3 camiones, 3 montacargas,
+   pallets, árboles y marcadores de bahía con datos reales de "camiones".
+   Click / toque en camiones, montacargas, puertas o edificio → panel. */
+const VB = {
+  ALTO: 520,
+  PUERTAS: [-4, 0, 4],            // x de las bahías B1, B2, B3 (fachada en z = 0)
+  FACHADA: 0,
+  ANDEN: 3.7,                     // centro de un camión estacionado de reversa
+  CALLE: 12,                      // carril de circulación
+  VEL: 0.02 * 60,                 // 0,02 unidades por cuadro a 60 fps
+  iniciado: false, fallo: null, activo: false, raf: null, ultimoT: 0, reloj: 0,
+  renderer: null, escena: null, camara: null, raycaster: null,
+  camiones: [], montacargas: [], marcadores: [], puertas: [], edificio: null, almacen: null,
+  clicables: [], sel: null, ultimoToque: 0, ultimoMarcador: 0,
 };
 
-function hayThree() { return typeof window.THREE !== 'undefined' && window.THREE.WebGLRenderer; }
-function m3(color, extra = {}) { return new THREE.MeshStandardMaterial({ color, roughness: 0.82, metalness: 0.02, ...extra }); }
-function caja3(w, h, d, material, x = 0, y = 0, z = 0, sombra = true) {
-  const malla = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
-  malla.position.set(x, y, z);
-  malla.castShadow = sombra;
-  malla.receiveShadow = true;
-  return malla;
+function vbMat(color, extra = {}) { return new THREE.MeshStandardMaterial({ color, roughness: 0.78, metalness: 0.05, ...extra }); }
+function vbCaja(w, h, d, mat, x = 0, y = 0, z = 0) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+  m.position.set(x, y, z);
+  m.castShadow = true;
+  m.receiveShadow = true;
+  return m;
 }
-function texturaCanvas(ancho, alto, dibujar) {
+function vbCanvas(w, h, dibujar) {
   const c = document.createElement('canvas');
-  c.width = ancho; c.height = alto;
+  c.width = w; c.height = h;
   const ctx = c.getContext('2d');
-  if (!ctx.roundRect) ctx.roundRect = function (x, y, w, h) { this.rect(x, y, w, h); };
-  dibujar(ctx, ancho, alto);
+  if (!ctx.roundRect) ctx.roundRect = function (x, y, ww, hh) { this.rect(x, y, ww, hh); };
+  dibujar(ctx, w, h);
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = 4;
   return t;
 }
+function vbSpriteTexto(texto, { fondo = '#ffffff', color = '#1e3a8a', ancho = 512, alto = 128, fuente = 72 } = {}) {
+  const tex = vbCanvas(ancho, alto, (c, w, h) => {
+    c.fillStyle = fondo; c.beginPath(); c.roundRect(4, 4, w - 8, h - 8, 26); c.fill();
+    c.fillStyle = color; c.font = `800 ${fuente}px Inter, Arial, sans-serif`;
+    c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(texto, w / 2, h / 2 + 3);
+  });
+  return new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
+}
 
-/* ── Modelos ── */
-function crearSuelo(escena) {
-  const g = new THREE.Group();
-  const base = caja3(44, 0.5, 32, m3('#cbd5e1'), 0, -0.25, 0, false);
-  const suelo = new THREE.Mesh(new THREE.PlaneGeometry(44, 32), m3('#e2e8f0', { roughness: 0.95 }));
-  suelo.rotation.x = -Math.PI / 2; suelo.position.y = 0.001; suelo.receiveShadow = true;
-  g.add(base, suelo);
-  const pintura = (w, d, color, x, z) => {
-    const p = new THREE.Mesh(new THREE.PlaneGeometry(w, d), m3(color, { roughness: 0.7, polygonOffset: true, polygonOffsetFactor: -2 }));
-    p.rotation.x = -Math.PI / 2; p.position.set(x, 0.012, z); p.receiveShadow = true;
-    g.add(p);
+/* ── Suelo, zona de carga y calle ── */
+function vbSuelo(esc) {
+  const suelo = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), vbMat('#e2e8f0', { roughness: 0.95 }));
+  suelo.rotation.x = -Math.PI / 2;
+  suelo.receiveShadow = true;
+  esc.add(suelo);
+  const pintura = (w, d, color, x, z, alto = 0.03) => {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, alto, d), vbMat(color, { roughness: 0.6 }));
+    m.position.set(x, alto / 2, z); m.receiveShadow = true;
+    esc.add(m);
+    return m;
   };
-  // Andén (concreto más claro) y calle de acceso
-  pintura(22, 2.2, '#f1f5f9', 0, -0.9);
-  pintura(44, 3.6, '#cbd5e1', 0, W3.CALLE_Z);
-  for (let x = -20; x < 22; x += 3.2) pintura(1.6, 0.14, '#ffffff', x, W3.CALLE_Z);
-  // Franjas amarillas: zona de carga de cada bahía
-  W3.PUERTAS_X.forEach(px => {
-    pintura(0.14, 7.4, '#facc15', px - 1.75, 2.0);
-    pintura(0.14, 7.4, '#facc15', px + 1.75, 2.0);
-  });
-  pintura(26, 0.16, '#facc15', 0, 5.75);
-  pintura(26, 0.16, '#facc15', 0, 9.1);
-  // Línea de seguridad junto a la fachada
-  for (let i = 0; i < 24; i++) pintura(0.45, 0.22, i % 2 ? '#111827' : '#facc15', -10.35 + i * 0.9, 0.1);
-  escena.add(g);
+  // 8 franjas amarillas paralelas: delimitan los carriles de las 3 bahías
+  [-6.8, -5.4, -2.6, -1.4, 1.4, 2.6, 5.4, 6.8].forEach(x => pintura(0.3, 7.2, '#fbbf24', x, 4.2));
+  // Borde del área de carga (rectángulo)
+  pintura(15.2, 0.3, '#fbbf24', 0, 8.0);
+  pintura(15.2, 0.3, '#fbbf24', 0, 0.45);
+  pintura(0.3, 7.85, '#fbbf24', -7.6, 4.22);
+  pintura(0.3, 7.85, '#fbbf24', 7.6, 4.22);
+  // Andén de concreto junto a la fachada y calle de circulación
+  pintura(15, 0.6, '#cbd5e1', 0, 0.15, 0.06);
+  pintura(50, 3.4, '#94a3b8', 0, VB.CALLE, 0.02);
+  for (let x = -24; x < 25; x += 3) pintura(1.5, 0.16, '#ffffff', x, VB.CALLE, 0.035);
 }
-function crearEdificio(escena) {
+
+/* ── Edificio principal y almacén trasero ── */
+function vbEdificio(esc) {
   const g = new THREE.Group();
-  const azul = m3('#1d4ed8'), blanco = m3('#f8fafc');
-  // Cuerpo principal 20 × 4 × 8: fachada y fondo azules, paredes laterales blancas
-  const cuerpo = new THREE.Mesh(new THREE.BoxGeometry(20, 4, 8), [blanco, blanco, azul, azul, azul, azul]);
-  cuerpo.position.set(0, 2, -6); cuerpo.castShadow = true; cuerpo.receiveShadow = true;
+  const azul = vbMat('#1d4ed8');
+  const cuerpo = vbCaja(14, 4, 8, azul, 0, 2, -4);
+  cuerpo.userData.pick = { tipo: 'edificio' };
   g.add(cuerpo);
-  g.add(caja3(20.04, 0.35, 8.04, m3('#1e3a8a'), 0, 0.175, -6, false)); // zócalo
-  // Techo a dos aguas con ligera pendiente
-  const ang = THREE.MathUtils.degToRad(9), L = 4.45, alzada = L * Math.sin(ang), techo = m3('#3b82f6', { roughness: 0.55 });
-  [1, -1].forEach(lado => {
-    const losa = caja3(20.8, 0.22, L, techo, 0, 4 + alzada - (L / 2) * Math.sin(ang) + 0.1, -6 + lado * (L / 2) * Math.cos(ang));
-    losa.rotation.x = lado * ang;
-    g.add(losa);
+  // Paredes laterales blanco grisáceo
+  [-7.05, 7.05].forEach(x => { const p = vbCaja(0.2, 4, 8, vbMat('#e2e8f0'), x, 2, -4); p.userData.pick = { tipo: 'edificio' }; g.add(p); });
+  // Zócalo oscuro
+  g.add(vbCaja(14.1, 0.35, 8.1, vbMat('#1e3a8a'), 0, 0.175, -4));
+  // Techo con volumen: losa, 6 líneas paralelas, alero frontal/trasero y equipos
+  const losa = vbCaja(14.4, 0.4, 8.4, vbMat('#1e40af'), 0, 4.2, -4);
+  losa.userData.pick = { tipo: 'edificio' };
+  g.add(losa);
+  for (let i = 0; i < 6; i++) g.add(vbCaja(14.4, 0.06, 0.14, vbMat('#3b82f6', { roughness: 0.5 }), 0, 4.43, -7.4 + i * (6.8 / 5)));
+  g.add(vbCaja(14.6, 0.25, 0.2, vbMat('#3b82f6'), 0, 4.45, 0.15));
+  g.add(vbCaja(14.6, 0.25, 0.2, vbMat('#3b82f6'), 0, 4.45, -8.15));
+  [[-4.5, -6], [3.8, -6.2]].forEach(([x, z]) => {
+    g.add(vbCaja(1.4, 0.7, 1.1, vbMat('#cbd5e1', { metalness: 0.4, roughness: 0.4 }), x, 4.75, z));
+    const vent = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.12, 20), vbMat('#64748b', { metalness: 0.5 }));
+    vent.position.set(x, 5.16, z); g.add(vent);
   });
-  g.add(caja3(20.9, 0.2, 0.28, m3('#60a5fa'), 0, 4 + alzada + 0.18, -6)); // cumbrera
-  const frontis = new THREE.Shape([new THREE.Vector2(-4, 0), new THREE.Vector2(4, 0), new THREE.Vector2(0, alzada + 0.05)]);
-  [10.001, -10.001].forEach(x => {
-    const tri = new THREE.Mesh(new THREE.ShapeGeometry(frontis), m3('#f8fafc', { side: THREE.DoubleSide }));
-    tri.rotation.y = x > 0 ? Math.PI / 2 : -Math.PI / 2;
-    tri.position.set(x, 4, -6); tri.castShadow = true;
-    g.add(tri);
-  });
-  // Tragaluces en el techo
-  for (let x = -7.5; x <= 7.5; x += 5) {
-    const tl = caja3(2.2, 0.06, 1.3, m3('#bfdbfe', { roughness: 0.25, metalness: 0.1 }), x, 4 + alzada - 1.1 * Math.sin(ang) + 0.24, -6 + 1.1 * Math.cos(ang), false);
-    tl.rotation.x = ang;
-    g.add(tl);
+  // Nervaduras de la fachada entre puertas
+  for (let x = -6.5; x <= 6.5; x += 1) {
+    if (VB.PUERTAS.some(px => Math.abs(x - px) < 1.6)) continue;
+    g.add(vbCaja(0.08, 3.4, 0.06, vbMat('#1e40af'), x, 1.9, 0.03));
   }
-  // 3 puertas de bahía con marco, cortina enrollada, luz de estado y topes
-  const z = W3.FACHADA_Z;
-  W3.PUERTAS_X.forEach((px, i) => {
+  // 3 puertas de bahía (B1 abierta con interior oscuro) con marco blanco
+  VB.PUERTAS.forEach((px, i) => {
     const p = new THREE.Group();
-    p.add(caja3(3.5, 3.15, 0.14, m3('#e2e8f0'), 0, 1.58, 0.02, false));
-    p.add(caja3(3.0, 2.8, 0.16, m3('#0f172a', { roughness: 0.6 }), 0, 1.4, 0.05, false));
-    for (let k = 0; k < 4; k++) p.add(caja3(3.0, 0.18, 0.2, m3('#cbd5e1'), 0, 2.72 - k * 0.2, 0.07, false));
-    const luzMat = new THREE.MeshStandardMaterial({ color: '#94a3b8', emissive: '#94a3b8', emissiveIntensity: 0.9 });
-    luzMat.userData.esLuz = true;
-    const luz = caja3(3.0, 0.12, 0.14, luzMat, 0, 3.08, 0.12, false);
-    p.add(luz);
-    [-1.3, 1.3].forEach(dx => p.add(caja3(0.3, 0.45, 0.3, m3('#111827'), dx, 0.45, 0.22)));
-    p.add(caja3(3.0, 0.06, 1.2, m3('#94a3b8', { metalness: 0.4, roughness: 0.4 }), 0, 0.04, 0.65, false));
-    p.position.set(px, 0, z);
-    p.userData.sel = { tipo: 'bahia', id: i };
-    p.traverse(o => { o.userData.sel = { tipo: 'bahia', id: i }; o.userData.pick = { obj: 'bahia', id: i }; });
+    const abierta = i === 0;
+    const matHoja = vbMat(abierta ? '#111827' : '#0f172a', { roughness: 0.9 });
+    const blanco = vbMat('#f8fafc');
+    p.userData.mats = [matHoja, blanco];
+    p.add(vbCaja(2.5, 3, 0.1, matHoja, 0, 1.5, 0.06));
+    if (abierta) {
+      p.add(vbCaja(2.5, 0.5, 0.25, vbMat('#94a3b8', { metalness: 0.3 }), 0, 2.78, 0.16));      // cortina enrollada arriba
+      p.add(vbCaja(2.3, 0.04, 1.0, vbMat('#475569', { metalness: 0.4 }), 0, 0.06, 0.55));      // rampa niveladora
+      [[-0.6, 0.6], [0.5, 0.45]].forEach(([dx, s]) => p.add(vbCaja(s, s, s, vbMat('#92400e'), dx, s / 2 + 0.05, 0.15))); // carga a la vista
+    } else {
+      for (let k = 0; k < 6; k++) p.add(vbCaja(2.46, 0.03, 0.12, vbMat('#1e293b'), 0, 0.4 + k * 0.45, 0.12)); // láminas de cortina
+    }
+    // Marco: 4 tiras blancas
+    p.add(vbCaja(2.8, 0.15, 0.14, blanco, 0, 3.07, 0.08));
+    p.add(vbCaja(2.8, 0.1, 0.14, blanco, 0, 0.05, 0.08));
+    p.add(vbCaja(0.15, 3.1, 0.14, blanco, -1.33, 1.55, 0.08));
+    p.add(vbCaja(0.15, 3.1, 0.14, blanco, 1.33, 1.55, 0.08));
+    // Topes de goma
+    [-1.1, 1.1].forEach(dx => p.add(vbCaja(0.3, 0.4, 0.3, vbMat('#111827'), dx, 0.4, 0.25)));
+    // Número B1/B2/B3 (sprite)
+    const num = vbSpriteTexto(`B${i + 1}`, { fondo: '#ffffff', color: '#1d4ed8', ancho: 192, alto: 112, fuente: 76 });
+    num.scale.set(0.85, 0.5, 1);
+    num.position.set(0, 3.55, 0.3);
+    p.add(num);
+    p.position.set(px, 0, VB.FACHADA);
+    p.traverse(o => { o.userData.pick = { tipo: 'bahia', id: i }; });
     g.add(p);
-    bodega3D.puertas.push({ grupo: p, luz: luzMat });
-    bodega3D.clicables.push(p);
+    VB.puertas.push(p);
   });
-  // Detalles: nervaduras de la fachada, canaleta, bajadas de agua, ventanas, puerta de personal y ventiladores
-  const nervio = m3('#1e40af');
-  for (let x = -9.5; x <= 9.5; x += 1) {
-    if (W3.PUERTAS_X.some(px => Math.abs(x - px) < 1.9)) continue;
-    g.add(caja3(0.08, 2.75, 0.06, nervio, x, 1.72, z + 0.02, false));
-  }
-  g.add(caja3(20.3, 0.14, 0.18, m3('#93c5fd'), 0, 3.98, z + 0.06, false));
-  [-9.85, 9.85].forEach(x => { const t = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 3.9, 8), m3('#cbd5e1')); t.position.set(x, 1.95, z + 0.1); t.castShadow = true; g.add(t); });
-  [-7.3, -4.7].forEach(zz => {
-    g.add(caja3(0.08, 0.75, 1.5, m3('#e2e8f0'), 10.03, 1.15, zz, false));
-    g.add(caja3(0.1, 0.6, 1.35, m3('#93c5fd', { roughness: 0.2, metalness: 0.2 }), 10.05, 1.15, zz, false));
-  });
-  g.add(caja3(0.1, 1.95, 0.95, m3('#475569'), 10.05, 0.98, -9.05, false));
-  g.add(caja3(0.6, 0.08, 1.3, m3('#1e3a8a'), 10.3, 2.1, -9.05));
-  for (let x = -8; x <= 8; x += 5.3) {
-    const yTecho = 4 + alzada - 2 * Math.tan(ang);
-    const vent = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 0.5, 14), m3('#cbd5e1', { metalness: 0.5, roughness: 0.35 }));
-    vent.position.set(x, yTecho + 0.25, -8); vent.castShadow = true; g.add(vent);
-    const tapa = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.08, 14), m3('#94a3b8', { metalness: 0.5 }));
-    tapa.position.set(x, yTecho + 0.54, -8); g.add(tapa);
-  }
-  // Letrero "BODEGA" en la fachada
-  const tex = texturaCanvas(1024, 160, (c, w, h) => {
-    c.fillStyle = '#ffffff'; c.beginPath(); c.roundRect(0, 0, w, h, 26); c.fill();
-    c.fillStyle = '#1d4ed8'; c.beginPath(); c.roundRect(28, 26, 108, 108, 20); c.fill();
-    c.strokeStyle = '#ffffff'; c.lineWidth = 9; c.lineJoin = 'round';
-    c.beginPath(); c.moveTo(48, 72); c.lineTo(82, 52); c.lineTo(116, 72); c.lineTo(116, 116); c.lineTo(48, 116); c.closePath(); c.stroke();
-    c.beginPath(); c.moveTo(62, 116); c.lineTo(62, 88); c.lineTo(102, 88); c.lineTo(102, 116); c.stroke();
-    c.fillStyle = '#0f172a'; c.font = '800 104px Inter, Arial, sans-serif'; c.textBaseline = 'middle';
-    c.fillText('BODEGA', 168, 86);
-  });
-  const matLetrero = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.6 });
-  const letrero = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 0.69), matLetrero);
-  letrero.position.set(3, 3.6, z + 0.03);
+  // Letrero "BODEGA" (sprite) en la parte superior central de la fachada
+  const letrero = vbSpriteTexto('BODEGA', { fondo: '#ffffff', color: '#1e3a8a', ancho: 640, alto: 150, fuente: 104 });
+  letrero.scale.set(3.6, 0.85, 1);
+  letrero.position.set(0, 4.55, 0.45);
   g.add(letrero);
-  const lateral = new THREE.Mesh(new THREE.PlaneGeometry(6.4, 1.0), matLetrero);  // también en la pared lateral blanca
-  lateral.rotation.y = Math.PI / 2;
-  lateral.position.set(10.02, 2.55, -6);
-  g.add(lateral);
-  escena.add(g);
+  esc.add(g);
+  VB.edificio = g;
+  VB.clicables.push(g);
+
+  // Almacén trasero: más pequeño, mismo estilo
+  const a = new THREE.Group();
+  const cuerpoA = vbCaja(6, 3, 5, vbMat('#2563eb'), 0, 1.5, 0);
+  a.add(cuerpoA);
+  a.add(vbCaja(6.3, 0.3, 5.3, vbMat('#1e40af'), 0, 3.15, 0));
+  for (let i = 0; i < 4; i++) a.add(vbCaja(6.3, 0.05, 0.12, vbMat('#3b82f6'), 0, 3.33, -2 + i * 1.33));
+  a.add(vbCaja(1.6, 2.2, 0.1, vbMat('#0f172a'), 1, 1.1, 2.53));
+  a.add(vbCaja(1.8, 0.12, 0.14, vbMat('#f8fafc'), 1, 2.26, 2.55));
+  [[-1.6, 1.6], [-1.6, 0.6]].forEach(([x, y]) => a.add(vbCaja(0.9, 0.55, 0.06, vbMat('#bfdbfe', { roughness: 0.2, metalness: 0.2 }), x, y + 0.4, 2.53)));
+  a.position.set(-10.5, 0, -5);
+  a.traverse(o => { o.userData.pick = { tipo: 'almacen' }; });
+  esc.add(a);
+  VB.almacen = a;
+  VB.clicables.push(a);
 }
-function crearCamion(escena, transparente) {
+
+/* ── Camiones ── */
+function vbCamion(esc, id) {
   const g = new THREE.Group();
   const mats = [];
-  const M = (color, extra) => { const mm = m3(color, extra); if (transparente) { mm.transparent = true; } mats.push(mm); return mm; };
-  const logo = texturaCanvas(1024, 400, (c, w, h) => {
-    c.fillStyle = '#ffffff'; c.fillRect(0, 0, w, h);
-    c.fillStyle = '#e2e8f0'; c.fillRect(0, h - 26, w, 26);
-    c.fillStyle = '#1d4ed8'; c.beginPath(); c.roundRect(300, 130, 110, 110, 22); c.fill();
-    c.fillStyle = '#fff'; c.font = '800 60px Inter, Arial, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('B', 355, 188);
-    c.textAlign = 'left'; c.fillStyle = '#1e3a8a'; c.font = '800 64px Inter, Arial, sans-serif'; c.fillText(APP_NOMBRE.split(' ')[0], 432, 165);
-    c.font = '600 40px Inter, Arial, sans-serif'; c.fillStyle = '#64748b'; c.fillText(APP_NOMBRE.split(' ').slice(1).join(' ') || 'Logística', 432, 222);
-  });
-  const blanco = M('#ffffff'), lado = M('#ffffff', { map: logo });
-  // Remolque (caja blanca larga): se mira hacia +x
-  const remolque = new THREE.Mesh(new THREE.BoxGeometry(6, 2.5, 2.2), [blanco, blanco, blanco, blanco, lado, lado]);
-  remolque.position.set(-1, 1.85, 0); remolque.castShadow = true; remolque.receiveShadow = true;
+  const M = (color, extra) => { const m = vbMat(color, extra); mats.push(m); return m; };
+  // Remolque blanco 5 × 2 × 2 con bordes grises y logo
+  const remolque = vbCaja(5, 2, 2, M('#f8fafc'), -1.1, 1.9, 0);
   g.add(remolque);
-  g.add(caja3(7.6, 0.25, 1.4, M('#334155'), 0, 0.55, 0));
-  // Cabina azul oscuro con parabrisas
-  g.add(caja3(1.9, 2.1, 2.2, M('#1e40af', { roughness: 0.45 }), 2.95, 1.55, 0));
-  g.add(caja3(0.06, 0.8, 1.9, M('#0f172a', { roughness: 0.15, metalness: 0.3 }), 3.92, 2.05, 0, false));
-  [-1.11, 1.11].forEach(zz => g.add(caja3(0.9, 0.6, 0.04, M('#0f172a', { roughness: 0.15 }), 3.1, 2.1, zz, false)));
-  g.add(caja3(0.1, 0.35, 2.0, M('#e2e8f0'), 3.93, 0.75, 0, false));
-  // Ruedas (cilindros negros que giran)
+  const borde = M('#94a3b8');
+  [[0.95, 1.0], [0.95, -1.0], [2.88, 1.0], [2.88, -1.0]].forEach(([y, z]) => g.add(vbCaja(5.04, 0.08, 0.08, borde, -1.1, y, z)));
+  [-3.6, 1.4].forEach(x => [1.0, -1.0].forEach(z => g.add(vbCaja(0.08, 2.0, 0.08, borde, x, 1.9, z))));
+  const logo = vbCanvas(1024, 400, (c, w, h) => {
+    c.fillStyle = '#f8fafc'; c.fillRect(0, 0, w, h);
+    c.fillStyle = '#1d4ed8'; c.beginPath(); c.roundRect(170, 120, 150, 150, 30); c.fill();
+    c.strokeStyle = '#fff'; c.lineWidth = 12; c.lineJoin = 'round';
+    c.beginPath(); c.moveTo(200, 185); c.lineTo(245, 158); c.lineTo(290, 185); c.lineTo(290, 245); c.lineTo(200, 245); c.closePath(); c.stroke();
+    c.fillStyle = '#1e3a8a'; c.font = '800 132px Inter, Arial, sans-serif'; c.textBaseline = 'middle'; c.fillText('BODEGA', 350, 200);
+  });
+  const matLogo = M('#ffffff', { map: logo });
+  [1.011, -1.011].forEach(z => {
+    const lado = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 1.8), matLogo);
+    lado.position.set(-1.1, 1.9, z);
+    if (z < 0) lado.rotation.y = Math.PI;
+    g.add(lado);
+  });
+  // Chasis
+  g.add(vbCaja(7, 0.25, 1.4, M('#334155'), -0.2, 0.75, 0));
+  // Cabina azul 2 × 2.2 × 2, parabrisas y espejos
+  g.add(vbCaja(2, 2.2, 2, M('#1e40af', { roughness: 0.4 }), 2.5, 1.75, 0));
+  const vidrio = M('#93c5fd', { transparent: true, opacity: 0.75, roughness: 0.1, metalness: 0.3 });
+  g.add(vbCaja(0.2, 1.4, 1.8, vidrio, 3.45, 2.15, 0));
+  [-0.86, 0.86].forEach(z => g.add(vbCaja(1.0, 0.7, 0.2, vidrio, 2.7, 2.25, z * 1.17)));
+  const espejo = M('#374151');
+  [1.18, -1.18].forEach(z => {
+    g.add(vbCaja(0.3, 0.3, 0.12, espejo, 3.35, 2.35, z * 1.15));
+    g.add(vbCaja(0.06, 0.06, 0.35, espejo, 3.35, 2.35, z));
+  });
+  g.add(vbCaja(0.12, 0.3, 1.9, M('#e2e8f0'), 3.52, 1.0, 0));                 // parachoques
+  [0.7, -0.7].forEach(z => g.add(vbCaja(0.06, 0.18, 0.3, M('#fef9c3', { emissive: '#fde68a', emissiveIntensity: 0.3 }), 3.53, 1.25, z))); // focos
+  // 6 ruedas con aro
   const ruedas = [];
-  const geoR = new THREE.CylinderGeometry(0.46, 0.46, 0.34, 20);
-  const matR = M('#111827', { roughness: 0.9 });
-  [-3.1, -2.1, 2.9].forEach(x => [-1.02, 1.02].forEach(zz => {
-    const r = new THREE.Mesh(geoR, matR);
-    r.rotation.x = Math.PI / 2; r.position.set(x, 0.46, zz); r.castShadow = true;
+  const gRueda = new THREE.CylinderGeometry(0.4, 0.4, 0.3, 16), gAro = new THREE.CylinderGeometry(0.2, 0.2, 0.31, 8);
+  const mRueda = M('#1f2937', { roughness: 0.9 }), mAro = M('#9ca3af', { metalness: 0.6, roughness: 0.3 });
+  [-2.9, -2.0, 2.6].forEach(x => [1.0, -1.0].forEach(z => {
+    const r = new THREE.Group();
+    const llanta = new THREE.Mesh(gRueda, mRueda), aro = new THREE.Mesh(gAro, mAro);
+    llanta.castShadow = true;
+    r.add(llanta, aro);
+    r.rotation.x = Math.PI / 2;
+    r.position.set(x, 0.4, z);
     g.add(r); ruedas.push(r);
   }));
-  escena.add(g);
-  return { grupo: g, ruedas, mats, ultimo: null };
+  g.traverse(o => { o.userData.pick = { tipo: 'camion', id }; });
+  esc.add(g);
+  VB.clicables.push(g);
+  return { grupo: g, mats, ruedas, id };
 }
-function crearMontacargas(escena, conCarga) {
+
+/* ── Montacargas ── */
+function vbMontacargas(esc, id, conCarga) {
   const g = new THREE.Group();
-  const naranja = m3('#f59e0b', { roughness: 0.5 }), oscuro = m3('#1f2937'), gris = m3('#475569', { metalness: 0.4, roughness: 0.45 });
-  g.add(caja3(1.5, 0.75, 1.1, naranja, 0, 0.62, 0));                  // cuerpo
-  g.add(caja3(0.5, 0.55, 1.1, m3('#d97706'), -0.6, 1.1, 0));            // contrapeso
-  g.add(caja3(0.42, 0.4, 0.5, oscuro, -0.05, 1.18, 0));                // asiento
-  [[-0.55, -0.5], [-0.55, 0.5], [0.55, -0.5], [0.55, 0.5]].forEach(([x, z]) => g.add(caja3(0.08, 1.2, 0.08, oscuro, x, 1.6, z)));
-  g.add(caja3(1.25, 0.08, 1.12, oscuro, 0, 2.22, 0));                  // techo protector
-  [-0.4, 0.4].forEach(z => g.add(caja3(0.1, 2.3, 0.1, gris, 0.8, 1.15, z))); // mástil
-  const horquillas = new THREE.Group();                                 // forma en L: horquillas al frente
-  horquillas.add(caja3(0.1, 0.6, 0.95, gris, 0.86, 0.3, 0));
-  [-0.3, 0.3].forEach(z => horquillas.add(caja3(1.15, 0.07, 0.16, gris, 1.45, 0.04, z)));
+  const mats = [];
+  const M = (color, extra) => { const m = vbMat(color, extra); mats.push(m); return m; };
+  g.add(vbCaja(1.2, 1.4, 1.2, M('#f59e0b', { roughness: 0.5 }), 0, 0.95, 0));       // cuerpo
+  g.add(vbCaja(1, 0.8, 0.6, M('#fbbf24'), -0.1, 2.05, 0));                          // cabina del operador
+  [[-0.55, -0.55], [-0.55, 0.55], [0.5, -0.55], [0.5, 0.55]].forEach(([x, z]) => g.add(vbCaja(0.07, 0.95, 0.07, M('#1f2937'), x, 2.1, z)));
+  g.add(vbCaja(1.3, 0.1, 1.3, M('#d97706'), 0, 2.6, 0));                            // protector superior
+  const mastil = new THREE.Group();
+  [-0.4, 0.4].forEach(z => mastil.add(vbCaja(0.15, 2, 0.15, M('#92400e'), 0.7, 1.2, z)));
+  const horquillas = new THREE.Group();
+  [-0.3, 0.3].forEach(z => horquillas.add(vbCaja(1.2, 0.15, 0.4, M('#78350f'), 1.35, 0.15, z)));
   if (conCarga) {
-    horquillas.add(caja3(1.0, 0.12, 0.95, m3('#a16207'), 1.5, 0.14, 0));
-    horquillas.add(caja3(0.85, 0.6, 0.8, m3('#92400e'), 1.5, 0.5, 0));
+    horquillas.add(vbCaja(1, 0.1, 1, M('#d4a373'), 1.35, 0.28, 0));
+    horquillas.add(vbCaja(0.8, 0.6, 0.8, M('#b45309'), 1.35, 0.63, 0));
   }
-  horquillas.position.y = 0.12;
-  g.add(horquillas);
-  const geoR = new THREE.CylinderGeometry(0.24, 0.24, 0.2, 14), matR = m3('#111827');
-  [[-0.45, -0.58], [-0.45, 0.58], [0.5, -0.58], [0.5, 0.58]].forEach(([x, z]) => { const r = new THREE.Mesh(geoR, matR); r.rotation.x = Math.PI / 2; r.position.set(x, 0.24, z); r.castShadow = true; g.add(r); });
-  escena.add(g);
-  return { grupo: g, horquillas };
+  mastil.add(horquillas);
+  g.add(mastil);
+  const gR = new THREE.CylinderGeometry(0.25, 0.25, 0.2, 12), mR = M('#1f2937');
+  [[-0.4, 0.62], [-0.4, -0.62], [0.4, 0.62], [0.4, -0.62]].forEach(([x, z]) => {
+    const r = new THREE.Mesh(gR, mR); r.rotation.x = Math.PI / 2; r.position.set(x, 0.25, z); r.castShadow = true; g.add(r);
+  });
+  // Zona de toque más grande e invisible (facilita tocarlo en el celular)
+  const zona = new THREE.Mesh(new THREE.BoxGeometry(3, 2.8, 1.8), new THREE.MeshBasicMaterial({ visible: false }));
+  zona.position.set(0.5, 1.4, 0);
+  zona.userData.zonaToque = true;
+  g.add(zona);
+  g.traverse(o => { o.userData.pick = { tipo: 'montacargas', id }; });
+  esc.add(g);
+  VB.clicables.push(g);
+  return { grupo: g, mats, horquillas, id };
 }
-function crearPila(escena, { x, z, capas }, idx) {
-  const g = new THREE.Group();
-  g.add(caja3(1.9, 0.18, 1.9, m3('#a16207'), 0, 0.09, 0));
-  const tonos = ['#92400e', '#9a4a12', '#8a3c0c'];
-  for (let c = 0; c < capas; c++) {
-    [[-0.45, -0.45], [0.45, -0.45], [-0.45, 0.45], [0.45, 0.45]].forEach(([dx, dz], k) => {
-      g.add(caja3(0.86, 0.6, 0.86, m3(tonos[(c + k) % tonos.length]), dx, 0.18 + 0.3 + c * 0.62, dz));
+
+/* ── Cajas, pallets y árboles ── */
+const VB_COLORES_CAJA = ['#92400e', '#b45309', '#78350f', '#d97706'];
+let vbTexturasCaja = null;
+function vbTexturaCaja(color) {
+  if (!vbTexturasCaja) vbTexturasCaja = {};
+  if (!vbTexturasCaja[color]) {
+    vbTexturasCaja[color] = vbCanvas(128, 128, (c, w, h) => {
+      c.fillStyle = color; c.fillRect(0, 0, w, h);
+      c.fillStyle = 'rgba(255,255,255,.08)'; c.fillRect(0, 0, w, 10);
+      c.fillStyle = 'rgba(254,243,199,.75)'; c.fillRect(w / 2 - 9, 0, 18, h);      // cinta de embalaje
+      c.strokeStyle = 'rgba(0,0,0,.25)'; c.lineWidth = 4; c.strokeRect(2, 2, w - 4, h - 4);
+      c.fillStyle = 'rgba(0,0,0,.18)'; c.fillRect(14, h - 34, 34, 18);                // etiqueta
     });
-    g.add(caja3(1.76, 0.03, 0.12, m3('#d6a56b'), 0, 0.18 + 0.61 + c * 0.62, 0, false));
+  }
+  return vbTexturasCaja[color];
+}
+function vbPila(esc, x, z, n, semilla) {
+  const g = new THREE.Group();
+  g.add(vbCaja(1, 0.1, 1, vbMat('#d4a373'), 0, 0.05, 0));
+  for (let i = 0; i < n; i++) {
+    const color = VB_COLORES_CAJA[(i + semilla) % VB_COLORES_CAJA.length];
+    const caja = vbCaja(0.8, 0.6, 0.8, new THREE.MeshStandardMaterial({ map: vbTexturaCaja(color), roughness: 0.85 }), 0, 0.1 + 0.3 + i * 0.6, 0);
+    caja.rotation.y = ((i * 37 + semilla * 11) % 9 - 4) * 0.02;
+    g.add(caja);
   }
   g.position.set(x, 0, z);
-  g.traverse(o => { o.userData.sel = { tipo: 'pila', id: idx }; o.userData.pick = { obj: 'pila', id: idx }; });
-  bodega3D.pilas[idx] = g;
-  escena.add(g);
-  bodega3D.clicables.push(g);
-  return g;
+  esc.add(g);
 }
-function crearArbol(escena, x, z, esc) {
+function vbArbol(esc, x, z, s = 1) {
   const g = new THREE.Group();
-  const tronco = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.24, 1.4, 10), m3('#92400e'));
-  tronco.position.y = 0.7; tronco.castShadow = true;
-  const copa = new THREE.Mesh(new THREE.SphereGeometry(1.15, 20, 16), m3('#16a34a', { roughness: 0.9 }));
-  copa.position.y = 2.15; copa.castShadow = true; copa.receiveShadow = true;
-  const copa2 = new THREE.Mesh(new THREE.SphereGeometry(0.7, 16, 12), m3('#22c55e', { roughness: 0.9 }));
-  copa2.position.set(0.45, 2.7, 0.3); copa2.castShadow = true;
+  const tronco = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.2, 1.2, 8), vbMat('#92400e'));
+  tronco.position.y = 0.6; tronco.castShadow = true;
+  const copa = new THREE.Mesh(new THREE.SphereGeometry(0.9, 8, 8), vbMat('#16a34a', { roughness: 0.9, flatShading: true }));
+  copa.position.y = 1.75; copa.castShadow = true; copa.receiveShadow = true;
+  const copa2 = new THREE.Mesh(new THREE.SphereGeometry(0.6, 8, 8), vbMat('#15803d', { roughness: 0.9, flatShading: true }));
+  copa2.position.set(0.1, 2.5, 0.05); copa2.castShadow = true;
   g.add(tronco, copa, copa2);
-  g.position.set(x, 0, z); g.scale.setScalar(esc);
-  escena.add(g);
+  g.position.set(x, 0, z); g.scale.setScalar(s);
+  esc.add(g);
 }
 
-/* ── Inicio, cámara y bucle ── */
-function iniciarBodega3D() {
-  if (bodega3D.iniciado || bodega3D.fallo) return;
-  const lienzo = $('#wt-canvas');
-  if (!lienzo) return;
-  if (!hayThree()) return falloBodega3D('No se pudo cargar Three.js. Revisa tu conexión a internet y recarga la página.');
+/* ── Marcadores flotantes de bahía (datos reales de "camiones") ── */
+const VB_COLOR_ESTADO = { cargando: '#22c55e', descargando: '#16a34a', esperando: '#eab308', listo: '#3b82f6', libre: '#6b7280' };
+const VB_TEXTO_ESTADO = { cargando: 'Cargando', descargando: 'Descargando', esperando: 'Esperando', listo: 'Listo', libre: 'Libre' };
+function vbBahias() { const conf = bahiasConfig(); return [0, 1, 2].map(i => conf[i] || `Bahía ${i + 1}`); }
+function vbCamionEnBahia(i) { return ocupantesBahia(vbBahias()[i])[0] || null; }
+function vbEstadoBahia(i) { const c = vbCamionEnBahia(i); return c ? c.estado : 'libre'; }
+function vbActualizarMarcadores() {
+  VB.marcadores.forEach((spr, i) => {
+    const estado = vbEstadoBahia(i);
+    const texto = `BAHÍA ${i + 1} · ${VB_TEXTO_ESTADO[estado] || estado}`;
+    if (spr.userData.texto === texto) return;
+    spr.userData.texto = texto;
+    const tex = vbCanvas(768, 200, (c, w, h) => {
+      c.fillStyle = VB_COLOR_ESTADO[estado] || '#6b7280';
+      c.beginPath(); c.roundRect(8, 8, w - 16, h - 16, 44); c.fill();
+      c.fillStyle = 'rgba(255,255,255,.25)'; c.beginPath(); c.arc(78, h / 2, 22, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#ffffff'; c.beginPath(); c.arc(78, h / 2, 12, 0, Math.PI * 2); c.fill();
+      c.font = '800 70px Inter, Arial, sans-serif'; c.textBaseline = 'middle'; c.fillText(texto, 120, h / 2 + 3);
+    });
+    if (spr.material.map) spr.material.map.dispose();
+    spr.material.map = tex;
+    spr.material.needsUpdate = true;
+  });
+}
+
+/* ── Inicio ── */
+function iniciarVistaBodega() {
+  if (VB.iniciado || VB.fallo) return;
+  const cont = $('#vb-canvas-wrap');
+  if (!cont) return;
+  if (typeof window.THREE === 'undefined') return vbFallo('No se pudo cargar Three.js. Revisa tu conexión a internet y recarga la página.');
   let renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas: lienzo, antialias: true, alpha: true, powerPreference: 'high-performance' });
+    renderer = new THREE.WebGLRenderer({ antialias: true });
   } catch (err) {
-    return falloBodega3D('Tu navegador no permite gráficos 3D (WebGL). Activa la aceleración por hardware o prueba con otro navegador.');
+    return vbFallo('Tu navegador no permite gráficos 3D (WebGL). Activa la aceleración por hardware o prueba otro navegador.');
   }
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.setClearColor(0x000000, 0);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  const escena = new THREE.Scene();
-  // Luces: ambiente 0.6 y direccional 0.8 desde arriba-derecha (× π = equivalente
-  // a esas intensidades en el modo de iluminación física de Three r155+)
-  escena.add(new THREE.AmbientLight(0xffffff, 0.6 * Math.PI));
-  const sol = new THREE.DirectionalLight(0xffffff, 0.8 * Math.PI);
-  sol.position.set(16, 26, 12);
+  renderer.domElement.id = 'vb-canvas';
+  cont.prepend(renderer.domElement);
+
+  const esc = new THREE.Scene();
+  esc.background = new THREE.Color('#dbeafe');
+  esc.fog = new THREE.Fog('#dbeafe', 30, 80);
+  // Intensidades × π: equivalen a 0.5 / 1.2 / 0.3 en el modo de luces clásico (Three r155+ usa luz física)
+  esc.add(new THREE.AmbientLight('#ffffff', 0.5 * Math.PI));
+  const sol = new THREE.DirectionalLight('#ffffff', 1.2 * Math.PI);
+  sol.position.set(15, 25, 10);
   sol.castShadow = true;
   sol.shadow.mapSize.set(2048, 2048);
-  Object.assign(sol.shadow.camera, { left: -28, right: 28, top: 24, bottom: -24, near: 1, far: 80 });
-  sol.shadow.bias = -0.0004;
+  Object.assign(sol.shadow.camera, { near: 1, far: 60, left: -20, right: 20, top: 20, bottom: -20 });
+  sol.shadow.bias = -0.0005;
   sol.shadow.normalBias = 0.03;
-  sol.shadow.radius = 4;
-  escena.add(sol);
+  esc.add(sol);
+  esc.add(new THREE.HemisphereLight('#87CEEB', '#8B7355', 0.3 * Math.PI));
 
-  crearSuelo(escena);
-  crearEdificio(escena);
-  W3.PILAS.forEach((p, i) => crearPila(escena, p, i));
-  W3.ARBOLES.forEach(([x, z, s]) => crearArbol(escena, x, z, s));
-  bodega3D.camion1 = crearCamion(escena, true);
-  const camion2 = crearCamion(escena, false);
-  camion2.grupo.position.set(W3.PUERTAS_X[1], 0, W3.ANDEN_Z);
-  camion2.grupo.rotation.y = -Math.PI / 2; // estacionado de reversa en la bahía 2
-  camion2.grupo.traverse(o => { o.userData.sel = { tipo: 'bahia', id: 1 }; o.userData.pick = { obj: 'camion', id: 1 }; });
-  bodega3D.clicables.push(camion2.grupo);
-  bodega3D.camion1.grupo.traverse(o => { o.userData.sel = { tipo: 'bahia', id: 0 }; o.userData.pick = { obj: 'camion', id: 0 }; });
-  bodega3D.clicables.push(bodega3D.camion1.grupo);
-  bodega3D.camiones = [bodega3D.camion1, camion2];
-  const fA = crearMontacargas(escena, true);
-  const fB = crearMontacargas(escena, false);
-  fA.grupo.position.set(4.8, 0, 7.8);
-  fB.grupo.position.set(-10.8, 0, 7.6); fB.grupo.rotation.y = Math.PI;
-  bodega3D.montacargas = [
-    { ...fA, base: 4.8, recorrido: 3.8, periodo: 7, fase: 0 },
-    { ...fB, base: -10.8, recorrido: -2.8, periodo: 8.5, fase: 2.2 },
-  ];
-  bodega3D.montacargas.forEach((f, i) => {
-    const zona = new THREE.Mesh(new THREE.BoxGeometry(3.4, 2.8, 1.8), new THREE.MeshBasicMaterial({ visible: false }));
-    zona.position.set(0.6, 1.4, 0);
-    zona.userData.hitbox = true;
-    f.grupo.add(zona);
-    f.grupo.traverse(o => { o.userData.pick = { obj: 'montacargas', id: i }; });
-    bodega3D.clicables.push(f.grupo);
+  const camara = new THREE.PerspectiveCamera(45, 1, 0.1, 200);
+  camara.position.set(20, 18, 20);
+  camara.lookAt(0, 0, 0);
+
+  Object.assign(VB, { renderer, escena: esc, camara, raycaster: new THREE.Raycaster() });
+
+  vbSuelo(esc);
+  vbEdificio(esc);
+  // 3 camiones: 1 en movimiento, 2 estacionado en B2, 3 saliendo de B3
+  VB.camiones = [vbCamion(esc, 0), vbCamion(esc, 1), vbCamion(esc, 2)];
+  VB.camiones[1].grupo.position.set(VB.PUERTAS[1], 0, VB.ANDEN);
+  VB.camiones[1].grupo.rotation.y = -Math.PI / 2;
+  VB.camiones[2].grupo.position.set(5.6, 0, 6.9);
+  VB.camiones[2].grupo.rotation.y = -Math.PI / 2 + 0.5;
+  // 3 montacargas: 1 va y viene, 2 patrulla, 3 cargando en bahía
+  VB.montacargas = [vbMontacargas(esc, 0, true), vbMontacargas(esc, 1, false), vbMontacargas(esc, 2, true)];
+  VB.montacargas[0].grupo.position.set(3, 0, 2);
+  VB.montacargas[2].grupo.position.set(-1.95, 0, 2.1);
+  VB.montacargas[2].grupo.rotation.y = Math.PI / 2;
+  VB.montacargas[2].horquillas.position.y = 0.55;
+  // 6 pilas de cajas (3 a 5 cajas): frente a bahías, lado del edificio y patio
+  [[-8, 2.6, 4], [-7.9, 7.4, 3], [9.6, 1.9, 5], [9.6, -2.6, 3], [9.6, -5.6, 4], [-14, 9.2, 5]].forEach(([x, z, n], i) => vbPila(esc, x, z, n, i));
+  // 6 árboles en los bordes
+  [[-18, -12, 1.2], [-19, 4, 1], [-15, 15, 1.1], [17, -13, 1.25], [19, 3, 1], [14, 16, 1.1]].forEach(([x, z, s]) => vbArbol(esc, x, z, s));
+  // Marcadores de bahía (sprites a y = 6)
+  VB.marcadores = VB.PUERTAS.map(x => {
+    const spr = new THREE.Sprite(new THREE.SpriteMaterial({ transparent: true, depthWrite: false }));
+    spr.scale.set(3, 1, 1);
+    spr.position.set(x, 6, 0.4);
+    spr.renderOrder = 10;
+    spr.userData.pick = null;
+    esc.add(spr);
+    return spr;
   });
+  vbActualizarMarcadores();
 
-  const camara = new THREE.OrthographicCamera(-10, 10, 10, -10, 0.1, 200);
-  Object.assign(bodega3D, { renderer, escena, camara, raycaster: new THREE.Raycaster(), objetivo: new THREE.Vector3(0, 1.2, 0), iniciado: true });
-  bodega3D.reducido = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  crearEtiquetas3D();
-  ajustarCamara3D();
-  if (window.ResizeObserver) new ResizeObserver(() => { if (bodega3D.iniciado) { ajustarCamara3D(); if (!bodega3D.activo) dibujarBodega3D(performance.now() / 1000); } }).observe($('#wt-stage'));
-  else window.addEventListener('resize', ajustarCamara3D);
-  enlazarToques3D(lienzo);
+  VB.iniciado = true;
+  vbAjustarTamano();
+  window.addEventListener('resize', vbAjustarTamano);
+  if (window.ResizeObserver) new ResizeObserver(vbAjustarTamano).observe(cont);
+  const lienzo = renderer.domElement;
+  lienzo.addEventListener('click', ev => {
+    if (Date.now() - VB.ultimoToque < 600) return; // el toque ya se procesó
+    vbSeleccionarEn(ev.clientX, ev.clientY);
+  });
+  lienzo.addEventListener('touchstart', ev => {
+    const t = ev.changedTouches[0];
+    if (!t) return;
+    VB.ultimoToque = Date.now();
+    vbSeleccionarEn(t.clientX, t.clientY);
+  }, { passive: true });
+  lienzo.addEventListener('mousemove', debounce(ev => { lienzo.style.cursor = vbPick(ev.clientX, ev.clientY) ? 'pointer' : 'default'; }, 40));
+  document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && VB.sel) vbCerrarPanel(); });
   document.addEventListener('visibilitychange', actualizarVisibilidadBodega3D);
 }
-function falloBodega3D(msg) {
-  bodega3D.fallo = msg;
-  const f = $('#wt-fallback');
+function vbFallo(msg) {
+  VB.fallo = msg;
+  const f = $('#vb-fallo');
   if (f) { f.hidden = false; f.innerHTML = `<div class="empty-ic">${ic('warehouse')}</div><strong>Vista 3D no disponible</strong><span>${esc(msg)}</span>`; }
 }
-function posicionarCamara3D(azGrados) {
-  const { camara, objetivo } = bodega3D;
-  const az = THREE.MathUtils.degToRad(azGrados), el = THREE.MathUtils.degToRad(W3.EL), r = 70;
-  camara.position.set(objetivo.x + r * Math.cos(el) * Math.sin(az), objetivo.y + r * Math.sin(el), objetivo.z + r * Math.cos(el) * Math.cos(az));
-  camara.lookAt(objetivo);
-  camara.updateMatrixWorld();
+function vbAjustarTamano() {
+  const cont = $('#vb-canvas-wrap');
+  if (!VB.renderer || !cont || !cont.clientWidth) return;
+  const w = cont.clientWidth, h = VB.ALTO;
+  VB.renderer.setSize(w, h, true);
+  VB.camara.aspect = w / h;
+  // En pantallas angostas se abre un poco el ángulo para que entre toda la bodega
+  VB.camara.fov = w < 520 ? 62 : w < 820 ? 52 : 45;
+  VB.camara.updateProjectionMatrix();
+  if (!VB.activo) vbDibujar(VB.reloj);
 }
-function margenesEscena() {
-  const ancho = window.innerWidth;
-  if (ancho >= 1180) return { arriba: 80, abajo: 150, izq: 10, der: 10 };
-  if (ancho >= 768) return { arriba: 86, abajo: 20, izq: 12, der: 12 };
-  return { arriba: 58, abajo: 4, izq: 2, der: 2 };
+
+/* ── Animación ── */
+// Camión 1: calle (x -20 → -4) → gira → retrocede a B1 → espera 4 s → sale → gira → calle (x -4 → 20)
+const VB_RUTA = (() => {
+  const v = 0.02 * 60, b1 = -4, giro = 1.2;
+  const tramos = [
+    { tipo: 'calle', desde: -20, hasta: b1, dur: (b1 + 20) / v },
+    { tipo: 'giro', desde: 0, hasta: -Math.PI / 2, dur: giro },
+    { tipo: 'reversa', desde: 12, hasta: 3.7, dur: (12 - 3.7) / v },
+    { tipo: 'espera', dur: 4 },
+    { tipo: 'avance', desde: 3.7, hasta: 12, dur: (12 - 3.7) / v },
+    { tipo: 'giro', desde: -Math.PI / 2, hasta: 0, dur: giro },
+    { tipo: 'calle', desde: b1, hasta: 20, dur: (20 - b1) / v },
+  ];
+  let t = 0;
+  tramos.forEach(s => { s.ini = t; t += s.dur; });
+  return { tramos, total: t, b1 };
+})();
+function vbPoseCamion1(seg) {
+  const t = seg % VB_RUTA.total;
+  const s = VB_RUTA.tramos.find(x => t >= x.ini && t < x.ini + x.dur) || VB_RUTA.tramos[VB_RUTA.tramos.length - 1];
+  const k = Math.min(1, (t - s.ini) / s.dur), suave = k * k * (3 - 2 * k);
+  const b1 = VB_RUTA.b1;
+  if (s.tipo === 'calle') return { x: s.desde + (s.hasta - s.desde) * k, z: VB.CALLE, yaw: 0, esperando: false };
+  if (s.tipo === 'giro') return { x: b1, z: VB.CALLE, yaw: s.desde + (s.hasta - s.desde) * suave, esperando: false };
+  if (s.tipo === 'reversa' || s.tipo === 'avance') return { x: b1, z: s.desde + (s.hasta - s.desde) * k, yaw: -Math.PI / 2, esperando: false };
+  return { x: b1, z: VB.ANDEN, yaw: -Math.PI / 2, esperando: true };
 }
-function ajustarCamara3D() {
-  const { renderer, camara } = bodega3D;
-  const stage = $('#wt-stage');
-  if (!renderer || !stage) return;
-  const w = Math.max(1, stage.clientWidth), h = Math.max(1, stage.clientHeight);
-  renderer.setSize(w, h, false);
-  posicionarCamara3D(W3.AZ);
-  const inv = camara.matrixWorldInverse, v = new THREE.Vector3();
-  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-  const { x: X, y: Y, z: Z } = window.innerWidth < 768 ? W3.LIMITES_MOVIL : W3.LIMITES;
-  for (const x of X) for (const y of Y) for (const z of Z) {
-    v.set(x, y, z).applyMatrix4(inv);
-    minX = Math.min(minX, v.x); maxX = Math.max(maxX, v.x); minY = Math.min(minY, v.y); maxY = Math.max(maxY, v.y);
+function vbAnimar(seg, dt) {
+  const c1 = VB.camiones[0];
+  const p = vbPoseCamion1(seg);
+  const g = c1.grupo;
+  const dx = p.x - g.position.x, dz = p.z - g.position.z, dist = Math.hypot(dx, dz);
+  if (dist > 0 && dist < 2) {
+    const sentido = (Math.cos(g.rotation.y) * dx - Math.sin(g.rotation.y) * dz) >= 0 ? 1 : -1;
+    c1.ruedas.forEach(r => { r.rotation.y += sentido * dist / 0.4; });
   }
-  // Zoom fijo que muestra toda la bodega, dejando espacio para los paneles flotantes
-  const m = margenesEscena();
-  const util = { w: Math.max(80, w - m.izq - m.der), h: Math.max(80, h - m.arriba - m.abajo) };
-  const s = Math.max((maxX - minX) / util.w, (maxY - minY) / util.h); // unidades por píxel
-  const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
-  const centroPx = { x: m.izq + util.w / 2, y: m.arriba + util.h / 2 };
-  camara.left = cx - centroPx.x * s;
-  camara.right = camara.left + w * s;
-  camara.top = cy + centroPx.y * s;
-  camara.bottom = camara.top - h * s;
-  camara.updateProjectionMatrix();
+  g.position.set(p.x, 0, p.z);
+  g.rotation.y = p.yaw;
+  c1.esperando = p.esperando;
+  // Montacargas 1: ida y vuelta entre x = 3 y x = 7 cada 3 s
+  const f1 = VB.montacargas[0];
+  const fase = (seg % 6) / 6;
+  f1.grupo.position.x = 3 + 4 * (0.5 - 0.5 * Math.cos(fase * Math.PI * 2));
+  f1.horquillas.position.y = 0.25 + 0.25 * Math.sin(seg * 2);
+  // Montacargas 2: patrulla en círculo lento cerca de las cajas
+  const f2 = VB.montacargas[1];
+  const ang = seg * 0.25;
+  f2.grupo.position.set(-11 + Math.cos(ang) * 2.2, 0, 5.4 + Math.sin(ang) * 2.2);
+  f2.grupo.rotation.y = -ang - Math.PI / 2; // mira hacia donde avanza
+  // Montacargas 3: estático cargando (horquillas suben y bajan suavemente)
+  VB.montacargas[2].horquillas.position.y = 0.45 + 0.15 * Math.sin(seg * 1.3);
 }
-const suave = k => (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2);
-function poseCamion1(t) {
-  // Ciclo de 10 s: entra por la izquierda → retrocede a la bahía 1 → espera 3 s → sale
-  const BX = W3.PUERTAS_X[0], CZ = W3.CALLE_Z, AZ = W3.ANDEN_Z, GIRO = -Math.PI / 2;
-  const tramo = (a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
-  if (t < 2.4) return { x: -26 + (BX + 26) * suave(tramo(0, 2.4)), z: CZ, yaw: 0, alfa: Math.min(1, t / 0.6) };
-  if (t < 3.2) return { x: BX, z: CZ, yaw: GIRO * suave(tramo(2.4, 3.2)), alfa: 1 };
-  if (t < 4.4) return { x: BX, z: CZ + (AZ - CZ) * suave(tramo(3.2, 4.4)), yaw: GIRO, alfa: 1 };
-  if (t < 7.4) return { x: BX, z: AZ, yaw: GIRO, alfa: 1 };
-  if (t < 8.4) return { x: BX, z: AZ + (CZ - AZ) * suave(tramo(7.4, 8.4)), yaw: GIRO, alfa: 1 };
-  if (t < 8.9) return { x: BX, z: CZ, yaw: GIRO * (1 - suave(tramo(8.4, 8.9))), alfa: 1 };
-  const k = tramo(8.9, 10);
-  return { x: BX + 20 * k * k, z: CZ, yaw: 0, alfa: 1 - Math.max(0, (t - 9.4) / 0.6) };
+function vbDibujar(seg, dt = 0) {
+  if (!VB.renderer) return;
+  vbAnimar(seg, dt);
+  if (seg - VB.ultimoMarcador >= 5) { VB.ultimoMarcador = seg; vbActualizarMarcadores(); } // cada 5 s
+  VB.renderer.render(VB.escena, VB.camara);
+  vbPosicionarPanel();
 }
-function animarBodega3D(seg) {
-  const c1 = bodega3D.camion1;
-  const t = bodega3D.reducido ? 5.5 : seg % 10;
-  const p = poseCamion1(t);
-  c1.grupo.position.set(p.x, 0, p.z);
-  c1.grupo.rotation.y = p.yaw;
-  c1.mats.forEach(mm => { mm.opacity = p.alfa; mm.depthWrite = p.alfa > 0.98; });
-  c1.grupo.visible = p.alfa > 0.01;
-  if (c1.ultimo) {
-    const d = Math.hypot(p.x - c1.ultimo.x, p.z - c1.ultimo.z);
-    const adelante = Math.cos(p.yaw) * (p.x - c1.ultimo.x) - Math.sin(p.yaw) * (p.z - c1.ultimo.z) >= 0 ? 1 : -1;
-    if (d < 2) c1.ruedas.forEach(r => { r.rotation.y -= adelante * d / 0.46; });
-  }
-  c1.ultimo = { x: p.x, z: p.z };
-  bodega3D.montacargas.forEach(f => {
-    const fase = bodega3D.reducido ? 0 : ((seg + f.fase) % f.periodo) / f.periodo;
-    const ida = 0.5 - 0.5 * Math.cos(fase * Math.PI * 2);
-    f.fase01 = fase; f.ida = ida;
-    f.grupo.position.x = f.base + f.recorrido * ida;
-    f.horquillas.position.y = 0.12 + 0.35 * Math.max(0, Math.sin(fase * Math.PI * 2 - Math.PI / 2));
-  });
-}
-function dibujarBodega3D(seg) {
-  const { renderer, escena, camara } = bodega3D;
-  if (!renderer) return;
-  // Respiración de cámara: ±2° en 20 s
-  posicionarCamara3D(W3.AZ + (bodega3D.reducido ? 0 : 2 * Math.sin((seg / 20) * Math.PI * 2)));
-  animarBodega3D(seg);
-  renderer.render(escena, camara);
-  posicionarEtiquetas3D();
-  if (bodega3D.pop) {
-    if (bodega3D.pop.obj === 'montacargas' && seg - (bodega3D.ultPop || 0) > 0.25) { bodega3D.ultPop = seg; renderPop3D(); }
-    posicionarPop3D();
-  }
-}
-function bucleBodega3D(ms) {
-  if (!bodega3D.activo) { bodega3D.raf = null; return; }
-  dibujarBodega3D(ms / 1000);
-  bodega3D.raf = requestAnimationFrame(bucleBodega3D);
+function vbBucle(ms) {
+  if (!VB.activo) { VB.raf = null; return; }
+  const t = ms / 1000;
+  const dt = VB.ultimoT ? Math.min(0.1, t - VB.ultimoT) : 0;
+  VB.ultimoT = t;
+  VB.reloj += dt;
+  vbDibujar(VB.reloj, dt);
+  VB.raf = requestAnimationFrame(vbBucle);
 }
 function actualizarVisibilidadBodega3D() {
   const vista = $('#view-bodega');
   const visible = !!vista && !vista.hidden && !document.hidden && esGestor() && !$('#screen-app').hidden;
-  if (visible && !bodega3D.iniciado && !bodega3D.fallo) iniciarBodega3D();
-  bodega3D.activo = visible && bodega3D.iniciado;
-  if (!bodega3D.activo && bodega3D.raf) { cancelAnimationFrame(bodega3D.raf); bodega3D.raf = null; }
-  if (bodega3D.activo) {
-    ajustarCamara3D();
+  if (visible && !VB.iniciado && !VB.fallo) iniciarVistaBodega();
+  VB.activo = visible && VB.iniciado;
+  if (!VB.activo && VB.raf) { cancelAnimationFrame(VB.raf); VB.raf = null; }
+  if (VB.activo) {
+    vbAjustarTamano();
     renderVistaBodega();
-    if (!bodega3D.raf) bodega3D.raf = requestAnimationFrame(bucleBodega3D);
+    VB.ultimoT = 0;
+    if (!VB.raf) VB.raf = requestAnimationFrame(vbBucle);
   }
+}
+function detenerVistaBodega() {
+  if (VB.iniciado) vbCerrarPanel();
+  VB.activo = false;
+  if (VB.raf) { cancelAnimationFrame(VB.raf); VB.raf = null; }
 }
 
-/* ── Etiquetas sobre la escena (HTML proyectado desde 3D) ── */
-function crearEtiquetas3D() {
-  const cont = $('#wt-labels');
-  cont.innerHTML = '';
-  bodega3D.etiquetas = [];
-  W3.PUERTAS_X.forEach((x, i) => {
-    const el = document.createElement('button');
-    el.className = 'wt-tag';
-    el.dataset.action = 'wt-sel'; el.dataset.tipo = 'bahia'; el.dataset.id = String(i);
-    cont.appendChild(el);
-    bodega3D.etiquetas.push({ el, pos: new THREE.Vector3(x, 4.95, W3.FACHADA_Z + 0.2) });
-  });
-  W3.PILAS.forEach((p, i) => {
-    const el = document.createElement('button');
-    el.className = 'wt-pin';
-    el.dataset.action = 'wt-sel'; el.dataset.tipo = 'pila'; el.dataset.id = String(i);
-    cont.appendChild(el);
-    bodega3D.etiquetas.push({ el, pos: new THREE.Vector3(p.x, 0.3 + p.capas * 0.62 + 1.1, p.z) });
-  });
-}
-function posicionarEtiquetas3D() {
-  const stage = $('#wt-stage');
-  if (!stage) return;
-  const w = stage.clientWidth, h = stage.clientHeight, v = new THREE.Vector3();
-  bodega3D.etiquetas.forEach(({ el, pos }) => {
-    v.copy(pos).project(bodega3D.camara);
-    el.style.transform = `translate(${((v.x + 1) / 2 * w).toFixed(1)}px, ${((1 - v.y) / 2 * h).toFixed(1)}px) translate(-50%, -100%)`;
-  });
-}
-function bahiasEscena3D() { const conf = bahiasConfig(); return [0, 1, 2].map(i => conf[i] || `Bahía ${i + 1}`); }
-function estadoBahia(b) {
-  const c = ocupantesBahia(b)[0];
-  if (!c) return { c: null, tone: 'green', label: 'Libre' };
-  const e = EST_CAMION[c.estado] || { label: c.estado, tone: 'gray' };
-  return { c, tone: e.tone, label: e.label };
-}
-const TONO_HEX = { green: '#16a34a', yellow: '#eab308', red: '#dc2626', blue: '#2563eb', indigo: '#6366f1', cyan: '#06b6d4', gray: '#94a3b8' };
-function productosCriticos() {
-  return [...S.productos.values()]
-    .sort((a, b) => (a.cantidad_actual / Math.max(1, a.cantidad_minima)) - (b.cantidad_actual / Math.max(1, b.cantidad_minima)))
-    .slice(0, W3.PILAS.length);
-}
-
-/* ── Paneles flotantes (datos reales, en vivo) ── */
-function ponerHTML(el, html) {
-  if (el && el._html !== html) { el.innerHTML = html; el._html = html; }
-}
-function renderVistaBodega() {
-  const raiz = $('#wt');
-  if (!raiz || !esGestor() || $('#view-bodega').hidden) return;
-  const bahias = bahiasEscena3D();
-  const criticos = productosCriticos();
-  // Luces de las puertas y etiquetas de bahías / pines de productos
-  bahias.forEach((b, i) => {
-    const st = estadoBahia(b);
-    const p = bodega3D.puertas[i];
-    if (p) { p.luz.color.set(TONO_HEX[st.tone]); p.luz.emissive.set(TONO_HEX[st.tone]); }
-    const et = $(`#wt-labels .wt-tag[data-id="${i}"]`);
-    if (et) {
-      et.className = `wt-tag tone-${st.tone}${bodega3D.seleccion?.tipo === 'bahia' && bodega3D.seleccion.id === i ? ' sel' : ''}`;
-      et.innerHTML = `<i class="n">${i + 1}</i><b>${esc(b)}</b><span>${esc(st.label)}${st.c ? ' · ' + esc(st.c.placa || 'Sin placa') : ''}</span>`;
-      et.setAttribute('aria-label', `${b}: ${st.label}`);
-    }
-  });
-  W3.PILAS.forEach((_, i) => {
-    const pin = $(`#wt-labels .wt-pin[data-id="${i}"]`);
-    if (!pin) return;
-    const prod = criticos[i];
-    pin.hidden = !prod;
-    if (!prod) return;
-    const n = nivelStock(prod);
-    pin.className = `wt-pin nivel-${n}${bodega3D.seleccion?.tipo === 'pila' && bodega3D.seleccion.id === i ? ' sel' : ''}`;
-    pin.innerHTML = `<span class="pin-ic">${ic('package')}</span><span class="pin-txt">${esc(prod.nombre)}</span>`;
-    pin.setAttribute('aria-label', `${prod.nombre}: ${fmtNum(prod.cantidad_actual)} ${prod.unidad || ''}`);
-  });
-  // KPIs flotantes
-  const k = calcularKPIs();
-  ponerHTML($('#wt-kpis'), [
-    { icon: 'package', lbl: 'Stock total', val: fmtNum(k.stock), sub: k.bajos ? `${k.bajos} bajo mínimo` : 'Todo sobre el mínimo', tone: k.bajos ? 'red' : 'green' },
-    { icon: 'truck', lbl: 'Camiones en sitio', val: fmtNum(k.enSitio), sub: `${k.enRuta} en ruta`, tone: k.esperando ? 'yellow' : 'blue' },
-    { icon: 'target', lbl: 'Entregas a tiempo', val: k.pct === null ? '—' : `${k.pct}%`, sub: k.pct === null ? 'Sin entregas este mes' : 'Este mes', tone: k.pct === null ? 'gray' : k.pct >= 90 ? 'green' : k.pct >= 70 ? 'yellow' : 'red' },
-  ].map(x => `<div class="wt-kpi wt-glass tone-${x.tone}"><span class="wt-kpi-ic">${ic(x.icon)}</span><div><span class="wt-kpi-lbl">${x.lbl}</span><strong>${x.val}</strong><small>${esc(x.sub)}</small></div></div>`).join(''));
-  renderSeguimiento3D();
-  renderLista3D(bahias);
-  renderDetalle3D(bahias, criticos);
-  renderPop3D();
-}
-const PASOS_PEDIDO = [['confirmado', 'Confirmado', 'clipboard'], ['preparando', 'Preparando', 'package'], ['enviado', 'Enviado', 'truck'], ['entregado', 'Entregado', 'checkCircle']];
-function renderSeguimiento3D() {
-  const cont = $('#wt-tracking');
-  const activos = [...S.pedidos.values()].filter(p => p.estado !== 'entregado').sort(ordenarPedidos);
-  if (!activos.length) {
-    ponerHTML(cont, `<div class="wt-head"><h4>${ic('route')} Seguimiento de pedidos</h4></div><div class="wt-vacio">${ic('checkCircle')} No hay pedidos activos. ¡Todo entregado!</div>`);
-    return;
+/* ── Interactividad (Raycaster) ── */
+function vbPick(cx, cy) {
+  if (!VB.iniciado) return null;
+  const r = VB.renderer.domElement.getBoundingClientRect();
+  const mouse = new THREE.Vector2(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1);
+  VB.raycaster.setFromCamera(mouse, VB.camara);
+  const hit = VB.raycaster.intersectObjects(VB.clicables, true).find(h => h.object.userData.pick);
+  if (!hit) return null;
+  const pick = { ...hit.object.userData.pick };
+  if (pick.tipo === 'edificio') {
+    // clic en el edificio → la bahía más cercana al punto tocado
+    let mejor = 0;
+    VB.PUERTAS.forEach((x, i) => { if (Math.abs(hit.point.x - x) < Math.abs(hit.point.x - VB.PUERTAS[mejor])) mejor = i; });
+    return { tipo: 'bahia', id: mejor };
   }
-  bodega3D.pedidoIdx = ((bodega3D.pedidoIdx % activos.length) + activos.length) % activos.length;
-  const p = activos[bodega3D.pedidoIdx];
-  const idxPaso = { confirmado: 0, preparando: 1, enviado: 2, entregado: 3, tarde: 2 }[p.estado] ?? 0;
-  const atrasado = p.estado === 'tarde' || esVencido(p);
-  const cam = p.camion_id ? S.camiones.get(p.camion_id) : null;
-  const r = restante(p);
-  ponerHTML(cont, `
-    <div class="wt-head">
-      <h4>${ic('route')} Seguimiento de pedido</h4>
-      <div class="wt-nav">
-        <span class="muted">${bodega3D.pedidoIdx + 1} de ${activos.length}</span>
-        <button class="btn-icon sm" data-action="wt-pedido" data-delta="-1" aria-label="Pedido anterior">${ic('chevronLeft')}</button>
-        <button class="btn-icon sm wt-flip" data-action="wt-pedido" data-delta="1" aria-label="Pedido siguiente">${ic('chevronLeft')}</button>
-      </div>
-    </div>
-    <div class="wt-track">
-      <ol class="wt-steps">${PASOS_PEDIDO.map(([, lbl, icono], i) => `<li class="${i < idxPaso ? 'ok' : i === idxPaso ? (atrasado ? 'now late' : 'now') : ''}"><span class="st-ic">${ic(i < idxPaso ? 'check' : icono)}</span><span class="st-lbl">${lbl}</span></li>`).join('')}</ol>
-      <button class="wt-ship" data-action="abrir-pedido" data-id="${esc(p.id)}">
-        <span class="wt-ship-ic">${ic('clipboard')}</span>
-        <span class="wt-ship-txt"><b>${esc(p.numero || 'Sin número')}</b><span>${esc(p.cliente || '—')}</span>
-          <span class="badge tone-${atrasado ? 'red' : (EST_PEDIDO[p.estado]?.tone || 'gray')}">${atrasado ? 'Atrasado' : esc(EST_PEDIDO[p.estado]?.label || p.estado)}</span></span>
-        <span class="wt-ship-meta">${cam ? esc(cam.placa || 'Sin placa') : 'Sin camión'}<b class="restante ${r.cls}" data-ped="${esc(p.id)}">${esc(r.txt)}</b></span>
-      </button>
-    </div>`);
+  return pick;
 }
-function renderLista3D(bahias) {
-  const cont = $('#wt-lista');
-  const todas = bahiasConfig();
-  const ocupadas = todas.filter(b => ocupantesBahia(b).length).length;
-  const cams = [...S.camiones.values()];
-  const peds = [...S.pedidos.values()].filter(p => p.estado !== 'entregado').sort(ordenarPedidos);
-  const tabs = [['bahias', 'Bahías', `${ocupadas}/${todas.length}`], ['camiones', 'Camiones', cams.length], ['pedidos', 'Pedidos', peds.length]];
-  let filas = '';
-  if (bodega3D.tab === 'bahias') {
-    filas = todas.map(b => {
-      const st = estadoBahia(b);
-      const i = bahias.indexOf(b);
-      return `<li><button class="wt-row" data-action="wt-sel" data-tipo="bahia" data-id="${i >= 0 ? i : ''}" data-bahia="${esc(b)}">
-        <span class="wt-row-id">${esc(b)}</span><span class="wt-row-txt">${st.c ? `${esc(st.c.placa || 'Sin placa')} · ${esc(st.c.conductor || 'Sin conductor')}` : 'Disponible'}</span>
-        <span class="badge tone-${st.tone}">${esc(st.label)}</span></button></li>`;
-    }).join('');
-  } else if (bodega3D.tab === 'camiones') {
-    filas = cams.sort((a, b) => String(a.placa).localeCompare(String(b.placa))).map(c => {
-      const e = EST_CAMION[c.estado] || { label: c.estado, tone: 'gray' };
-      const lugar = c.estado === 'en_ruta' ? textoEta(c).txt : (c.bahia || 'En patio');
-      return `<li><button class="wt-row" data-action="wt-camion" data-id="${esc(c.id)}">
-        <span class="wt-row-id mono">${esc(c.placa || 'Sin placa')}</span><span class="wt-row-txt">${esc(lugar)}</span>
-        <span class="badge tone-${e.tone}">${esc(e.label)}</span></button></li>`;
-    }).join('');
-  } else {
-    filas = peds.map(p => {
-      const atrasado = p.estado === 'tarde' || esVencido(p);
-      return `<li><button class="wt-row" data-action="abrir-pedido" data-id="${esc(p.id)}">
-        <span class="wt-row-id mono">${esc(p.numero || '—')}</span><span class="wt-row-txt">${esc(p.cliente || '—')}</span>
-        <span class="badge tone-${atrasado ? 'red' : (EST_PEDIDO[p.estado]?.tone || 'gray')}">${atrasado ? 'Atrasado' : esc(EST_PEDIDO[p.estado]?.label || p.estado)}</span></button></li>`;
-    }).join('');
-  }
-  ponerHTML(cont, `
-    <div class="wt-tabs" role="tablist">${tabs.map(([k, lbl, n]) => `<button role="tab" aria-selected="${bodega3D.tab === k}" class="${bodega3D.tab === k ? 'on' : ''}" data-action="wt-tab" data-tab="${k}">${lbl} <span>${n}</span></button>`).join('')}</div>
-    <ul class="wt-rows">${filas || '<li class="wt-vacio">Nada que mostrar</li>'}</ul>`);
+function vbSeleccionarEn(cx, cy) {
+  const pick = vbPick(cx, cy);
+  if (!pick) return vbCerrarPanel();
+  if (VB.sel && VB.sel.tipo === pick.tipo && VB.sel.id === pick.id) return vbCerrarPanel();
+  vbCerrarPanel();
+  VB.sel = pick;
+  VB.ancla = vbAnclaPanel(); // el panel queda fijo donde estaba el objeto al tocarlo (fácil de cerrar aunque se mueva)
+  vbBrillo(pick, true);
+  const panel = $('#vb-panel');
+  panel.hidden = false;
+  panel._html = null;
+  panel.classList.remove('entra'); void panel.offsetWidth; panel.classList.add('entra');
+  vbRenderPanel();
+  vbPosicionarPanel();
 }
-function renderDetalle3D(bahias, criticos) {
-  const cont = $('#wt-detalle');
-  const sel = bodega3D.seleccion;
-  if (!sel) { cont.hidden = true; return; }
-  let html = '';
-  if (sel.tipo === 'bahia') {
-    const b = sel.bahia || bahias[sel.id];
-    if (!b) { cont.hidden = true; return; }
-    const st = estadoBahia(b);
-    const c = st.c;
-    const total = Number(c?.pallets_total) || 0, carg = Number(c?.pallets_cargados) || 0;
-    const pct = total ? Math.round((carg / total) * 100) : 0;
-    html = `
-      <div class="wt-det-head">
-        <span class="wt-det-ic tone-${st.tone}">${ic(c ? 'truck' : 'warehouse')}</span>
-        <div><span class="wt-det-kind">Bahía de carga</span><h4>${esc(b)}</h4></div>
-        <button class="btn-icon sm" data-action="wt-cerrar" aria-label="Cerrar detalle">${ic('x')}</button>
-      </div>
-      <span class="badge tone-${st.tone}">${esc(st.label)}${c ? ' · ' + esc(c.placa || 'Sin placa') : ''}</span>
-      ${c ? `
-        <div class="wt-prog"><div class="pallets-top"><span>Pallets cargados</span><strong>${fmtNum(carg)} de ${fmtNum(total)}</strong></div><div class="progress tone-${st.tone}"><span style="width:${pct}%"></span></div></div>
-        <dl class="wt-dl">
-          <dt>Conductor</dt><dd>${esc(c.conductor || '—')}</dd>
-          <dt>Destino</dt><dd>${esc(c.destino || '—')}</dd>
-          <dt>En este estado</dt><dd>${c.estado_desde ? esc(fmtDuracion(Date.now() - new Date(c.estado_desde).getTime())) : '—'}</dd>
-          <dt>Llegada</dt><dd>${esc(fmtHora(c.hora_llegada))}</dd>
-        </dl>
-        <div class="field"><label for="wt-estado">Cambiar estado</label>
-          <select class="select sm" id="wt-estado" data-action="estado-camion" data-id="${esc(c.id)}">${opcionesEstadoCamion(c.estado)}</select></div>`
-      : `<p class="wt-libre">${ic('checkCircle')} Disponible para recibir un camión.</p>`}
-      <a class="btn btn-sm btn-block" href="#/camiones">${ic('truck')} Ver camiones y bahías</a>`;
-  } else {
-    const p = criticos[sel.id];
-    if (!p) { cont.hidden = true; return; }
-    const n = nivelStock(p);
-    html = `
-      <div class="wt-det-head">
-        <span class="wt-det-ic nivel-${n}" style="background:var(--ts);color:var(--tc)">${ic('package')}</span>
-        <div><span class="wt-det-kind">Producto · ${esc(p.codigo || 'Sin código')}</span><h4>${esc(p.nombre)}</h4></div>
-        <button class="btn-icon sm" data-action="wt-cerrar" aria-label="Cerrar detalle">${ic('x')}</button>
-      </div>
-      <div class="wt-stock nivel-${n}"><strong>${fmtNum(p.cantidad_actual)}</strong><span>${esc(p.unidad || 'unidades')}</span><span class="stock-label">${NIVEL_LABEL[n]}</span></div>
-      <div class="stockbar nivel-${n}"><span style="width:${pctStock(p)}%"></span></div>
-      <dl class="wt-dl">
-        <dt>Mínimo</dt><dd>${fmtNum(p.cantidad_minima)} ${esc(p.unidad || '')}</dd>
-        <dt>Ubicación</dt><dd>${esc(p.ubicacion || '—')}</dd>
-        <dt>Actualizado</dt><dd>${esc(hace(p.updated_at) || '—')}</dd>
-      </dl>
-      <button class="btn btn-primary btn-sm btn-block" data-action="mov" data-id="${esc(p.id)}">${ic('plus')} Registrar movimiento</button>`;
-  }
-  cont.hidden = false;
-  ponerHTML(cont, html);
+function vbCerrarPanel() {
+  if (VB.sel) vbBrillo(VB.sel, false);
+  VB.sel = null;
+  const panel = $('#vb-panel');
+  if (panel) { panel.hidden = true; panel._html = null; }
 }
-function seleccionarBodega3D(tipo, id, bahiaNombre) {
-  if (tipo === 'bahia' && (id === '' || id === undefined || id === null || Number.isNaN(id))) {
-    bodega3D.seleccion = { tipo: 'bahia', id: -1, bahia: bahiaNombre };
-  } else {
-    bodega3D.seleccion = { tipo, id: Number(id) };
-  }
-  renderVistaBodega();
-}
-/* ── Interactividad: tocar objetos 3D (mouse y táctil) → panel flotante ── */
-const POP_ESTADO = { en_ruta: 'En ruta', esperando: 'En espera', cargando: 'Cargando', descargando: 'Descargando', listo: 'Listo' };
-const MONTACARGAS_INFO = [
-  { id: 'MC-01', bateria: 82, zonas: [2, 3] },   // va y vuelve entre la Zona 3 y la Zona 4
-  { id: 'MC-02', bateria: 67, zonas: [1, 0] },   // va y vuelve entre la Zona 2 y la Zona 1
-];
-function visibleEnEscena(o) { for (let n = o; n; n = n.parent) if (n.visible === false) return false; return true; }
-function rayoBodega3D(ev) {
-  const { camara, raycaster, clicables } = bodega3D;
-  const r = bodega3D.renderer.domElement.getBoundingClientRect();
-  const p = new THREE.Vector2(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
-  raycaster.setFromCamera(p, camara);
-  const hit = raycaster.intersectObjects(clicables, true).find(h => h.object.userData.pick && visibleEnEscena(h.object));
-  return hit ? hit.object.userData.pick : null;
-}
-// Un "toque" = pointerdown + pointerup sin arrastrar (sirve para mouse, dedo y lápiz)
-function enlazarToques3D(lienzo) {
-  let inicio = null;
-  lienzo.addEventListener('pointerdown', ev => { inicio = { x: ev.clientX, y: ev.clientY, t: performance.now() }; });
-  lienzo.addEventListener('pointerup', ev => {
-    if (!inicio || !bodega3D.iniciado) return;
-    const movio = Math.hypot(ev.clientX - inicio.x, ev.clientY - inicio.y) > 10 || performance.now() - inicio.t > 700;
-    inicio = null;
-    if (movio) return;
-    const pick = rayoBodega3D(ev);
-    if (pick) abrirPop3D(pick); else cerrarPop3D();
-  });
-  lienzo.addEventListener('pointercancel', () => { inicio = null; });
-  lienzo.addEventListener('pointermove', debounce(ev => {
-    if (ev.pointerType === 'mouse' && bodega3D.iniciado) lienzo.style.cursor = rayoBodega3D(ev) ? 'pointer' : 'default';
-  }, 30));
-  document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && bodega3D.pop) cerrarPop3D(); });
-}
-function grupoDePick(pick) {
+function vbObjetoDe(pick) {
   if (!pick) return null;
-  if (pick.obj === 'camion') return bodega3D.camiones[pick.id]?.grupo;
-  if (pick.obj === 'montacargas') return bodega3D.montacargas[pick.id]?.grupo;
-  if (pick.obj === 'bahia') return bodega3D.puertas[pick.id]?.grupo;
-  if (pick.obj === 'pila') return bodega3D.pilas[pick.id];
+  if (pick.tipo === 'camion') return VB.camiones[pick.id];
+  if (pick.tipo === 'montacargas') return VB.montacargas[pick.id];
+  if (pick.tipo === 'bahia') return { mats: VB.puertas[pick.id].userData.mats };
   return null;
 }
-// Iluminación suave en amarillo del objeto seleccionado
-function resaltar3D(grupo, encender) {
-  if (!grupo) return;
-  grupo.traverse(o => {
-    if (!o.isMesh || o.userData.hitbox) return;
-    (Array.isArray(o.material) ? o.material : [o.material]).forEach(mt => {
-      if (!mt || !mt.emissive || mt.userData.esLuz) return;
+function vbBrillo(pick, encender) {
+  const obj = vbObjetoDe(pick);
+  if (obj) {
+    obj.mats.forEach(m => {
       if (encender) {
-        if (!mt.userData.emisivaOriginal) mt.userData.emisivaOriginal = { c: mt.emissive.getHex(), i: mt.emissiveIntensity };
-        mt.emissive.set('#fde68a');
-        mt.emissiveIntensity = 0.42;
-      } else if (mt.userData.emisivaOriginal) {
-        mt.emissive.setHex(mt.userData.emisivaOriginal.c);
-        mt.emissiveIntensity = mt.userData.emisivaOriginal.i;
-        delete mt.userData.emisivaOriginal;
+        if (!m.userData.orig) m.userData.orig = { c: m.emissive.getHex(), i: m.emissiveIntensity };
+        m.emissive.setHex(0xffff00);
+        m.emissiveIntensity = pick.tipo === 'bahia' ? 0.2 : 0.35;
+      } else if (m.userData.orig) {
+        m.emissive.setHex(m.userData.orig.c);
+        m.emissiveIntensity = m.userData.orig.i;
+        delete m.userData.orig;
       }
     });
-  });
-}
-function abrirPop3D(pick) {
-  const mismo = bodega3D.pop && bodega3D.pop.obj === pick.obj && bodega3D.pop.id === pick.id;
-  cerrarPop3D(true);
-  if (mismo) return; // tocar de nuevo el mismo objeto lo cierra
-  bodega3D.pop = { obj: pick.obj, id: pick.id };
-  resaltar3D(grupoDePick(pick), true);
-  const el = $('#wt-pop');
-  el.hidden = false;
-  el._html = null;
-  el.classList.remove('entra'); void el.offsetWidth; el.classList.add('entra');
-  renderPop3D();
-  posicionarPop3D();
-}
-function cerrarPop3D(silencioso) {
-  if (bodega3D.pop) resaltar3D(grupoDePick(bodega3D.pop), false);
-  bodega3D.pop = null;
-  const el = $('#wt-pop');
-  if (el) { el.hidden = true; el._html = null; }
-  if (!silencioso && bodega3D.iniciado && !bodega3D.activo) dibujarBodega3D(performance.now() / 1000);
-}
-function anclaPop3D() {
-  const p = bodega3D.pop;
-  if (!p) return null;
-  if (p.obj === 'camion') {
-    const g = bodega3D.camiones[p.id]?.grupo;
-    return g ? new THREE.Vector3(g.position.x, 3.5, g.position.z) : null;
   }
-  if (p.obj === 'montacargas') { const g = bodega3D.montacargas[p.id]?.grupo; return g ? new THREE.Vector3(g.position.x + (p.id ? -0.5 : 0.5), 2.7, g.position.z) : null; }
-  if (p.obj === 'bahia') return new THREE.Vector3(W3.PUERTAS_X[p.id], 3.3, W3.FACHADA_Z + 0.3);
-  if (p.obj === 'pila') { const s = W3.PILAS[p.id]; return new THREE.Vector3(s.x, 0.4 + s.capas * 0.62, s.z); }
+}
+function vbAnclaPanel() {
+  const s = VB.sel;
+  if (!s) return null;
+  if (s.tipo === 'camion') { const g = VB.camiones[s.id].grupo; return new THREE.Vector3(g.position.x, 3.3, g.position.z); }
+  if (s.tipo === 'montacargas') { const g = VB.montacargas[s.id].grupo; return new THREE.Vector3(g.position.x, 2.9, g.position.z); }
+  if (s.tipo === 'bahia') return new THREE.Vector3(VB.PUERTAS[s.id], 3.4, VB.FACHADA + 0.4);
+  if (s.tipo === 'almacen') return new THREE.Vector3(-10.5, 3.4, -2.5);
   return null;
 }
-function posicionarPop3D() {
-  const el = $('#wt-pop'), stage = $('#wt-stage');
-  if (!el || el.hidden || !bodega3D.pop) return;
-  const ancla = anclaPop3D();
-  const objeto = grupoDePick(bodega3D.pop);
-  el.style.visibility = ancla && (!objeto || objeto.visible) ? 'visible' : 'hidden';
-  if (!ancla) return;
-  const w = stage.clientWidth, h = stage.clientHeight;
-  const v = ancla.project(bodega3D.camara);
+function vbPosicionarPanel() {
+  const panel = $('#vb-panel'), cont = $('#vb-canvas-wrap');
+  if (!panel || panel.hidden || !VB.sel || !VB.ancla) return;
+  const v = VB.ancla.clone().project(VB.camara);
+  const w = cont.clientWidth, h = cont.clientHeight;
   const ax = (v.x + 1) / 2 * w, ay = (1 - v.y) / 2 * h;
-  const pw = el.offsetWidth, ph = el.offsetHeight, margen = 8, flecha = 14;
-  const x = Math.min(w - pw / 2 - margen, Math.max(pw / 2 + margen, ax));
-  const abajo = ay - ph - flecha < margen;
-  const y = abajo ? Math.min(h - ph - margen, ay + flecha + 26) : ay - ph - flecha;
-  el.classList.toggle('abajo', abajo);
-  el.style.setProperty('--ax', `${Math.max(16, Math.min(pw - 16, ax - (x - pw / 2)))}px`);
-  el.style.transform = `translate(${(x - pw / 2).toFixed(1)}px, ${y.toFixed(1)}px)`;
+  const pw = panel.offsetWidth, ph = panel.offsetHeight;
+  const x = Math.min(w - pw - 8, Math.max(8, ax - pw / 2));
+  const arriba = ay - ph - 14 >= 8;
+  const y = arriba ? ay - ph - 14 : Math.min(h - ph - 8, ay + 24);
+  panel.classList.toggle('abajo', !arriba);
+  panel.style.setProperty('--ax', `${Math.max(18, Math.min(pw - 18, ax - x))}px`);
+  panel.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
 }
-function camionDeEscena(i) {
-  const b = bahiasEscena3D();
-  const real = estadoBahia(b[i]).c;
-  if (real) return { c: real, bahia: b[i], llegando: false };
-  if (i === 0) {
-    const prox = [...S.camiones.values()].filter(c => c.estado === 'en_ruta').sort(ordenRuta)[0];
-    if (prox) return { c: prox, bahia: b[i], llegando: true };
-  }
-  return { c: null, bahia: b[i], llegando: false };
+function vbFila(emoji, lbl, valor) {
+  return `<div class="vb-fila"><span class="e" aria-hidden="true">${emoji}</span><span class="l">${lbl}</span><span class="v">${valor}</span></div>`;
 }
-function minutosDesde(iso) { return iso ? Math.max(0, (Date.now() - new Date(iso).getTime()) / 60000) : 0; }
-function tiempoEnBahia(c) {
+function vbTiempoEnBahia(c) {
   if (!c) return '—';
-  if (c.estado === 'en_ruta') return c.hora_llegada ? textoEta(c).txt.replace(/^l/, 'L') : 'Sin hora estimada';
-  const llegada = c.hora_llegada && new Date(c.hora_llegada) < new Date() ? c.hora_llegada : c.estado_desde;
-  return llegada ? fmtDuracion(Date.now() - new Date(llegada).getTime()) : '—';
+  if (c.estado === 'en_ruta') return textoEta(c).txt;
+  const desde = c.hora_llegada && new Date(c.hora_llegada) < new Date() ? c.hora_llegada : c.estado_desde;
+  return desde ? fmtDuracion(Date.now() - new Date(desde).getTime()) : '—';
 }
-function tiempoEstimado(c) {
+function vbTiempoEstimado(c) {
   if (!c) {
     const prox = [...S.camiones.values()].filter(x => x.estado === 'en_ruta').sort(ordenRuta)[0];
-    return prox ? `Próximo: ${prox.placa || 'camión'} ${textoEta(prox).txt}` : 'Sin camiones en camino';
+    return prox ? `Próximo: ${prox.placa || 'camión'}, ${textoEta(prox).txt}` : 'Sin camiones en camino';
   }
   if (c.estado === 'listo') return 'Listo para salir';
-  if (c.estado === 'en_ruta') return textoEta(c).txt.replace(/^l/, 'L');
-  if (c.estado === 'esperando') return `En espera hace ${fmtDuracion(minutosDesde(c.estado_desde) * 60000)}`;
+  if (c.estado === 'esperando') return `En espera hace ${fmtDuracion(Date.now() - new Date(c.estado_desde || Date.now()).getTime())}`;
   const total = Number(c.pallets_total) || 0, hechos = Number(c.pallets_cargados) || 0, faltan = Math.max(0, total - hechos);
   if (!total) return 'Sin pallets registrados';
   if (!faltan) return 'Terminando';
-  const min = minutosDesde(c.estado_desde);
-  const ritmo = hechos > 0 && min >= 1 ? min / hechos : 2.5; // minutos por pallet (2,5 si aún no hay historial)
-  return `≈ ${fmtDuracion(Math.ceil(faltan * ritmo) * 60000)} para terminar`;
+  const min = Math.max(0, (Date.now() - new Date(c.estado_desde || Date.now()).getTime()) / 60000);
+  const ritmo = hechos > 0 && min >= 1 ? min / hechos : 2.5; // min por pallet (2,5 si no hay historial)
+  return `≈ ${fmtDuracion(Math.ceil(faltan * ritmo) * 60000)}`;
 }
-function zonaProductos(i) {
-  // Las pilas representan 4 zonas; cada zona agrupa productos (la zona i empieza por el producto crítico i)
-  const lista = [...S.productos.values()].sort((a, b) => (a.cantidad_actual / Math.max(1, a.cantidad_minima)) - (b.cantidad_actual / Math.max(1, b.cantidad_minima)));
-  return lista.filter((_, k) => k % W3.PILAS.length === i);
+function vbCamionReal(id) {
+  if (id === 0) {
+    return vbCamionEnBahia(0) || [...S.camiones.values()].filter(c => c.estado === 'en_ruta').sort(ordenRuta)[0] || null;
+  }
+  if (id === 1) return vbCamionEnBahia(1);
+  return vbCamionEnBahia(2) || [...S.camiones.values()].find(c => c.estado === 'listo') || null;
 }
-function filaPop(emoji, lbl, valor, extra = '') {
-  return `<div class="wt-pop-fila"><span class="e" aria-hidden="true">${emoji}</span><span class="l">${lbl}</span><span class="v">${valor}</span>${extra}</div>`;
-}
-function renderPop3D() {
-  const el = $('#wt-pop');
-  const p = bodega3D.pop;
-  if (!el || !p) return;
-  let titulo = '', tipo = '', tono = 'gray', cuerpo = '', pie = '';
-  if (p.obj === 'camion') {
-    const { c, bahia, llegando } = camionDeEscena(p.id);
-    tipo = llegando ? `Camión · llegando a ${bahia}` : `Camión · ${bahia}`;
+function vbRenderPanel() {
+  const panel = $('#vb-panel');
+  const s = VB.sel;
+  if (!panel || !s) return;
+  let titulo = '', sub = '', cuerpo = '', color = '#94a3b8';
+  if (s.tipo === 'camion') {
+    const c = vbCamionReal(s.id);
+    sub = ['Camión en movimiento', 'Camión en bahía 2', 'Camión saliendo de bahía 3'][s.id];
     if (c) {
-      const e = EST_CAMION[c.estado] || { tone: 'gray' };
-      tono = e.tone;
-      const total = Number(c.pallets_total) || 0, carg = Number(c.pallets_cargados) || 0;
+      color = VB_COLOR_ESTADO[c.estado] || '#3b82f6';
       titulo = c.placa || 'Sin placa';
-      cuerpo = filaPop('🚛', 'Placa', `<span class="mono">${esc(c.placa || '—')}</span>`)
-        + filaPop('📦', 'Pallets', `${fmtNum(carg)} / ${fmtNum(total)}`, `<div class="progress tone-${tono}"><span style="width:${total ? Math.round(carg / total * 100) : 0}%"></span></div>`)
-        + filaPop('⏱', c.estado === 'en_ruta' ? 'Llegada' : 'En bahía', esc(tiempoEnBahia(c)))
-        + filaPop('🔄', 'Estado', `<span class="badge tone-${tono}">${esc(POP_ESTADO[c.estado] || c.estado)}</span>`);
-      pie = `<select class="select sm" data-action="estado-camion" data-id="${esc(c.id)}" aria-label="Cambiar estado del camión">${opcionesEstadoCamion(c.estado)}</select>`;
+      cuerpo = vbFila('🚛', 'Placa', `<span class="mono">${esc(c.placa || '—')}</span>`)
+        + vbFila('📦', 'Pallets', `${fmtNum(c.pallets_cargados)} / ${fmtNum(c.pallets_total)}`)
+        + vbFila('⏱', c.estado === 'en_ruta' ? 'Llegada' : 'Tiempo en bahía', esc(vbTiempoEnBahia(c)))
+        + vbFila('🔄', 'Estado', `<span class="vb-pill" style="--c:${color}">${esc(c.estado === 'esperando' ? 'En espera' : (EST_CAMION[c.estado]?.label || c.estado))}</span>`);
     } else {
       titulo = 'Sin camión registrado';
-      cuerpo = `<p class="wt-pop-nota">No hay un camión asignado a ${esc(bahia)} en Supabase. Asígnalo desde Camiones.</p>`;
-      pie = `<a class="btn btn-sm" href="#/camiones">${ic('truck')} Ir a Camiones</a>`;
+      cuerpo = `<p class="vb-nota">No hay un camión asignado a esta posición en Supabase.</p>`;
     }
-  } else if (p.obj === 'montacargas') {
-    const info = MONTACARGAS_INFO[p.id], f = bodega3D.montacargas[p.id];
-    const fase = f?.fase01 ?? 0, ida = f?.ida ?? 0;
-    const [zA, zB] = info.zonas.map(z => `Zona ${z + 1}`);
-    const zona = ida > 0.75 ? zB : ida < 0.25 ? zA : `Pasillo ${zA} – ${zB}`;
-    const operacion = fase > 0.4 && fase < 0.6 ? `Levantando pallet en ${zB}` : fase < 0.5 ? `Trasladando carga a ${zB}` : `Regresando a ${zA}`;
-    tipo = 'Montacargas'; titulo = info.id; tono = 'yellow';
-    cuerpo = filaPop('🟡', 'ID', `<span class="mono">${info.id}</span>`)
-      + filaPop('📍', 'Zona actual', esc(zona))
-      + filaPop('🔋', 'Estado operativo', `<span class="badge tone-green">Operativo</span> ${info.bateria}%`)
-      + `<p class="wt-pop-nota">${esc(operacion)} · equipo ilustrativo, sin telemetría conectada.</p>`;
-  } else if (p.obj === 'bahia') {
-    const b = bahiasEscena3D()[p.id];
-    const st = estadoBahia(b);
-    const c = st.c;
-    tipo = `Bahía ${p.id + 1} · puerta de carga`; titulo = b; tono = st.tone;
-    const total = Number(c?.pallets_total) || 0, carg = Number(c?.pallets_cargados) || 0;
-    cuerpo = filaPop('🏷️', 'Bahía', esc(b))
-      + filaPop('🚛', 'Camión', c ? `<span class="mono">${esc(c.placa || 'Sin placa')}</span> · ${esc(c.conductor || 'Sin conductor')}` : '<span class="muted">Libre</span>')
-      + filaPop('📦', 'Pallets', c ? `${fmtNum(carg)} / ${fmtNum(total)}` : '—', c && total ? `<div class="progress tone-${tono}"><span style="width:${Math.round(carg / total * 100)}%"></span></div>` : '')
-      + filaPop('⏳', 'Tiempo estimado', esc(tiempoEstimado(c)));
-    pie = c ? `<select class="select sm" data-action="estado-camion" data-id="${esc(c.id)}" aria-label="Cambiar estado del camión">${opcionesEstadoCamion(c.estado)}</select>` : `<span class="badge tone-green">Disponible</span>`;
-  } else if (p.obj === 'pila') {
-    const prods = zonaProductos(p.id);
-    const conteo = new Map();
-    S.movimientos.forEach(m => conteo.set(m.producto_id, (conteo.get(m.producto_id) || 0) + 1));
-    const top = [...prods].sort((a, b) => (conteo.get(b.id) || 0) - (conteo.get(a.id) || 0) || b.cantidad_actual - a.cantidad_actual)[0];
-    const totalZona = prods.reduce((s, x) => s + (Number(x.cantidad_actual) || 0), 0);
-    const aprox = totalZona >= 100 ? Math.round(totalZona / 10) * 10 : totalZona;
-    tipo = `Pila de cajas · Zona ${p.id + 1}`; titulo = `Zona ${p.id + 1}`; tono = top ? (nivelStock(top) === 'bajo' ? 'red' : nivelStock(top) === 'medio' ? 'yellow' : 'green') : 'gray';
-    if (top) {
-      const veces = conteo.get(top.id) || 0;
-      cuerpo = filaPop('📦', 'Producto más frecuente', esc(top.nombre))
-        + filaPop('🔁', 'Movimientos recientes', veces ? `${veces}` : 'Sin movimientos recientes')
-        + filaPop('🔢', 'Cantidad aproximada', `≈ ${fmtNum(aprox)} unidades`)
-        + filaPop('🗂️', 'Productos en la zona', fmtNum(prods.length));
-      pie = `<button class="btn btn-primary btn-sm" data-action="mov" data-id="${esc(top.id)}">${ic('plus')} Movimiento</button><button class="btn btn-sm" data-action="chat-producto" data-id="${esc(top.id)}">Ver inventario</button>`;
-    } else {
-      cuerpo = '<p class="wt-pop-nota">Aún no hay productos en esta zona.</p>';
-    }
+  } else if (s.tipo === 'montacargas') {
+    const info = [
+      { id: 'MC-01', zona: 'Frente a bahía 3', estado: 'Moviendo pallets', bat: 81 },
+      { id: 'MC-02', zona: 'Patio oeste · cajas', estado: 'Patrullando', bat: 64 },
+      { id: 'MC-03', zona: 'Entre bahía 1 y 2', estado: 'Cargando camión', bat: 92 },
+    ][s.id];
+    color = '#f59e0b';
+    titulo = info.id; sub = 'Montacargas';
+    cuerpo = vbFila('🟡', 'ID', `<span class="mono">${info.id}</span>`)
+      + vbFila('📍', 'Zona', esc(info.zona))
+      + vbFila('🔋', 'Estado operativo', `${esc(info.estado)} · ${info.bat}%`)
+      + `<p class="vb-nota">Equipo ilustrativo: los montacargas aún no tienen datos en Supabase.</p>`;
+  } else if (s.tipo === 'bahia') {
+    const b = vbBahias()[s.id];
+    const c = vbCamionEnBahia(s.id);
+    const estado = c ? c.estado : 'libre';
+    color = VB_COLOR_ESTADO[estado] || '#6b7280';
+    titulo = `Bahía ${s.id + 1}`; sub = b !== `Bahía ${s.id + 1}` ? b : (s.id === 0 ? 'Puerta abierta' : 'Puerta de carga');
+    cuerpo = vbFila('🏷️', 'Estado', `<span class="vb-pill" style="--c:${color}">${esc(VB_TEXTO_ESTADO[estado] || estado)}</span>`)
+      + vbFila('🚛', 'Camión', c ? `<span class="mono">${esc(c.placa || 'Sin placa')}</span>` : 'Ninguno')
+      + vbFila('📦', 'Pallets', c ? `${fmtNum(c.pallets_cargados)} / ${fmtNum(c.pallets_total)}` : '—')
+      + vbFila('⏳', 'Tiempo estimado', esc(vbTiempoEstimado(c)));
+  } else if (s.tipo === 'almacen') {
+    const k = calcularKPIs();
+    color = '#2563eb'; titulo = 'Almacén trasero'; sub = 'Resumen de inventario';
+    cuerpo = vbFila('📦', 'Productos', fmtNum(S.productos.size))
+      + vbFila('🔢', 'Stock total', fmtNum(k.stock))
+      + vbFila('⚠️', 'Bajo mínimo', fmtNum(k.bajos));
   }
-  ponerHTML(el, `
-    <div class="wt-pop-head tone-${tono}">
-      <div><span class="wt-pop-tipo">${esc(tipo)}</span><strong>${esc(titulo)}</strong></div>
-      <button class="btn-icon sm" data-action="wt-pop-cerrar" aria-label="Cerrar">${ic('x')}</button>
+  ponerHTML(panel, `
+    <div class="vb-panel-head" style="--c:${color}">
+      <div><span class="vb-sub">${esc(sub)}</span><strong>${esc(titulo)}</strong></div>
+      <button class="btn-icon sm" data-action="vb-cerrar" aria-label="Cerrar">${ic('x')}</button>
     </div>
-    <div class="wt-pop-body">${cuerpo}</div>
-    ${pie ? `<div class="wt-pop-pie">${pie}</div>` : ''}
-    <span class="wt-pop-flecha"></span>`);
+    <div class="vb-panel-body">${cuerpo}</div>
+    <span class="vb-flecha"></span>`);
+}
+function ponerHTML(el, html) { if (el && el._html !== html) { el.innerHTML = html; el._html = html; } }
+
+/* ── Datos en tiempo real (llamado por los cambios de Supabase vía supabase.channel) ── */
+function renderVistaBodega() {
+  if (!esGestor() || !$('#view-bodega')) return;
+  const todas = bahiasConfig();
+  const ocupadas = todas.filter(b => ocupantesBahia(b).length).length;
+  const res = $('#vb-resumen');
+  if (res) res.textContent = `${todas.length} bahías · ${ocupadas} ocupadas · ${[...S.camiones.values()].filter(c => c.estado === 'en_ruta').length} camiones en ruta`;
+  if (!VB.iniciado) return;
+  vbActualizarMarcadores();
+  if (VB.sel) vbRenderPanel();
 }
 
 /* ═══════════════ 7. MODO DEMO ═══════════════ */
@@ -5389,9 +5066,7 @@ function iniciarMejorasTrabajador() {
   iniciarChat();
 }
 function detenerMejoras() {
-  if (bodega3D.iniciado) cerrarPop3D(true);
-  bodega3D.activo = false;
-  if (bodega3D.raf) { cancelAnimationFrame(bodega3D.raf); bodega3D.raf = null; }
+  detenerVistaBodega();
   detenerChat();
   if (S.demo) { S.demo = false; $('#screen-app').classList.remove('modo-demo'); $('#demo-pill').hidden = true; $$('.demo-toggle').forEach(t => { t.checked = false; }); }
   S.empresaReal = null;
