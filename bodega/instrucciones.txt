@@ -57,6 +57,41 @@ DETALLES ÚTILES
 • Para probar en tu computador basta con abrir index.html en el navegador
   (doble clic). Para clientes, súbelo a Vercel (Paso 8).
 
+MEJORAS v2 (chat, invitaciones, logo, vista bodega, modo oscuro, PDF, PWA)
+---------------------------------------------------------------------------
+
+Paso A: En Supabase > SQL Editor ejecuta TODO el archivo mejoras.sql
+        (después de setup.sql). No borra ni cambia nada existente: solo
+        agrega el chat, las invitaciones y el logo de la empresa.
+Paso B: En Supabase > Authentication > URL Configuration pon como
+        "Site URL" la dirección de tu app en Vercel (ej: https://mi-bodega.vercel.app).
+        Así el correo de confirmación de los trabajadores invitados los
+        devuelve a tu app.
+Paso C: Vuelve a subir la carpeta completa a Vercel. Ahora incluye
+        manifest.json, sw.js e íconos para instalarla como app.
+
+Qué trae cada mejora:
+  • Vista Bodega      → menú lateral. Bodega 3D con camiones y montacargas;
+                        las etiquetas de cada bahía muestran el estado real.
+  • Modo oscuro       → botón 🌙/☀️ arriba. Se recuerda en cada equipo.
+  • Gráfica           → Dashboard: entradas vs salidas de los últimos 7 días.
+  • Exportar Reporte  → Dashboard: descarga un PDF con KPIs y stock bajo.
+  • Sonido            → un "ping" suave cuando llega una alerta nueva
+                        (solo después de que hayas tocado la página).
+  • Modo Demo         → solo el dueño (menú lateral o ⚙️ en el celular).
+                        Muestra datos ficticios para presentar la app a
+                        clientes. Nada de lo que hagas en demo se guarda.
+  • Configuración     → solo el dueño: nombre, logo (texto) y color de la app.
+  • Asistente inicial → aparece la primera vez que entra un dueño:
+                        empresa, primeros productos e invitación a un trabajador.
+  • Invitaciones      → el link sirve una sola vez, vence en 14 días y solo
+                        funciona con el correo indicado. El trabajador crea
+                        su contraseña, confirma su correo y entra.
+  • Chat              → botón 💬 abajo a la derecha. Escribe # para mencionar
+                        un producto.
+  • Instalar como app → en el celular aparece "Instala BodegaApp" la primera
+                        vez (en iPhone: Compartir > Agregar a inicio).
+
 • Si la app muestra "Falta conectar la base de datos", revisa config.js.
   Si muestra "La base de datos no está configurada", vuelve a ejecutar
   setup.sql. Si un usuario ve "no tiene un perfil asignado", falta su fila
