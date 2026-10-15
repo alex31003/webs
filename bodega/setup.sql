@@ -28,7 +28,7 @@ create table if not exists public.empresas (
   nombre          text not null,
   color_primario  text default '#2563eb',
   -- Bahías de carga configuradas (se muestran como tarjetas en "Camiones")
-  bahias          text[] not null default array['Bahía 1','Bahía 2','Bahía 3','Bahía 4'],
+  bahias          text[] not null default array['Bahía 1','Bahía 2','Bahía 3','Bahía 4','Bahía 5'],
   created_at      timestamptz not null default now()
 );
 
@@ -616,7 +616,7 @@ $$;
 
 insert into public.empresas (id, nombre, color_primario, bahias)
 values ('11111111-1111-1111-1111-111111111111', 'Distribuidora Demo', '#2563eb',
-        array['Bahía 1', 'Bahía 2', 'Bahía 3', 'Bahía 4'])
+        array['Bahía 1', 'Bahía 2', 'Bahía 3', 'Bahía 4', 'Bahía 5'])
 on conflict (id) do nothing;
 
 -- 8 productos (3 en stock bajo, 2 en zona amarilla, 3 holgados)

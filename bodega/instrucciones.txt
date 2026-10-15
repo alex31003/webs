@@ -136,3 +136,37 @@ Qué trae cada mejora:
 • Si no ejecutas mejoras2.sql la app sigue funcionando igual: el Excel
   funciona, el chat queda en un solo canal y la Red de Bodegas muestra un
   aviso para ejecutar el archivo.
+
+
+VISTA BODEGA v5 (ciudad 3D con todas tus bodegas)
+---------------------------------------------------------------------------
+
+Paso A: Vuelve a ejecutar mejoras2.sql en Supabase > SQL Editor > Run.
+        Agrega la columna "capacidad_maxima" a sucursales (para la barra
+        "stock / capacidad") y deja la empresa demo con 5 bahías. No borra
+        nada y se puede ejecutar las veces que quieras.
+Paso B: Vuelve a subir la carpeta "bodega" a Vercel / Netlify.
+
+Cómo se usa:
+  • Arriba: 4 indicadores en vivo (stock / capacidad, camiones en sitio y
+    en ruta, entregas a tiempo y alertas). Se actualizan cada 5 segundos.
+  • Centro: una ciudad 3D con UNA BODEGA POR SUCURSAL, unidas por avenidas.
+      - Arrastra (o desliza con un dedo) para recorrer la ciudad.
+      - Clic derecho / Shift + arrastrar (o 2 dedos) para girar.
+      - Rueda del mouse o pellizcar para acercar / alejar.
+      - Toca una bodega para entrar en ella; el botón 🌐 vuelve a la red.
+      - Toca un camión, montacargas, bahía o pila de cajas para ver sus datos.
+  • Camiones: los "en ruta" entran por la avenida y avanzan según su hora de
+    salida y su hora estimada de llegada (si la carga llega antes, van más
+    rápido). Al pasar a "cargando" en una bahía entran de reversa; al pasar a
+    "listo" salen y cruzan la ciudad. La tabla camiones se lee cada 3 s.
+  • Bahías B1–B5 (hasta 10, se configuran en Camiones › Bahías):
+    verde = cargando, amarillo = esperando, gris = libre,
+    rojo = problema (espera de más de 2 h o dos camiones en la misma bahía).
+  • Montacargas: se mueven entre las pilas y las bahías; si hubo movimientos
+    de stock en el último minuto trabajan más rápido.
+  • Pilas de cajas: cantidad proporcional al stock de cada bodega.
+  • Derecha: sucursal, inventario en vivo, flota (batería) y docks
+    (toca un dock para centrar la cámara en esa bahía).
+  • La capacidad máxima de cada bodega se edita en Red de Bodegas ›
+    Editar (campo "Capacidad máxima").

@@ -830,11 +830,27 @@ html[data-theme="dark"] .w-ok { background: #15803d; }
 .chart-msg { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 13.5px; text-align: center; padding: 20px; }
 
 /* ── 1. VISTA BODEGA 3D (Three.js) ── */
-.vb-card { overflow: hidden; }
-.vb-wrap { position: relative; width: 100%; height: 520px; background: #dbeafe; }
-#vb-canvas { display: block; width: 100%; height: 520px; touch-action: pan-y; -webkit-tap-highlight-color: transparent; }
+.vb-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.vb-kpi { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); min-width: 0; }
+.vb-kpi-ic { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: var(--ts); color: var(--tc); flex: none; }
+.vb-kpi-txt { min-width: 0; flex: 1; }
+.vb-kpi-lbl { font-size: 12px; font-weight: 600; color: var(--muted); }
+.vb-kpi-val { font-size: 21px; font-weight: 800; letter-spacing: -.02em; line-height: 1.2; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vb-kpi-val small { font-size: 12.5px; font-weight: 600; color: var(--muted); letter-spacing: 0; }
+.vb-kpi-sub { font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vb-barra { height: 6px; border-radius: 999px; background: var(--border-2); overflow: hidden; margin: 5px 0 3px; }
+.vb-barra i { display: block; height: 100%; width: var(--p, 0%); background: var(--c, #2563eb); border-radius: inherit; transition: width .6s ease; }
+.vb-layout { display: grid; grid-template-columns: minmax(0, 7fr) minmax(300px, 3fr); gap: 16px; align-items: stretch; }
+.vb-card { overflow: hidden; display: flex; flex-direction: column; }
+.vb-wrap { position: relative; width: 100%; height: clamp(460px, calc(100dvh - 330px), 780px); background: linear-gradient(#e6eefa, #f4f7fc); flex: none; }
+#vb-canvas { display: block; width: 100%; height: 100%; touch-action: none; outline: none; cursor: grab; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+#vb-canvas.arrastrando { cursor: grabbing; }
+.vb-ctl { position: absolute; left: 12px; top: 12px; z-index: 4; display: flex; flex-direction: column; background: #fff; border-radius: 10px; box-shadow: 0 4px 14px rgba(15, 23, 42, .14); overflow: hidden; }
+.vb-ctl button { width: 34px; height: 34px; border: 0; background: #fff; color: #334155; display: grid; place-items: center; font-size: 18px; font-weight: 700; line-height: 1; }
+.vb-ctl button + button { border-top: 1px solid #e2e8f0; }
+.vb-ctl button:hover { background: #f1f5f9; }
 .vb-panel {
-  position: absolute; left: 0; top: 0; z-index: 5; width: 220px; padding: 16px;
+  position: absolute; left: 0; top: 0; z-index: 5; width: 264px; padding: 16px;
   background: #ffffff; color: #0f172a; border-radius: 12px;
   box-shadow: 0 12px 32px rgba(15, 23, 42, .16), 0 2px 6px rgba(15, 23, 42, .08);
   will-change: transform; --ax: 50%;
@@ -847,24 +863,105 @@ html[data-theme="dark"] .w-ok { background: #15803d; }
 .vb-sub { display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #64748b; }
 .vb-panel .btn-icon { width: 28px; height: 28px; margin: -6px -8px 0 0; color: #64748b; }
 .vb-panel .btn-icon:hover { background: #f1f5f9; color: #0f172a; }
-.vb-panel-body { display: flex; flex-direction: column; gap: 8px; }
+.vb-panel-body { display: flex; flex-direction: column; gap: 7px; }
 .vb-fila { display: grid; grid-template-columns: 18px auto minmax(0, 1fr); align-items: center; gap: 6px; font-size: 12.5px; }
 .vb-fila .e { font-size: 14px; line-height: 1; }
 .vb-fila .l { color: #64748b; }
 .vb-fila .v { text-align: right; font-weight: 700; overflow-wrap: anywhere; }
 .vb-pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; color: #fff; background: var(--c); }
 .vb-nota { font-size: 11.5px; color: #64748b; line-height: 1.4; margin-top: 2px; }
+.vb-nota.rojo { color: #b91c1c; }
+.vb-sec-t { margin-top: 4px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #64748b; }
+.vb-track { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin: 0 0 4px; position: relative; }
+.vb-track::before { content: ''; position: absolute; left: 10%; right: 10%; top: 6px; height: 2px; background: #e2e8f0; }
+.vb-track span { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+.vb-track i { width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 2px solid #cbd5e1; }
+.vb-track span.ok i { background: #2563eb; border-color: #2563eb; }
+.vb-track span.on i { background: #fff; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, .2); }
+.vb-track b { font-size: 9.5px; font-weight: 600; color: #64748b; line-height: 1.15; white-space: nowrap; }
+.vb-track span.on b { color: #1d4ed8; font-weight: 800; }
+.vb-viaje { margin-bottom: 2px; }
+.vb-viaje span { font-size: 11px; color: #475569; }
+.vb-carga { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.vb-carga li { font-size: 12px; padding: 6px 8px; border-radius: 8px; background: #f1f5f9; }
+.vb-carga li span { display: block; color: #475569; font-size: 11.5px; margin-top: 1px; }
 .vb-flecha { position: absolute; left: var(--ax); bottom: -7px; width: 14px; height: 14px; margin-left: -7px; background: #fff; transform: rotate(45deg); box-shadow: 3px 3px 6px rgba(15, 23, 42, .06); }
 .vb-panel.abajo .vb-flecha { bottom: auto; top: -7px; box-shadow: none; }
 .vb-leyenda { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 12px 16px; border-top: 1px solid var(--border-2); font-size: 12.5px; color: var(--muted); }
 .vb-leyenda span { display: inline-flex; align-items: center; gap: 6px; }
 .vb-leyenda i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
 .vb-leyenda .vb-ayuda { margin-left: auto; }
-.vb-fallo { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 24px; color: #475569; }
+.vb-fallo { position: absolute; inset: 0; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 24px; color: #475569; background: #eef3fa; }
 .vb-fallo .empty-ic { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #fff; color: #2563eb; }
 .vb-fallo strong { color: #0f172a; font-size: 16px; }
+/* Panel lateral (siempre visible) */
+.vb-lateral { position: relative; padding: 0; overflow: hidden; min-height: 300px; }
+.vb-lateral-in { position: absolute; inset: 0; overflow-y: auto; overscroll-behavior: contain; }
+.vbl-sec { padding: 14px 16px; border-bottom: 1px solid var(--border-2); }
+.vbl-sec:last-child { border-bottom: 0; }
+.vbl-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.vbl-h > span:last-child { text-transform: none; letter-spacing: 0; font-weight: 600; }
+.vb-suc-wrap { min-width: 0; }
+.vb-suc { height: 30px; padding: 0 28px 0 8px; font-size: 12.5px; max-width: 170px; }
+.vbs-top { display: flex; align-items: center; gap: 10px; }
+.vbs-ic { width: 38px; height: 38px; border-radius: 10px; background: #2563eb; color: #fff; display: grid; place-items: center; flex: none; }
+.vbs-txt { min-width: 0; }
+.vbs-cod { display: block; font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.vbs-txt strong { display: block; font-size: 15.5px; font-weight: 800; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vbs-estado { display: flex; align-items: center; gap: 8px; margin-top: 8px; min-width: 0; }
+.vb-estado-pill { flex: none; padding: 2px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 700; }
+.vb-estado-pill.on { background: rgba(22, 163, 74, .12); color: #15803d; }
+.vb-estado-pill.off { background: rgba(100, 116, 139, .14); color: #475569; }
+.vbs-dir { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.vbs-mini { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.vbs-mini div { padding: 8px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border-2); min-width: 0; }
+.vbs-mini b { display: block; font-size: 16px; font-weight: 800; color: var(--text); }
+.vbs-mini span { display: block; font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vbi, .vbf { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 7px 0; }
+.vbi + .vbi, .vbf + .vbf { border-top: 1px dashed var(--border-2); }
+.vbi-ic, .vbf-ic { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: color-mix(in srgb, var(--c, #f59e0b) 14%, transparent); color: var(--c, #d97706); }
+.vbi-ic .ic, .vbf-ic .ic { width: 16px; height: 16px; }
+.vbi-txt b, .vbf-txt b { display: block; font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vbi-txt .vb-barra { margin: 5px 0 0; height: 5px; }
+.vbi-der { text-align: right; }
+.vbi-der b { display: block; font-size: 13.5px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.vbi-pill { display: inline-block; margin-top: 2px; padding: 1px 7px; border-radius: 999px; font-size: 10.5px; font-weight: 700; color: var(--c); background: color-mix(in srgb, var(--c) 12%, transparent); white-space: nowrap; }
+.vbl-mas { display: block; margin-top: 8px; font-size: 12.5px; font-weight: 600; color: var(--primary); }
+.vbl-vacio { font-size: 12.5px; color: var(--muted); }
+.vbf-txt span { display: block; font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vbf-der { width: 92px; text-align: right; }
+.vbf-est { display: block; font-size: 11px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vbf-bat { display: flex; align-items: center; gap: 6px; }
+.vbf-bat .vb-barra { flex: 1; margin: 0; height: 5px; }
+.vbf-bat small { font-size: 10.5px; color: var(--muted); font-variant-numeric: tabular-nums; width: 28px; text-align: right; }
+.vbd { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; align-items: center; gap: 10px; width: 100%; padding: 8px; margin: 0 -8px; width: calc(100% + 16px); border: 0; border-radius: 10px; background: transparent; text-align: left; color: var(--text); transition: background var(--t); }
+.vbd:hover, .vbd.sel { background: var(--primary-soft); }
+.vbd-b { width: 36px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: var(--c); color: #fff; font-size: 12.5px; font-weight: 800; }
+.vbd-txt b { display: block; font-size: 13px; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vbd-txt span { display: block; font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vbd-der { text-align: right; }
+.vbd-der b { display: block; font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.vbd-der span { font-size: 11px; color: var(--muted); }
+.vbd-der .vbd-est { font-weight: 700; color: var(--c); }
+.vbd-sitio .vbd-txt b { font-family: inherit; }
+.vbd-sitio .vb-barra { margin: 5px 0 0; height: 5px; }
+.vbd-sitio .vbd-b { font-size: 12px; }
+.vbf-txt b small { font-size: 10.5px; font-weight: 700; color: var(--muted); }
+.vb-ctl button[hidden] { display: none; }
+@media (max-width: 1180px) { .vb-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) {
+  .vb-layout { grid-template-columns: minmax(0, 1fr); }
+  .vb-wrap { height: 420px; }
+  .vb-lateral { min-height: 0; }
+  .vb-lateral-in { position: static; overflow: visible; }
+}
 @media (max-width: 767px) {
+  .vb-kpis { gap: 8px; }
+  .vb-kpi { padding: 10px 12px; gap: 8px; }
+  .vb-kpi-ic { display: none; }
+  .vb-kpi-val { font-size: 17px; white-space: normal; }
   .vb-leyenda .vb-ayuda { margin-left: 0; width: 100%; }
+  .vb-panel { width: 248px; padding: 14px; }
 }
 
 /* ── 10. CHAT INTERNO ── */
@@ -1035,7 +1132,6 @@ html[data-theme="dark"] .red-mapa { background: #0b1220; }
 html[data-theme="dark"] .red-popup .leaflet-popup-content-wrapper, html[data-theme="dark"] .red-popup .leaflet-popup-tip { background: #1e293b; }
 html[data-theme="dark"] .red-pop { color: #e2e8f0; }
 html[data-theme="dark"] .red-pop dt, html[data-theme="dark"] .red-pop-head span, html[data-theme="dark"] .red-pop dd small { color: #94a3b8; }
-.vb-suc { min-width: 210px; }
 .dd-pre { white-space: pre-wrap; }
 @media (max-width: 1100px) { .red-layout { grid-template-columns: minmax(0, 1fr) 300px; } }
 @media (max-width: 900px) {
@@ -1048,7 +1144,6 @@ html[data-theme="dark"] .red-pop dt, html[data-theme="dark"] .red-pop-head span,
   .chat-panel { display: flex; }
   .chat-panel .chat-head { padding-top: calc(12px + env(safe-area-inset-top, 0px)); }
   body.chat-abierto { overflow: hidden; }
-  .vb-suc { min-width: 0; width: 100%; }
   .red-kpi b { font-size: 17px; }
 }
 
@@ -1346,29 +1441,59 @@ html[data-theme="dark"] .link-btn { color: #00ff88; }
         </div>
       </section>
 
-      <!-- ── VISTA BODEGA (Three.js) ── -->
+      <!-- ── VISTA BODEGA (Three.js): KPIs · escena 3D · panel lateral ── -->
       <section class="view" id="view-bodega" data-view="bodega" hidden>
         <div class="page-head">
           <div>
             <h1>Vista Bodega</h1>
-            <p id="vb-resumen">Bodega en 3D con el estado real de las bahías</p>
-          </div>
-          <div class="page-actions" id="vb-suc-wrap" hidden>
-            <select class="select vb-suc" id="vb-sucursal" aria-label="Sucursal a mostrar"></select>
+            <p id="vb-resumen">Bodega en 3D con el estado real de camiones, bahías y stock</p>
           </div>
         </div>
-        <div class="card vb-card">
-          <div class="vb-wrap" id="vb-canvas-wrap">
-            <div class="vb-panel" id="vb-panel" role="dialog" aria-label="Detalle del objeto seleccionado" hidden></div>
-            <div class="vb-fallo" id="vb-fallo" hidden></div>
+        <div class="vb-kpis" id="vb-kpis" aria-live="polite"></div>
+        <div class="vb-layout">
+          <div class="card vb-card">
+            <div class="vb-wrap" id="vb-canvas-wrap">
+              <div class="vb-ctl" id="vb-ctl" role="group" aria-label="Controles de cámara">
+                <button type="button" data-vb-ctl="mas" aria-label="Acercar" title="Acercar">+</button>
+                <button type="button" data-vb-ctl="menos" aria-label="Alejar" title="Alejar">−</button>
+                <button type="button" data-vb-ctl="izq" aria-label="Girar a la izquierda" title="Girar (Q)">↺</button>
+                <button type="button" data-vb-ctl="der" aria-label="Girar a la derecha" title="Girar (E)">↻</button>
+                <button type="button" data-vb-ctl="inicio" aria-label="Vista inicial" title="Vista inicial">⌂</button>
+                <button type="button" data-vb-ctl="red" aria-label="Ver toda la red de bodegas" title="Ver toda la red" hidden>🌐</button>
+              </div>
+              <div class="vb-panel" id="vb-panel" role="dialog" aria-label="Detalle del objeto seleccionado" hidden></div>
+              <div class="vb-fallo" id="vb-fallo" hidden></div>
+            </div>
+            <div class="vb-leyenda">
+              <span style="--c:#22c55e"><i></i>Cargando</span>
+              <span style="--c:#eab308"><i></i>Esperando</span>
+              <span style="--c:#94a3b8"><i></i>Libre</span>
+              <span style="--c:#ef4444"><i></i>Problema</span>
+              <span class="vb-ayuda">🖱️ Arrastra para moverte por la ciudad · clic derecho para girar · rueda para zoom · toca cualquier cosa para ver sus datos</span>
+            </div>
           </div>
-          <div class="vb-leyenda">
-            <span style="--c:#22c55e"><i></i>Cargando</span>
-            <span style="--c:#eab308"><i></i>Esperando</span>
-            <span style="--c:#3b82f6"><i></i>Listo</span>
-            <span style="--c:#6b7280"><i></i>Libre</span>
-            <span class="vb-ayuda">👆 Toca un camión, un montacargas o una bahía para ver sus datos</span>
-          </div>
+          <aside class="card vb-lateral" aria-label="Panel de la bodega">
+            <div class="vb-lateral-in">
+              <section class="vbl-sec">
+                <div class="vbl-h"><span>Sucursal</span>
+                  <span class="vb-suc-wrap" id="vb-suc-wrap" hidden><select class="select vb-suc" id="vb-sucursal" aria-label="Sucursal a mostrar"></select></span>
+                </div>
+                <div id="vbl-suc-info"></div>
+              </section>
+              <section class="vbl-sec">
+                <div class="vbl-h"><span>Inventario en vivo</span><span id="vbl-inv-n"></span></div>
+                <div id="vbl-inv"></div>
+              </section>
+              <section class="vbl-sec">
+                <div class="vbl-h"><span>Flota</span><span>Montacargas</span></div>
+                <div id="vbl-flota"></div>
+              </section>
+              <section class="vbl-sec">
+                <div class="vbl-h"><span id="vbl-docks-t">Docks</span><span id="vbl-docks-h">Toca para centrar</span></div>
+                <div id="vbl-docks"></div>
+              </section>
+            </div>
+          </aside>
         </div>
       </section>
 
@@ -3865,22 +3990,312 @@ function exportarPDF() {
 }
 
 /* ═══════════════ 1. VISTA BODEGA 3D (Three.js) ═══════════════
-   Escena 3D completa: bodega, almacén trasero, 3 camiones, 3 montacargas,
-   pallets, árboles y marcadores de bahía con datos reales de "camiones".
-   Click / toque en camiones, montacargas, puertas o edificio → panel. */
+   Tres capas:
+   1) KPIs en vivo arriba (stock / capacidad, camiones, entregas, alertas).
+   2) Escena 3D (70 %): una ciudad con una bodega SEPARADA por sucursal,
+      unidas por avenidas. "Todas las sucursales" muestra la red completa;
+      al elegir una, la cámara vuela a esa bodega. En cada bodega:
+      camiones que se mueven según su estado real en "camiones"
+      (supabase.channel + lectura cada 3 s), 5 a 10 bahías con color por
+      estado, montacargas que aceleran si hubo movimientos en el último
+      minuto y pilas de cajas proporcionales al stock.
+   3) Panel lateral (30 %): sucursal, inventario en vivo, flota y docks.
+   Cámara ortográfica en (22, 20, 22) respecto a la bodega, mirando a su
+   centro; rueda = zoom (12–35); arrastrar = girar en Y (±60°). */
 const VB = {
-  ALTO: 520,
-  PUERTAS: [-4, 0, 4],            // x de las bahías B1, B2, B3 (fachada en z = 0)
-  FACHADA: 0,
-  ANDEN: 3.7,                     // centro de un camión estacionado de reversa
-  CALLE: 12,                      // carril de circulación
-  VEL: 0.02 * 60,                 // 0,02 unidades por cuadro a 60 fps
+  CALLE: 13,            // avenida frente a cada bodega (z local; los camiones circulan en x)
+  ANDEN: 5.8,           // centro de un camión estacionado de reversa (parte trasera en z ≈ 2.2)
+  PASILLO: 1.0,         // pasillo de montacargas frente a la fachada (z local)
+  SEP_X: 86, SEP_Z: 84, // distancia entre bodegas en la ciudad
+  MIN_BAHIAS: 5, MAX_BAHIAS: 10,
+  ZOOM_MIN: 12, ZOOM_MAX: 35, GIRO_MAX: Math.PI / 3, AZ0: Math.PI / 4,
+  RADIO: Math.hypot(22, 22), ALTURA: 20,
+  VEL_CAMION: 4.5, VEL_LENTA: 1.2, VEL_RAPIDA: 3.2,
+  MAX_CAJAS: 144, CAJAS_ZONA: 36,
   iniciado: false, fallo: null, activo: false, raf: null, ultimoT: 0, reloj: 0,
-  renderer: null, escena: null, camara: null, raycaster: null,
-  camiones: [], montacargas: [], marcadores: [], puertas: [], edificio: null, almacen: null,
-  clicables: [], sel: null, ultimoToque: 0, ultimoMarcador: 0,
+  renderer: null, escena: null, camara: null, raycaster: null, sol: null,
+  ciudad: null, sitios: [], firmaSitios: '', foco: null, zoomMax: 35,
+  nBahias: 0, sep: 4.4, ancho: 24, fondo: 11,
+  camiones: new Map(), actividad: false, sel: null, ancla: null,
+  cam: { az: Math.PI / 4, azObj: Math.PI / 4, vista: 32, vistaObj: 32, tx: 0, tz: 0, txObj: 0, tzObj: 0, manual: false },
+  punteros: new Map(), arrastre: null, pinza: null,
+  timers: [], leyendo: false, ultimoSeg: 0,
 };
+const VB_COLOR_BAHIA = { cargando: '#22c55e', esperando: '#eab308', libre: '#94a3b8', problema: '#ef4444' };
+const VB_TEXTO_BAHIA = { cargando: 'Cargando', esperando: 'Esperando', libre: 'Libre', problema: 'Problema' };
+const VB_COLOR_ZONA = ['#2563eb', '#f59e0b', '#10b981', '#8b5cf6'];
+const VB_COLOR_CAMION = { en_ruta: '#3b82f6', esperando: '#eab308', cargando: '#22c55e', descargando: '#16a34a', listo: '#64748b' };
+const VB_NIVEL = { ok: { txt: 'En stock', c: '#16a34a' }, medio: { txt: 'Stock bajo', c: '#ea580c' }, bajo: { txt: 'Crítico', c: '#dc2626' } };
 
+function ponerHTML(el, html) { if (el && el._html !== html) { el.innerHTML = html; el._html = html; } }
+function vbAngulo(a) { return Math.atan2(Math.sin(a), Math.cos(a)); }
+
+/* ═════════ DATOS (no dependen de Three.js) ═════════ */
+function vbCantidadBahias() { return Math.min(VB.MAX_BAHIAS, Math.max(VB.MIN_BAHIAS, bahiasConfig().length)); }
+function vbNombreBahia(i) { return bahiasConfig()[i] || `Bahía ${i + 1}`; }
+function vbIndiceBahia(nombre) {
+  if (!nombre) return -1;
+  const n = vbCantidadBahias();
+  const i = bahiasConfig().indexOf(nombre);
+  if (i >= 0) return i < n ? i : -1;
+  const m = String(nombre).match(/(\d+)/);
+  const k = m ? parseInt(m[1], 10) - 1 : -1;
+  return k >= 0 && k < n ? k : -1;
+}
+/* Una bodega por sucursal (o una sola si la empresa no usa sucursales) */
+function vbSitiosDatos() {
+  if (!S.sucursales.length) return [{ id: '', suc: null, idx: 0 }];
+  return S.sucursales.map((suc, idx) => ({ id: suc.id, suc, idx }));
+}
+function vbCodigoSitio(idx) { return `WH-${String(idx + 1).padStart(2, '0')}`; }
+function vbSucursal() { return S.sucursales.find(s => s.id === S.sucursalVista) || null; }
+function vbSitioIdDe(item) { return S.sucursales.length ? (sucursalDe(item)?.id || '') : ''; }
+function vbProductos(sucId = S.sucursalVista) { return [...S.productos.values()].filter(p => enSucursal(p, sucId)); }
+function vbCamionesDe(sucId = S.sucursalVista) { return [...S.camiones.values()].filter(c => enSucursal(c, sucId)); }
+function vbEsProblema(c, asignados) {
+  if (asignados > 1) return true;
+  if (c.estado !== 'esperando') return false;
+  const espera = Date.now() - new Date(c.estado_desde || Date.now()).getTime();
+  if (espera > 2 * 3600000) return true;
+  return [...S.alertas.values()].some(a => a.tipo === 'camion_esperando' && a.referencia_id === c.id);
+}
+/* Dónde debe estar cada camión de una bodega según su estado real */
+function vbPlanDatos(sucId) {
+  const n = vbCantidadBahias();
+  const bahias = Array.from({ length: n }, (_, i) => ({ i, nombre: vbNombreBahia(i), asignados: [], ocupante: null, estado: 'libre' }));
+  const destinos = new Map();
+  const cola = [], ruta = [];
+  vbCamionesDe(sucId).forEach(c => {
+    if (c.estado === 'en_ruta') { ruta.push(c); return; }
+    if (c.estado === 'listo') { destinos.set(c.id, { tipo: 'salida', b: vbIndiceBahia(c.bahia) }); return; }
+    const b = vbIndiceBahia(c.bahia);
+    if (b >= 0) bahias[b].asignados.push(c); else cola.push(c);
+  });
+  bahias.forEach(b => {
+    b.asignados.sort((x, y) => new Date(x.estado_desde || 0) - new Date(y.estado_desde || 0));
+    b.ocupante = b.asignados[0] || null;
+    if (b.ocupante) destinos.set(b.ocupante.id, { tipo: 'bahia', b: b.i });
+    b.asignados.slice(1).forEach(c => cola.push(c));
+    const c = b.ocupante;
+    b.estado = !c ? 'libre' : vbEsProblema(c, b.asignados.length) ? 'problema' : c.estado === 'esperando' ? 'esperando' : 'cargando';
+  });
+  // Fila en la avenida: primero los que ya llegaron sin bahía; luego los que vienen en ruta (x=-20 lejos → x=-4 llegando)
+  let x = -4;
+  cola.sort((a, b) => new Date(a.estado_desde || 0) - new Date(b.estado_desde || 0)).forEach(c => {
+    destinos.set(c.id, { tipo: 'cola', x }); x -= 8.5;
+  });
+  // En ruta: avanzan por la avenida de la ciudad según su avance real (salida → hora de llegada)
+  const ahora = Date.now();
+  ruta.map(c => ({ c, p: vbProgresoRuta(c, ahora) })).sort((a, b) => b.p - a.p).forEach(({ c }) => {
+    destinos.set(c.id, { tipo: 'ruta', tope: x });
+    x -= 8.5;
+  });
+  return { n, bahias, destinos };
+}
+/* Avance del viaje 0–1: desde que salió (estado_desde) hasta su hora de llegada */
+function vbProgresoRuta(c, ahora = Date.now()) {
+  if (!c || !c.hora_llegada) return 0.5;
+  const salida = new Date(c.estado_desde || c.hora_llegada).getTime(), eta = new Date(c.hora_llegada).getTime();
+  if (eta <= salida) return ahora >= eta ? 1 : 0.5;
+  return Math.min(1, Math.max(0, (ahora - salida) / (eta - salida)));
+}
+function vbPlanesVista() {
+  const sitios = vbSitiosDatos();
+  const foco = sitios.find(s => s.id === S.sucursalVista) || (sitios.length === 1 ? sitios[0] : null);
+  return foco ? [vbPlanDatos(foco.id)] : sitios.map(s => vbPlanDatos(s.id));
+}
+/* Capacidad máxima: la de la sucursal (mejoras2.sql) o una estimación */
+function vbCapacidad(stock, sucId = S.sucursalVista) {
+  const suc = S.sucursales.find(s => s.id === sucId) || null;
+  const lista = suc ? [suc] : S.sucursales.filter(s => s.activa !== false);
+  const caps = lista.map(s => Number(s.capacidad_maxima) || 0);
+  if (lista.length && caps.every(c => c > 0)) return { valor: caps.reduce((a, b) => a + b, 0), estimada: false };
+  const prods = vbProductos(sucId);
+  const base = Math.max(stock * 1.3, prods.reduce((t, p) => t + (Number(p.cantidad_minima) || 0) * 4, 0), 100);
+  return { valor: Math.ceil(base / 100) * 100, estimada: true };
+}
+/* Zonas del patio: productos agrupados por ubicación (máx. 4) */
+function vbClaveZona(ub) {
+  const t = String(ub || '').split(/[·|,]/)[0].trim().replace(/\s+/g, ' ');
+  return t || 'Sin ubicación';
+}
+function vbZonas(sucId = S.sucursalVista) {
+  const grupos = new Map();
+  vbProductos(sucId).forEach(p => {
+    const k = vbClaveZona(p.ubicacion);
+    if (!grupos.has(k)) grupos.set(k, []);
+    grupos.get(k).push(p);
+  });
+  const suma = ps => ps.reduce((t, p) => t + (Number(p.cantidad_actual) || 0), 0);
+  let lista = [...grupos.entries()].map(([nombre, productos]) => ({ nombre, productos, stock: suma(productos) }))
+    .sort((a, b) => b.stock - a.stock || a.nombre.localeCompare(b.nombre, 'es'));
+  if (lista.length > 4) {
+    const resto = lista.slice(3).flatMap(z => z.productos);
+    lista = [...lista.slice(0, 3), { nombre: 'Otros', productos: resto, stock: suma(resto) }];
+  }
+  return lista.map((z, i) => ({ ...z, i, letra: 'ABCD'[i], color: VB_COLOR_ZONA[i], criticos: z.productos.filter(p => nivelStock(p) === 'bajo') }));
+}
+function vbZonaDeProducto(p, zonas) {
+  return zonas.find(z => z.productos.includes(p)) || null;
+}
+function vbProductoFrecuente(zona) {
+  if (!zona || !zona.productos.length) return null;
+  const cuenta = new Map();
+  S.movimientos.forEach(m => cuenta.set(m.producto_id, (cuenta.get(m.producto_id) || 0) + 1));
+  return [...zona.productos].sort((a, b) => (cuenta.get(b.id) || 0) - (cuenta.get(a.id) || 0) || (b.cantidad_actual || 0) - (a.cantidad_actual || 0))[0];
+}
+function vbTiempoEnBahia(c) {
+  if (!c) return '—';
+  if (c.estado === 'en_ruta') return textoEta(c).txt;
+  const desde = c.hora_llegada && new Date(c.hora_llegada) < new Date() && c.estado !== 'listo' ? c.hora_llegada : c.estado_desde;
+  return desde ? fmtDuracion(Date.now() - new Date(desde).getTime()) : '—';
+}
+function vbTiempoEstimado(c) {
+  if (!c) return 'Sin camión';
+  if (c.estado === 'en_ruta') return textoEta(c).txt.replace(/^llega en/, 'Llega en');
+  if (c.estado === 'listo') return 'Saliendo';
+  if (c.estado === 'esperando') return `En espera hace ${fmtDuracion(Date.now() - new Date(c.estado_desde || Date.now()).getTime())}`;
+  const total = Number(c.pallets_total) || 0, hechos = Number(c.pallets_cargados) || 0, faltan = Math.max(0, total - hechos);
+  if (!total) return 'Sin pallets registrados';
+  if (!faltan) return 'Terminando';
+  const min = Math.max(0, (Date.now() - new Date(c.estado_desde || Date.now()).getTime()) / 60000);
+  const ritmo = hechos > 0 && min >= 1 ? min / hechos : 2.5; // min por pallet (2,5 si no hay historial)
+  return `≈ ${fmtDuracion(Math.ceil(faltan * ritmo) * 60000)}`;
+}
+function vbHayActividad() { return S.movimientos.some(m => Date.now() - new Date(m.created_at).getTime() < 60000); }
+function vbEnfocarSitio(id) {
+  S.sucursalVista = id || '';
+  if (typeof renderSelectorSucursal === 'function') renderSelectorSucursal();
+  vbCerrarPanel();
+  renderVistaBodega();
+}
+
+/* ═════════ CAPA 1: KPIs EN VIVO ═════════ */
+function vbRenderKpis() {
+  const cont = $('#vb-kpis');
+  if (!cont) return;
+  const prods = vbProductos();
+  const stock = prods.reduce((t, p) => t + (Number(p.cantidad_actual) || 0), 0);
+  const cap = vbCapacidad(stock);
+  const pct = cap.valor ? Math.round((stock / cap.valor) * 100) : 0;
+  const cams = vbCamionesDe();
+  const enSitio = cams.filter(c => EN_SITIO.includes(c.estado)).length;
+  const enRuta = cams.filter(c => c.estado === 'en_ruta').length;
+  const planes = vbPlanesVista();
+  const ocupadas = planes.reduce((t, p) => t + p.bahias.filter(b => b.ocupante).length, 0);
+  const totalBahias = planes.reduce((t, p) => t + p.n, 0);
+  const k = calcularKPIs();
+  const suc = vbSucursal();
+  const alertas = [...S.alertas.values()].filter(a => !suc || sucursalDeAlerta(a)?.id === suc.id);
+  const deStock = alertas.filter(a => a.tipo === 'stock_bajo').length;
+  const colorCap = pct >= 90 ? '#dc2626' : pct >= 75 ? '#f59e0b' : '#2563eb';
+  const tarjeta = (id, icono, tono, lbl, val, sub, barra = '') => `
+    <div class="vb-kpi" id="${id}" style="--tc:${tono.c};--ts:${tono.s}">
+      <span class="vb-kpi-ic">${ic(icono)}</span>
+      <div class="vb-kpi-txt"><div class="vb-kpi-lbl">${lbl}</div><div class="vb-kpi-val">${val}</div>${barra}<div class="vb-kpi-sub">${sub}</div></div>
+    </div>`;
+  const azul = { c: '#2563eb', s: 'rgba(37,99,235,.1)' }, verde = { c: '#16a34a', s: 'rgba(22,163,74,.1)' };
+  const amarillo = { c: '#d97706', s: 'rgba(217,119,6,.1)' }, rojo = { c: '#dc2626', s: 'rgba(220,38,38,.1)' }, gris = { c: '#64748b', s: 'rgba(100,116,139,.1)' };
+  ponerHTML(cont,
+    tarjeta('vbk-stock', 'package', azul, 'Stock total', `${fmtNum(stock)} <small>/ ${fmtNum(cap.valor)}</small>`,
+      `${pct}% de la capacidad${cap.estimada ? ' (estimada)' : ''}`,
+      `<div class="vb-barra" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="--p:${Math.min(100, pct)}%;--c:${colorCap}"></i></div>`)
+    + tarjeta('vbk-camiones', 'truck', azul, 'Camiones', `${fmtNum(enSitio)} <small>en sitio</small> · ${fmtNum(enRuta)} <small>en ruta</small>`,
+      `${ocupadas} de ${totalBahias} bahías ocupadas`)
+    + tarjeta('vbk-entregas', 'clock', k.pct === null ? gris : k.pct >= 90 ? verde : k.pct >= 70 ? amarillo : rojo, 'Entregas a tiempo',
+      k.pct === null ? '—' : `${k.pct}%`, k.pct === null ? 'Sin entregas este mes' : `${k.aTiempo} de ${k.entregadosMes} este mes`)
+    + tarjeta('vbk-alertas', 'alert', alertas.length ? rojo : verde, 'Alertas activas', fmtNum(alertas.length),
+      alertas.length ? `${deStock} de stock · ${alertas.length - deStock} operativas` : 'Todo en orden'));
+}
+
+/* ═════════ CAPA 3: PANEL LATERAL ═════════ */
+function vbRenderLateral() {
+  if (!$('#vbl-suc-info')) return;
+  const sitios = vbSitiosDatos();
+  const suc = vbSucursal();
+  const red = !suc && sitios.length > 1;
+  const planes = vbPlanesVista();
+  const ocupadas = planes.reduce((t, p) => t + p.bahias.filter(b => b.ocupante).length, 0);
+  const total = planes.reduce((t, p) => t + p.n, 0);
+  const idx = suc ? S.sucursales.indexOf(suc) : 0;
+  const activa = !suc || suc.activa !== false;
+  const direccion = suc ? [suc.direccion, suc.ciudad].filter(Boolean).join(', ') : red ? `${sitios.length} bodegas en ${new Set(S.sucursales.map(s => norm(s.ciudad)).filter(Boolean)).size || 1} ciudades` : 'Bodega principal';
+  ponerHTML($('#vbl-suc-info'), `
+    <div class="vbs-top">
+      <span class="vbs-ic">${ic(red ? 'globe' : 'warehouse')}</span>
+      <div class="vbs-txt"><span class="vbs-cod">${red ? 'Red de bodegas · todas' : `Depósito · ${vbCodigoSitio(idx)}`}</span><strong>${esc(suc?.nombre || (red ? 'Vista general de la red' : S.empresa?.nombre || 'Bodega'))}</strong></div>
+    </div>
+    <div class="vbs-estado"><span class="vb-estado-pill ${activa ? 'on' : 'off'}">${activa ? 'Operacional' : 'Inactiva'}</span><span class="vbs-dir">${esc(direccion)}</span></div>
+    <div class="vbs-mini">
+      <div><b>${ocupadas}/${total}</b><span>docks</span></div>
+      <div><b>${vbCamionesDe().filter(c => c.estado === 'en_ruta').length}</b><span>llegando</span></div>
+      <div><b>${red ? sitios.length * 3 : 3}</b><span>montacargas</span></div>
+    </div>`);
+
+  const zonas = vbZonas();
+  const orden = { bajo: 0, medio: 1, ok: 2 };
+  const prods = vbProductos().sort((a, b) => orden[nivelStock(a)] - orden[nivelStock(b)] || String(a.nombre).localeCompare(String(b.nombre), 'es'));
+  $('#vbl-inv-n').textContent = prods.length ? `${prods.length} productos` : '';
+  ponerHTML($('#vbl-inv'), prods.length ? prods.slice(0, 8).map(p => {
+    const n = nivelStock(p), z = vbZonaDeProducto(p, zonas);
+    return `<div class="vbi" data-id="${esc(p.id)}">
+      <span class="vbi-ic" style="--c:${z ? z.color : '#94a3b8'}">${ic('package')}</span>
+      <div class="vbi-txt"><b>${esc(p.nombre)}</b><div class="vb-barra"><i style="--p:${pctStock(p)}%;--c:${VB_NIVEL[n].c}"></i></div></div>
+      <div class="vbi-der"><b>${fmtNum(p.cantidad_actual)}</b><span class="vbi-pill" style="--c:${VB_NIVEL[n].c}">${VB_NIVEL[n].txt}</span></div>
+    </div>`;
+  }).join('') + (prods.length > 8 ? `<a class="vbl-mas" href="#/inventario">Ver los ${prods.length} productos →</a>` : '')
+    : '<p class="vbl-vacio">No hay productos en esta sucursal.</p>');
+  vbRenderLateralVivo();
+}
+function vbRenderLateralVivo() {
+  const flota = $('#vbl-flota'), docks = $('#vbl-docks');
+  if (!flota || !docks) return;
+  const sitios = vbSitiosDatos();
+  const suc = vbSucursal();
+  const red = !suc && sitios.length > 1;
+  const foco = VB.sitios.find(s => s.id === (suc ? suc.id : sitios.length === 1 ? sitios[0].id : null));
+  const maquinas = (foco ? foco.montacargas : VB.sitios.flatMap(s => s.montacargas));
+  const lista = maquinas.length ? maquinas : [0, 1, 2].map(i => ({ id: `FL-0${i + 1}`, estado: 'En espera', tarea: 'Abre la vista para ver su tarea', bateria: [81, 64, 92][i] }));
+  ponerHTML(flota, lista.map(m => {
+    const b = Math.round(m.bateria);
+    const cb = b < 20 ? '#dc2626' : b < 45 ? '#f59e0b' : '#16a34a';
+    return `<div class="vbf"><span class="vbf-ic">${ic('truck')}</span>
+      <div class="vbf-txt"><b>${esc(m.id)}${red && m.sitio ? ` <small>${vbCodigoSitio(m.sitio.idx)}</small>` : ''}</b><span>${esc(m.tarea)}</span></div>
+      <div class="vbf-der"><span class="vbf-est">${esc(m.estado)}</span><div class="vbf-bat" title="Batería ${b}%"><div class="vb-barra"><i style="--p:${b}%;--c:${cb}"></i></div><small>${b}%</small></div></div>
+    </div>`;
+  }).join(''));
+  $('#vbl-docks-t').textContent = red ? 'Sitios de la red' : 'Docks';
+  $('#vbl-docks-h').textContent = red ? 'Toca para entrar' : 'Toca para centrar';
+  if (red) {
+    ponerHTML(docks, sitios.map(s => {
+      const plan = vbPlanDatos(s.id);
+      const stock = vbProductos(s.id).reduce((t, p) => t + (Number(p.cantidad_actual) || 0), 0);
+      const pct = Math.round((stock / vbCapacidad(stock, s.id).valor) * 100);
+      const ocup = plan.bahias.filter(b => b.ocupante).length;
+      const llegan = vbCamionesDe(s.id).filter(c => c.estado === 'en_ruta').length;
+      const color = s.suc.activa === false ? '#94a3b8' : '#2563eb';
+      return `<button type="button" class="vbd vbd-sitio" data-vb-sitio="${esc(s.id)}" title="Ir a ${esc(s.suc.nombre)}">
+        <span class="vbd-b" style="--c:${color}">${vbCodigoSitio(s.idx).slice(3)}</span>
+        <div class="vbd-txt"><b>${esc(s.suc.nombre)}</b><span>${ocup}/${plan.n} docks · ${llegan} llegando${s.suc.activa === false ? ' · inactiva' : ''}</span>
+          <div class="vb-barra"><i style="--p:${Math.min(100, pct)}%;--c:${pct >= 90 ? '#dc2626' : pct >= 75 ? '#f59e0b' : '#2563eb'}"></i></div></div>
+        <div class="vbd-der"><b>${pct}%</b><span>lleno</span></div>
+      </button>`;
+    }).join(''));
+    return;
+  }
+  const plan = (foco && foco.plan) || vbPlanesVista()[0];
+  ponerHTML(docks, plan.bahias.map(b => {
+    const c = b.ocupante;
+    const col = VB_COLOR_BAHIA[b.estado];
+    return `<button type="button" class="vbd ${VB.sel?.tipo === 'bahia' && VB.sel.id === b.i ? 'sel' : ''}" data-vb-bahia="${b.i}" title="Centrar cámara en ${esc(b.nombre)}">
+      <span class="vbd-b" style="--c:${col}">B${b.i + 1}</span>
+      <div class="vbd-txt"><b>${c ? esc(c.placa || 'Sin placa') : 'Libre'}</b><span>${c ? `${esc(EST_CAMION[c.estado]?.label || c.estado)} · ${esc(vbTiempoEnBahia(c))}` : esc(b.nombre)}</span></div>
+      <div class="vbd-der">${c ? `<b>${fmtNum(c.pallets_cargados)}/${fmtNum(c.pallets_total)}</b><span>pallets</span>` : `<span class="vbd-est" style="--c:${col}">${VB_TEXTO_BAHIA[b.estado]}</span>`}</div>
+    </button>`;
+  }).join(''));
+}
+
+/* ═════════ ESCENA 3D: piezas ═════════ */
 function vbMat(color, extra = {}) { return new THREE.MeshStandardMaterial({ color, roughness: 0.78, metalness: 0.05, ...extra }); }
 function vbCaja(w, h, d, mat, x = 0, y = 0, z = 0) {
   const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
@@ -3900,142 +4315,158 @@ function vbCanvas(w, h, dibujar) {
   t.anisotropy = 4;
   return t;
 }
-function vbSpriteTexto(texto, { fondo = '#ffffff', color = '#1e3a8a', ancho = 512, alto = 128, fuente = 72 } = {}) {
-  const tex = vbCanvas(ancho, alto, (c, w, h) => {
-    c.fillStyle = fondo; c.beginPath(); c.roundRect(4, 4, w - 8, h - 8, 26); c.fill();
-    c.fillStyle = color; c.font = `800 ${fuente}px Inter, Arial, sans-serif`;
-    c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(texto, w / 2, h / 2 + 3);
+function vbTexturaEtiqueta(texto, { fondo = '#ffffff', color = '#1e3a8a', punto = null, ancho = 512, alto = 128, fuente = 72 } = {}) {
+  return vbCanvas(ancho, alto, (c, w, h) => {
+    c.fillStyle = 'rgba(15,23,42,.18)'; c.beginPath(); c.roundRect(6, 10, w - 12, h - 14, 28); c.fill();
+    c.fillStyle = fondo; c.beginPath(); c.roundRect(4, 4, w - 8, h - 12, 26); c.fill();
+    const espacioPunto = punto ? 58 : 0;
+    let tam = fuente;
+    c.font = `800 ${tam}px Inter, Arial, sans-serif`;
+    let tw = c.measureText(texto).width;
+    const max = w - 44 - espacioPunto;
+    if (tw > max) { tam = Math.floor(tam * max / tw); c.font = `800 ${tam}px Inter, Arial, sans-serif`; tw = c.measureText(texto).width; }
+    const x0 = (w - tw - espacioPunto) / 2, cy = (h - 8) / 2;
+    if (punto) { c.fillStyle = punto; c.beginPath(); c.arc(x0 + 16, cy, Math.min(15, tam / 4), 0, Math.PI * 2); c.fill(); }
+    c.fillStyle = color; c.textAlign = 'left'; c.textBaseline = 'middle';
+    c.fillText(texto, x0 + espacioPunto, cy + 3);
   });
-  return new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
+}
+function vbSprite(tex, sx, sy) {
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
+  s.scale.set(sx, sy, 1);
+  s.renderOrder = 10;
+  return s;
+}
+function vbCambiarTextura(sprite, tex) {
+  if (sprite.material.map) sprite.material.map.dispose();
+  sprite.material.map = tex;
+  sprite.material.needsUpdate = true;
+}
+function vbPintura(padre, w, d, color, x, z, alto = 0.03, extra = {}) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, alto, d), vbMat(color, { roughness: 0.6, ...extra }));
+  m.position.set(x, alto / 2, z);
+  m.receiveShadow = true;
+  padre.add(m);
+  return m;
 }
 
-/* ── Suelo, zona de carga y calle ── */
-function vbSuelo(esc) {
-  const suelo = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), vbMat('#e2e8f0', { roughness: 0.95 }));
-  suelo.rotation.x = -Math.PI / 2;
-  suelo.receiveShadow = true;
-  esc.add(suelo);
-  const pintura = (w, d, color, x, z, alto = 0.03) => {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(w, alto, d), vbMat(color, { roughness: 0.6 }));
-    m.position.set(x, alto / 2, z); m.receiveShadow = true;
-    esc.add(m);
-    return m;
-  };
-  // 8 franjas amarillas paralelas: delimitan los carriles de las 3 bahías
-  [-6.8, -5.4, -2.6, -1.4, 1.4, 2.6, 5.4, 6.8].forEach(x => pintura(0.3, 7.2, '#fbbf24', x, 4.2));
-  // Borde del área de carga (rectángulo)
-  pintura(15.2, 0.3, '#fbbf24', 0, 8.0);
-  pintura(15.2, 0.3, '#fbbf24', 0, 0.45);
-  pintura(0.3, 7.85, '#fbbf24', -7.6, 4.22);
-  pintura(0.3, 7.85, '#fbbf24', 7.6, 4.22);
-  // Andén de concreto junto a la fachada y calle de circulación
-  pintura(15, 0.6, '#cbd5e1', 0, 0.15, 0.06);
-  pintura(50, 3.4, '#94a3b8', 0, VB.CALLE, 0.02);
-  for (let x = -24; x < 25; x += 3) pintura(1.5, 0.16, '#ffffff', x, VB.CALLE, 0.035);
-}
 
-/* ── Edificio principal y almacén trasero ── */
-function vbEdificio(esc) {
-  const g = new THREE.Group();
-  const azul = vbMat('#1d4ed8');
-  const cuerpo = vbCaja(14, 4, 8, azul, 0, 2, -4);
-  cuerpo.userData.pick = { tipo: 'edificio' };
-  g.add(cuerpo);
-  // Paredes laterales blanco grisáceo
-  [-7.05, 7.05].forEach(x => { const p = vbCaja(0.2, 4, 8, vbMat('#e2e8f0'), x, 2, -4); p.userData.pick = { tipo: 'edificio' }; g.add(p); });
-  // Zócalo oscuro
-  g.add(vbCaja(14.1, 0.35, 8.1, vbMat('#1e3a8a'), 0, 0.175, -4));
-  // Techo con volumen: losa, 6 líneas paralelas, alero frontal/trasero y equipos
-  const losa = vbCaja(14.4, 0.4, 8.4, vbMat('#1e40af'), 0, 4.2, -4);
-  losa.userData.pick = { tipo: 'edificio' };
-  g.add(losa);
-  for (let i = 0; i < 6; i++) g.add(vbCaja(14.4, 0.06, 0.14, vbMat('#3b82f6', { roughness: 0.5 }), 0, 4.43, -7.4 + i * (6.8 / 5)));
-  g.add(vbCaja(14.6, 0.25, 0.2, vbMat('#3b82f6'), 0, 4.45, 0.15));
-  g.add(vbCaja(14.6, 0.25, 0.2, vbMat('#3b82f6'), 0, 4.45, -8.15));
-  [[-4.5, -6], [3.8, -6.2]].forEach(([x, z]) => {
-    g.add(vbCaja(1.4, 0.7, 1.1, vbMat('#cbd5e1', { metalness: 0.4, roughness: 0.4 }), x, 4.75, z));
-    const vent = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.12, 20), vbMat('#64748b', { metalness: 0.5 }));
-    vent.position.set(x, 5.16, z); g.add(vent);
-  });
-  // Nervaduras de la fachada entre puertas
-  for (let x = -6.5; x <= 6.5; x += 1) {
-    if (VB.PUERTAS.some(px => Math.abs(x - px) < 1.6)) continue;
-    g.add(vbCaja(0.08, 3.4, 0.06, vbMat('#1e40af'), x, 1.9, 0.03));
+/* ── Patio de cada bodega (coordenadas locales del sitio) ── */
+function vbPatio(sitio) {
+  const g = sitio.grupo, W = VB.ancho;
+  vbPintura(g, W + 28, 27, '#f4f7fb', 0, -2.4, 0.02);                          // patio de concreto
+  vbPintura(g, W + 2, 1.6, '#e2e8f0', 0, VB.PASILLO, 0.035);                   // pasillo de montacargas
+  for (let i = 0; i <= VB.nBahias; i++) {                                       // carriles de cada bahía
+    vbPintura(g, 0.2, 8.4, '#fbbf24', (i - VB.nBahias / 2) * VB.sep, 6.4, 0.05);
   }
-  // 3 puertas de bahía (B1 abierta con interior oscuro) con marco blanco
-  VB.PUERTAS.forEach((px, i) => {
-    const p = new THREE.Group();
-    const abierta = i === 0;
-    const matHoja = vbMat(abierta ? '#111827' : '#0f172a', { roughness: 0.9 });
-    const blanco = vbMat('#f8fafc');
-    p.userData.mats = [matHoja, blanco];
-    p.add(vbCaja(2.5, 3, 0.1, matHoja, 0, 1.5, 0.06));
-    if (abierta) {
-      p.add(vbCaja(2.5, 0.5, 0.25, vbMat('#94a3b8', { metalness: 0.3 }), 0, 2.78, 0.16));      // cortina enrollada arriba
-      p.add(vbCaja(2.3, 0.04, 1.0, vbMat('#475569', { metalness: 0.4 }), 0, 0.06, 0.55));      // rampa niveladora
-      [[-0.6, 0.6], [0.5, 0.45]].forEach(([dx, s]) => p.add(vbCaja(s, s, s, vbMat('#92400e'), dx, s / 2 + 0.05, 0.15))); // carga a la vista
-    } else {
-      for (let k = 0; k < 6; k++) p.add(vbCaja(2.46, 0.03, 0.12, vbMat('#1e293b'), 0, 0.4 + k * 0.45, 0.12)); // láminas de cortina
-    }
-    // Marco: 4 tiras blancas
-    p.add(vbCaja(2.8, 0.15, 0.14, blanco, 0, 3.07, 0.08));
-    p.add(vbCaja(2.8, 0.1, 0.14, blanco, 0, 0.05, 0.08));
-    p.add(vbCaja(0.15, 3.1, 0.14, blanco, -1.33, 1.55, 0.08));
-    p.add(vbCaja(0.15, 3.1, 0.14, blanco, 1.33, 1.55, 0.08));
-    // Topes de goma
-    [-1.1, 1.1].forEach(dx => p.add(vbCaja(0.3, 0.4, 0.3, vbMat('#111827'), dx, 0.4, 0.25)));
-    // Número B1/B2/B3 (sprite)
-    const num = vbSpriteTexto(`B${i + 1}`, { fondo: '#ffffff', color: '#1d4ed8', ancho: 192, alto: 112, fuente: 76 });
-    num.scale.set(0.85, 0.5, 1);
-    num.position.set(0, 3.55, 0.3);
-    p.add(num);
-    p.position.set(px, 0, VB.FACHADA);
-    p.traverse(o => { o.userData.pick = { tipo: 'bahia', id: i }; });
-    g.add(p);
-    VB.puertas.push(p);
+  vbPintura(g, VB.nBahias * VB.sep + 0.2, 0.2, '#fbbf24', 0, 10.6, 0.05);
+  // Reja perimetral con portón hacia la avenida
+  const reja = vbMat('#cbd5e1', { metalness: 0.3 });
+  const x0 = -(W / 2 + 13.5), x1 = W / 2 + 13.5, zA = -VB.fondo - 4.5, zF = 10.9;
+  [[x0, zA, x1, zA], [x0, zA, x0, zF], [x1, zA, x1, zF]].forEach(([a, b, c, d]) => {
+    const largo = Math.hypot(c - a, d - b);
+    const m = vbCaja(c === a ? 0.12 : largo, 0.9, c === a ? largo : 0.12, reja, (a + c) / 2, 0.45, (b + d) / 2);
+    m.castShadow = false;
+    g.add(m);
   });
-  // Letrero "BODEGA" (sprite) en la parte superior central de la fachada
-  const letrero = vbSpriteTexto('BODEGA', { fondo: '#ffffff', color: '#1e3a8a', ancho: 640, alto: 150, fuente: 104 });
-  letrero.scale.set(3.6, 0.85, 1);
-  letrero.position.set(0, 4.55, 0.45);
-  g.add(letrero);
-  esc.add(g);
-  VB.edificio = g;
-  VB.clicables.push(g);
+}
 
-  // Almacén trasero: más pequeño, mismo estilo
-  const a = new THREE.Group();
-  const cuerpoA = vbCaja(6, 3, 5, vbMat('#2563eb'), 0, 1.5, 0);
-  a.add(cuerpoA);
-  a.add(vbCaja(6.3, 0.3, 5.3, vbMat('#1e40af'), 0, 3.15, 0));
-  for (let i = 0; i < 4; i++) a.add(vbCaja(6.3, 0.05, 0.12, vbMat('#3b82f6'), 0, 3.33, -2 + i * 1.33));
-  a.add(vbCaja(1.6, 2.2, 0.1, vbMat('#0f172a'), 1, 1.1, 2.53));
-  a.add(vbCaja(1.8, 0.12, 0.14, vbMat('#f8fafc'), 1, 2.26, 2.55));
-  [[-1.6, 1.6], [-1.6, 0.6]].forEach(([x, y]) => a.add(vbCaja(0.9, 0.55, 0.06, vbMat('#bfdbfe', { roughness: 0.2, metalness: 0.2 }), x, y + 0.4, 2.53)));
-  a.position.set(-10.5, 0, -5);
-  a.traverse(o => { o.userData.pick = { tipo: 'almacen' }; });
-  esc.add(a);
-  VB.almacen = a;
-  VB.clicables.push(a);
+/* ── Edificio y bahías ── */
+function vbEdificio(sitio) {
+  const g = sitio.grupo, W = VB.ancho, D = VB.fondo, H = 6;
+  const inactiva = sitio.suc && sitio.suc.activa === false;
+  const ed = new THREE.Group();
+  ed.add(vbCaja(W, H, D, vbMat(inactiva ? '#94a3b8' : '#2563eb'), 0, H / 2, -D / 2));
+  [-W / 2 - 0.06, W / 2 + 0.06].forEach(x => ed.add(vbCaja(0.14, H, D, vbMat('#e2e8f0'), x, H / 2, -D / 2)));
+  ed.add(vbCaja(W + 0.1, 0.4, D + 0.1, vbMat('#1e3a8a'), 0, 0.2, -D / 2));
+  ed.add(vbCaja(W + 0.5, 0.45, D + 0.5, vbMat(inactiva ? '#64748b' : '#1e40af'), 0, H + 0.2, -D / 2));
+  for (let i = 0; i < 7; i++) ed.add(vbCaja(W + 0.5, 0.06, 0.16, vbMat(inactiva ? '#94a3b8' : '#3b82f6', { roughness: 0.5 }), 0, H + 0.45, -D + 0.6 + i * ((D - 1.2) / 6)));
+  [[-W / 4, -D * 0.65], [W / 4, -D * 0.4]].forEach(([x, z]) => {
+    ed.add(vbCaja(1.6, 0.7, 1.2, vbMat('#cbd5e1', { metalness: 0.4, roughness: 0.4 }), x, H + 0.75, z));
+    const vent = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.12, 20), vbMat('#64748b', { metalness: 0.5 }));
+    vent.position.set(x, H + 1.16, z); vent.castShadow = true; ed.add(vent);
+  });
+  for (let x = -W / 2 + 0.6; x <= W / 2 - 0.6; x += 0.9) {                       // nervaduras entre puertas
+    if ([...Array(VB.nBahias).keys()].some(i => Math.abs(x - vbXBahia(i)) < Math.min(1.75, VB.sep / 2 - 0.1))) continue;
+    ed.add(vbCaja(0.08, H - 0.8, 0.06, vbMat(inactiva ? '#64748b' : '#1d4ed8'), x, (H - 0.8) / 2 + 0.4, 0.03));
+  }
+  ed.traverse(o => { o.userData.pick = { tipo: 'edificio', sitio: sitio.id }; });
+  // Letrero con el nombre de la sucursal, pegado a la fachada
+  sitio.letrero = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ transparent: true }));
+  sitio.letrero.position.set(0, H - 0.75, 0.08);
+  ed.add(sitio.letrero);
+  // Rótulo grande que se ve en la vista general de la red
+  sitio.rotulo = vbSprite(vbTexturaEtiqueta('—'), 16, 3.4);
+  sitio.rotulo.position.set(0, H + 9, -D / 2);
+  sitio.rotulo.userData.pick = { tipo: 'edificio', sitio: sitio.id };
+  ed.add(sitio.rotulo);
+  g.add(ed);
+  sitio.edificio = ed;
+  sitio.bahias = [];
+  for (let i = 0; i < VB.nBahias; i++) sitio.bahias.push(vbBahia(sitio, i));
+}
+function vbXBahia(i) { return (i - (VB.nBahias - 1) / 2) * VB.sep; }
+function vbBahia(sitio, i) {
+  const p = new THREE.Group();
+  const ancho = Math.min(2.7, VB.sep - 0.7);
+  const blanco = vbMat('#f8fafc');
+  const cerrada = new THREE.Group(), abierta = new THREE.Group();
+  cerrada.add(vbCaja(ancho, 3.2, 0.1, vbMat('#cbd5e1', { roughness: 0.6 }), 0, 1.6, 0.06));
+  for (let k = 0; k < 7; k++) cerrada.add(vbCaja(ancho - 0.04, 0.03, 0.12, vbMat('#94a3b8'), 0, 0.35 + k * 0.42, 0.12));
+  abierta.add(vbCaja(ancho, 3.2, 0.1, vbMat('#0f172a', { roughness: 0.9 }), 0, 1.6, 0.06));
+  abierta.add(vbCaja(ancho, 0.45, 0.25, vbMat('#94a3b8', { metalness: 0.3 }), 0, 2.98, 0.16));
+  p.add(cerrada, abierta);
+  p.add(vbCaja(ancho + 0.3, 0.15, 0.14, blanco, 0, 3.27, 0.08));
+  p.add(vbCaja(0.15, 3.3, 0.14, blanco, -ancho / 2 - 0.08, 1.65, 0.08));
+  p.add(vbCaja(0.15, 3.3, 0.14, blanco, ancho / 2 + 0.08, 1.65, 0.08));
+  [-ancho / 2 + 0.2, ancho / 2 - 0.2].forEach(dx => p.add(vbCaja(0.3, 0.4, 0.3, vbMat('#111827'), dx, 0.45, 0.25)));
+  // Luz de estado sobre la puerta + franja en el piso
+  const luzMat = vbMat('#94a3b8', { emissive: '#94a3b8', emissiveIntensity: 0.6, roughness: 0.3 });
+  p.add(vbCaja(ancho + 0.2, 0.16, 0.16, luzMat, 0, 3.52, 0.12));
+  const pisoMat = new THREE.MeshBasicMaterial({ color: '#94a3b8', transparent: true, opacity: 0.32, depthWrite: false });
+  const piso = new THREE.Mesh(new THREE.PlaneGeometry(ancho + 0.3, 2.0), pisoMat);
+  piso.rotation.x = -Math.PI / 2; piso.position.set(0, 0.06, 1.15);
+  p.add(piso);
+  const etiqueta = vbSprite(vbTexturaEtiqueta(`B${i + 1}`, { ancho: 192, alto: 120, fuente: 70 }), 1.45, 0.9);
+  etiqueta.position.set(0, 4.3, 0.6);
+  p.add(etiqueta);
+  p.position.set(vbXBahia(i), 0, 0);
+  p.traverse(o => { o.userData.pick = { tipo: 'bahia', id: i, sitio: sitio.id }; });
+  sitio.grupo.add(p);
+  return { i, grupo: p, cerrada, abierta, luzMat, pisoMat, etiqueta, estado: null, mats: [luzMat, blanco] };
+}
+function vbPintarBahia(sitio, b, datos) {
+  const bah = sitio.bahias[b];
+  if (!bah) return;
+  const estado = datos.estado;
+  const clave = estado + (datos.ocupante ? '1' : '0');
+  if (bah.estado === clave) return;
+  bah.estado = clave;
+  const col = VB_COLOR_BAHIA[estado];
+  bah.luzMat.color.set(col);
+  if (bah.luzMat.userData.orig) bah.luzMat.userData.orig.c = new THREE.Color(col).getHex();
+  else bah.luzMat.emissive.set(col);
+  bah.pisoMat.color.set(col);
+  bah.cerrada.visible = !datos.ocupante;
+  bah.abierta.visible = !!datos.ocupante;
+  vbCambiarTextura(bah.etiqueta, vbTexturaEtiqueta(`B${b + 1}`, { fondo: col, color: '#ffffff', ancho: 192, alto: 120, fuente: 70 }));
 }
 
 /* ── Camiones ── */
-function vbCamion(esc, id) {
+function vbModeloCamion(id, cabina) {
   const g = new THREE.Group();
   const mats = [];
   const M = (color, extra) => { const m = vbMat(color, extra); mats.push(m); return m; };
-  // Remolque blanco 5 × 2 × 2 con bordes grises y logo
-  const remolque = vbCaja(5, 2, 2, M('#f8fafc'), -1.1, 1.9, 0);
-  g.add(remolque);
+  g.add(vbCaja(5, 2, 2, M('#f8fafc'), -1.1, 1.9, 0));
   const borde = M('#94a3b8');
   [[0.95, 1.0], [0.95, -1.0], [2.88, 1.0], [2.88, -1.0]].forEach(([y, z]) => g.add(vbCaja(5.04, 0.08, 0.08, borde, -1.1, y, z)));
   [-3.6, 1.4].forEach(x => [1.0, -1.0].forEach(z => g.add(vbCaja(0.08, 2.0, 0.08, borde, x, 1.9, z))));
   const logo = vbCanvas(1024, 400, (c, w, h) => {
     c.fillStyle = '#f8fafc'; c.fillRect(0, 0, w, h);
-    c.fillStyle = '#1d4ed8'; c.beginPath(); c.roundRect(170, 120, 150, 150, 30); c.fill();
+    c.fillStyle = cabina; c.beginPath(); c.roundRect(150, 120, 150, 150, 30); c.fill();
     c.strokeStyle = '#fff'; c.lineWidth = 12; c.lineJoin = 'round';
-    c.beginPath(); c.moveTo(200, 185); c.lineTo(245, 158); c.lineTo(290, 185); c.lineTo(290, 245); c.lineTo(200, 245); c.closePath(); c.stroke();
-    c.fillStyle = '#1e3a8a'; c.font = '800 132px Inter, Arial, sans-serif'; c.textBaseline = 'middle'; c.fillText('BODEGA', 350, 200);
+    c.beginPath(); c.moveTo(180, 185); c.lineTo(225, 158); c.lineTo(270, 185); c.lineTo(270, 245); c.lineTo(180, 245); c.closePath(); c.stroke();
+    c.fillStyle = '#1e3a8a'; c.font = 'italic 800 120px Inter, Arial, sans-serif'; c.textBaseline = 'middle'; c.fillText('BodegaApp', 330, 200);
   });
   const matLogo = M('#ffffff', { map: logo });
   [1.011, -1.011].forEach(z => {
@@ -4044,21 +4475,15 @@ function vbCamion(esc, id) {
     if (z < 0) lado.rotation.y = Math.PI;
     g.add(lado);
   });
-  // Chasis
   g.add(vbCaja(7, 0.25, 1.4, M('#334155'), -0.2, 0.75, 0));
-  // Cabina azul 2 × 2.2 × 2, parabrisas y espejos
-  g.add(vbCaja(2, 2.2, 2, M('#1e40af', { roughness: 0.4 }), 2.5, 1.75, 0));
+  g.add(vbCaja(2, 2.2, 2, M(cabina, { roughness: 0.4 }), 2.5, 1.75, 0));
   const vidrio = M('#93c5fd', { transparent: true, opacity: 0.75, roughness: 0.1, metalness: 0.3 });
   g.add(vbCaja(0.2, 1.4, 1.8, vidrio, 3.45, 2.15, 0));
   [-0.86, 0.86].forEach(z => g.add(vbCaja(1.0, 0.7, 0.2, vidrio, 2.7, 2.25, z * 1.17)));
   const espejo = M('#374151');
-  [1.18, -1.18].forEach(z => {
-    g.add(vbCaja(0.3, 0.3, 0.12, espejo, 3.35, 2.35, z * 1.15));
-    g.add(vbCaja(0.06, 0.06, 0.35, espejo, 3.35, 2.35, z));
-  });
-  g.add(vbCaja(0.12, 0.3, 1.9, M('#e2e8f0'), 3.52, 1.0, 0));                 // parachoques
-  [0.7, -0.7].forEach(z => g.add(vbCaja(0.06, 0.18, 0.3, M('#fef9c3', { emissive: '#fde68a', emissiveIntensity: 0.3 }), 3.53, 1.25, z))); // focos
-  // 6 ruedas con aro
+  [1.18, -1.18].forEach(z => g.add(vbCaja(0.3, 0.3, 0.12, espejo, 3.35, 2.35, z * 1.15)));
+  g.add(vbCaja(0.12, 0.3, 1.9, M('#e2e8f0'), 3.52, 1.0, 0));
+  [0.7, -0.7].forEach(z => g.add(vbCaja(0.06, 0.18, 0.3, M('#fef9c3', { emissive: '#fde68a', emissiveIntensity: 0.3 }), 3.53, 1.25, z)));
   const ruedas = [];
   const gRueda = new THREE.CylinderGeometry(0.4, 0.4, 0.3, 16), gAro = new THREE.CylinderGeometry(0.2, 0.2, 0.31, 8);
   const mRueda = M('#1f2937', { roughness: 0.9 }), mAro = M('#9ca3af', { metalness: 0.6, roughness: 0.3 });
@@ -4071,47 +4496,293 @@ function vbCamion(esc, id) {
     r.position.set(x, 0.4, z);
     g.add(r); ruedas.push(r);
   }));
+  const etiqueta = vbSprite(vbTexturaEtiqueta('—'), 3.6 * (VB.escalaEtiquetas || 1), 0.9 * (VB.escalaEtiquetas || 1));
+  etiqueta.position.set(-0.4, 4.2, 0);
+  g.add(etiqueta);
   g.traverse(o => { o.userData.pick = { tipo: 'camion', id }; });
-  esc.add(g);
-  VB.clicables.push(g);
-  return { grupo: g, mats, ruedas, id };
+  return { grupo: g, mats, ruedas, etiqueta };
+}
+function vbEntradaX(sitio) { return Math.min(...VB.sitios.map(s => s.cx)) - 70 - sitio.cx; }
+function vbSalidaX(sitio) { return Math.max(...VB.sitios.map(s => s.cx)) + 70 - sitio.cx; }
+function vbXRuta(obj) {
+  const x0 = vbEntradaX(obj.sitio);
+  const x = x0 + vbProgresoRuta(S.camiones.get(obj.id)) * (-4 - x0);
+  return Math.min(x, obj.dest?.tope ?? -4);
+}
+function vbCrearCamion(c, dest, sitio) {
+  let h = 0;
+  for (const ch of String(c.placa || c.id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  const cabina = ['#1d4ed8', '#1d4ed8', '#0f766e', '#2563eb'][h % 4];
+  const m = vbModeloCamion(c.id, cabina);
+  const obj = { id: c.id, sitio, ...m, pasos: [], vel: 0, clave: null, dest: null, fuera: false, firma: '' };
+  const g = obj.grupo;
+  if (dest.tipo === 'bahia' || (dest.tipo === 'salida' && dest.b >= 0)) {
+    // Ya estaba en su bahía al abrir la vista: estático, de reversa contra el andén
+    g.position.set(vbXBahia(dest.b), 0, VB.ANDEN);
+    g.rotation.y = -Math.PI / 2;
+    if (dest.tipo === 'bahia') { obj.clave = `b${dest.b}`; obj.dest = dest; }
+  } else if (dest.tipo === 'salida') {
+    g.position.set(-4, 0, VB.CALLE);
+  } else if (dest.tipo === 'ruta') {
+    obj.dest = dest;
+    g.position.set(Math.max(vbEntradaX(sitio), vbXRuta(obj) - 14), 0, VB.CALLE); // entra rodando hasta su punto real del viaje
+  } else {
+    g.position.set(Math.min(-20, dest.x - 10), 0, VB.CALLE);
+  }
+  sitio.grupo.add(g);
+  return obj;
+}
+function vbEtiquetaCamion(obj, c) {
+  const firma = `${c.placa}|${c.estado}`;
+  if (obj.firma === firma) return;
+  obj.firma = firma;
+  vbCambiarTextura(obj.etiqueta, vbTexturaEtiqueta(c.placa || 'Sin placa', { punto: VB_COLOR_CAMION[c.estado] || '#64748b', color: '#0f172a', ancho: 512, alto: 128, fuente: 66 }));
+}
+function vbQuitarCamion(obj) {
+  if (VB.sel?.tipo === 'camion' && VB.sel.id === obj.id) vbCerrarPanel();
+  if (obj.grupo.parent) obj.grupo.parent.remove(obj.grupo);
+  obj.grupo.traverse(o => { if (o.material?.map) o.material.map.dispose(); });
+  VB.camiones.delete(obj.id);
+}
+/* Ruta de un camión desde donde está hasta su destino (avenida ↔ carril de bahía) */
+function vbPlanear(obj, dest) {
+  const g = obj.grupo;
+  const pasos = [];
+  let x = g.position.x;
+  const enCalle = Math.abs(g.position.z - VB.CALLE) < 0.35;
+  const mover = (px, pz, rev = false, frenar = false) => pasos.push({ t: 'mover', x: px, z: pz, rev, frenar });
+  const girar = yaw => pasos.push({ t: 'girar', yaw });
+  if (!enCalle) {
+    if (dest.tipo === 'bahia' && Math.abs(x - vbXBahia(dest.b)) < 0.3) {
+      girar(-Math.PI / 2); mover(vbXBahia(dest.b), VB.ANDEN, true, true);
+      obj.pasos = pasos; return;
+    }
+    girar(-Math.PI / 2);
+    mover(x, VB.CALLE);
+  }
+  const porCalle = (destX, frenar) => {
+    if (Math.abs(destX - x) < 0.05) return;
+    girar(destX > x ? 0 : Math.PI);
+    mover(destX, VB.CALLE, false, frenar);
+    x = destX;
+  };
+  if (dest.tipo === 'bahia') {
+    const bx = vbXBahia(dest.b);
+    porCalle(bx, true);
+    girar(-Math.PI / 2);
+    mover(bx, VB.ANDEN, true, true);                 // reversa hasta el andén con frenado suave
+  } else if (dest.tipo === 'cola') {
+    porCalle(dest.x, true);
+    girar(0);
+  } else if (dest.tipo === 'ruta') {
+    girar(0);
+    pasos.push({ t: 'seguir' });                     // sigue su avance real por la avenida
+  } else {
+    porCalle(Math.max(x, -4), false);
+    girar(0);
+    mover(vbSalidaX(obj.sitio), VB.CALLE, false, false); // sale de la bodega y cruza la ciudad
+    pasos.push({ t: 'ocultar' });
+  }
+  obj.pasos = pasos;
+}
+function vbAnimarCamion(obj, dt) {
+  const g = obj.grupo;
+  const paso = obj.pasos[0];
+  if (!paso) { obj.vel = 0; return; }
+  if (paso.t === 'girar') {
+    const d = vbAngulo(paso.yaw - g.rotation.y), max = 1.9 * dt;
+    if (Math.abs(d) <= max) { g.rotation.y = paso.yaw; obj.pasos.shift(); } else g.rotation.y += Math.sign(d) * max;
+    return;
+  }
+  if (paso.t === 'seguir') {
+    const d = vbXRuta(obj) - g.position.x;
+    if (Math.abs(d) < 0.005) { obj.vel = 0; return; }
+    obj.vel = Math.min(VB.VEL_CAMION, obj.vel + 3.2 * dt, Math.sqrt(2 * 2.4 * Math.abs(d)));
+    const av = Math.sign(d) * Math.min(Math.abs(d), Math.max(0.01, obj.vel) * dt);
+    g.position.x += av;
+    obj.ruedas.forEach(r => { r.rotation.y -= av / 0.4; });
+    return;
+  }
+  if (paso.t === 'ocultar') {
+    g.visible = false; obj.fuera = true; obj.pasos.shift();
+    if (VB.sel?.tipo === 'camion' && VB.sel.id === obj.id) vbCerrarPanel();
+    return;
+  }
+  const dx = paso.x - g.position.x, dz = paso.z - g.position.z, dist = Math.hypot(dx, dz);
+  if (dist < 0.004) {
+    g.position.x = paso.x; g.position.z = paso.z; obj.pasos.shift();
+    if (paso.frenar) obj.vel = 0;
+    return;
+  }
+  const vmax = paso.rev ? VB.VEL_CAMION * 0.5 : VB.VEL_CAMION;
+  obj.vel = Math.min(vmax, obj.vel + 3.2 * dt);
+  if (paso.frenar) obj.vel = Math.min(obj.vel, Math.max(0.2, Math.sqrt(2 * 2.4 * dist))); // frenado suave
+  const avance = Math.min(dist, obj.vel * dt);
+  g.position.x += (dx / dist) * avance;
+  g.position.z += (dz / dist) * avance;
+  obj.ruedas.forEach(r => { r.rotation.y += (paso.rev ? 1 : -1) * avance / 0.4; });
+  if (!paso.frenar && paso.x > 30) obj.etiqueta.material.opacity = Math.max(0, Math.min(1, (paso.x - g.position.x) / 14));
 }
 
-/* ── Montacargas ── */
-function vbMontacargas(esc, id, conCarga) {
+/* ── Montacargas (3 por bodega) ── */
+function vbCarrilX(lado) { return lado * (VB.ancho / 2 + 1.0); }
+function vbPosicionInicialMontacargas(k) {
+  return [[-2, VB.PASILLO], [vbCarrilX(-1), -4], [vbCarrilX(1), -2.5]][k];
+}
+function vbCrearMontacargas(sitio) {
+  const base = VB.sitios.length > 1 || sitio.suc ? (sitio.idx + 1) * 10 : 0;
+  sitio.montacargas = [0, 1, 2].map(k => {
+    const id = `FL-${String(base + k + 1).padStart(2, '0')}`;
+    const gi = VB.sitios.indexOf(sitio) * 3 + k;
+    const m = vbModeloMontacargas(id, { tipo: 'montacargas', id: gi, sitio: sitio.id });
+    const [x, z] = vbPosicionInicialMontacargas(k);
+    m.grupo.position.set(x, 0, z);
+    sitio.grupo.add(m.grupo);
+    return { k, gi, id, sitio, ...m, ruta: [], accion: null, espera: 0, yawFinal: null, bateria: [81, 64, 92][k],
+      estado: 'Patrullando', tarea: 'Recorriendo el patio', producto: null, productoProx: null, zona: null, bahia: null };
+  });
+}
+function vbTodosMontacargas() { return VB.sitios.flatMap(s => s.montacargas); }
+/* Rutas sobre el pasillo frontal (z = PASILLO) y los carriles laterales (x = ±carril) */
+function vbRutaMontacargas(desde, hasta) {
+  const L = vbCarrilX(1), P = VB.PASILLO;
+  const enPasillo = p => Math.abs(p.z - P) < 0.05;
+  const carril = p => (Math.abs(p.x - L) < 0.05 ? 1 : Math.abs(p.x + L) < 0.05 ? -1 : 0);
+  const a = carril(desde), b = carril(hasta);
+  if ((enPasillo(desde) && enPasillo(hasta)) || (a && a === b)) return [hasta];
+  if (a && !b) return [{ x: a * L, z: P }, hasta];
+  if (!a && b) return [{ x: b * L, z: P }, hasta];
+  if (a && b) return [{ x: a * L, z: P }, { x: b * L, z: P }, hasta];
+  return [{ x: desde.x, z: P }, hasta];
+}
+function vbSiguienteTarea(m) {
+  const sitio = m.sitio;
+  const pos = { x: m.grupo.position.x, z: m.grupo.position.z };
+  const zonasConCajas = sitio.zonas.filter(z => sitio.slots.some(s => s.zona === z.i && s.cajas > 0));
+  const ir = (destino, accion, yaw, estado, tarea) => {
+    m.ruta = vbRutaMontacargas(pos, destino); m.accion = accion; m.yawFinal = yaw; m.estado = estado; m.tarea = tarea;
+  };
+  const al = lista => lista[Math.floor(Math.random() * lista.length)];
+  if (m.bateria < 18 && !m.carga.visible) {
+    ir({ x: vbCarrilX(-1), z: -VB.fondo + 0.4 }, 'cargar', Math.PI / 2, 'Batería baja', 'Yendo al cargador');
+    return;
+  }
+  if (m.carga.visible) {
+    const plan = sitio.plan;
+    const activas = plan ? plan.bahias.filter(b => b.ocupante && b.estado !== 'esperando') : [];
+    const ocupadas = plan ? plan.bahias.filter(b => b.ocupante) : [];
+    const lista = activas.length ? activas : ocupadas;
+    if (lista.length) {
+      const b = al(lista);
+      m.bahia = b.i; m.zona = null;
+      ir({ x: vbXBahia(b.i), z: VB.PASILLO }, 'soltar', -Math.PI / 2, 'Moviendo carga', `Llevando ${m.producto || 'carga'} a B${b.i + 1}`);
+      return;
+    }
+    m.bahia = null;
+  }
+  if (!zonasConCajas.length) {
+    const puntos = [{ x: vbCarrilX(-1), z: -6 }, { x: 0, z: VB.PASILLO }, { x: vbCarrilX(1), z: -6 }, { x: -VB.ancho / 4, z: VB.PASILLO }];
+    ir(al(puntos), 'pausa', null, 'Patrullando', 'Sin cajas en el patio');
+    return;
+  }
+  const z = al(zonasConCajas);
+  const s = al(sitio.slots.filter(x => x.zona === z.i && x.cajas > 0));
+  const lado = Math.sign(s.x);
+  m.zona = z.i; m.bahia = null;
+  if (m.carga.visible) {
+    ir({ x: vbCarrilX(lado), z: s.z }, 'soltar', lado > 0 ? 0 : Math.PI, 'Reubicando', `Reubicando ${m.producto || 'carga'} en Zona ${z.letra}`);
+    return;
+  }
+  const prods = z.productos.filter(p => (Number(p.cantidad_actual) || 0) > 0);
+  const total = prods.reduce((t, p) => t + Number(p.cantidad_actual), 0);
+  let r = Math.random() * total, prod = prods[0];
+  for (const p of prods) { r -= Number(p.cantidad_actual); if (r <= 0) { prod = p; break; } }
+  m.productoProx = prod?.nombre || null;
+  ir({ x: vbCarrilX(lado), z: s.z }, 'tomar', lado > 0 ? 0 : Math.PI, 'Buscando carga', `Retirando ${prod?.nombre || 'cajas'} en Zona ${z.letra}`);
+}
+function vbAnimarMontacargas(m, dt) {
+  const g = m.grupo;
+  const rapido = VB.actividad;
+  if (m.espera > 0) {
+    m.espera -= dt;
+    const k = Math.max(0, m.espera);
+    if (m.accion === 'cargar') {
+      m.bateria = Math.min(100, m.bateria + 6 * dt);
+      if (m.bateria < 95) m.espera = Math.max(m.espera, 0.5);
+      else if (m.espera <= 0) { m.accion = null; m.estado = 'Patrullando'; m.tarea = 'Batería cargada'; }
+      return;
+    }
+    m.horquillas.position.y = m.accion === 'tomar' || m.accion === 'soltar' ? 0.35 * Math.sin((1 - k / 1.4) * Math.PI) : 0;
+    if (m.espera <= 0) {
+      if (m.accion === 'tomar') { m.carga.visible = true; m.producto = m.productoProx; }
+      if (m.accion === 'soltar') { m.carga.visible = false; m.producto = null; }
+      m.accion = null; m.horquillas.position.y = 0;
+    }
+    return;
+  }
+  const p = m.ruta[0];
+  if (!p) {
+    if (m.accion) {
+      if (m.yawFinal !== null) {
+        const d = vbAngulo(m.yawFinal - g.rotation.y), max = 5 * dt;
+        if (Math.abs(d) > max) { g.rotation.y += Math.sign(d) * max; return; }
+        g.rotation.y = m.yawFinal;
+      }
+      m.espera = m.accion === 'pausa' ? 1 : 1.4;
+      if (m.accion === 'cargar') { m.estado = 'Cargando batería'; m.tarea = 'En el cargador'; m.espera = 1; }
+      return;
+    }
+    vbSiguienteTarea(m);
+    return;
+  }
+  const dx = p.x - g.position.x, dz = p.z - g.position.z, dist = Math.hypot(dx, dz);
+  if (dist < 0.01) { g.position.x = p.x; g.position.z = p.z; m.ruta.shift(); return; }
+  const yaw = Math.atan2(-dz, dx);
+  const d = vbAngulo(yaw - g.rotation.y);
+  if (Math.abs(d) > 0.02) { g.rotation.y += Math.sign(d) * Math.min(Math.abs(d), 5 * dt); if (Math.abs(d) > 0.6) return; }
+  const v = (rapido ? VB.VEL_RAPIDA : VB.VEL_LENTA) * Math.min(1, 0.35 + dist / 1.2);
+  const avance = Math.min(dist, v * dt);
+  g.position.x += (dx / dist) * avance;
+  g.position.z += (dz / dist) * avance;
+  m.bateria = Math.max(5, m.bateria - (rapido ? 0.12 : 0.04) * dt);
+}
+
+
+/* ── Montacargas: modelo ── */
+function vbModeloMontacargas(id, pick) {
   const g = new THREE.Group();
   const mats = [];
   const M = (color, extra) => { const m = vbMat(color, extra); mats.push(m); return m; };
-  g.add(vbCaja(1.2, 1.4, 1.2, M('#f59e0b', { roughness: 0.5 }), 0, 0.95, 0));       // cuerpo
-  g.add(vbCaja(1, 0.8, 0.6, M('#fbbf24'), -0.1, 2.05, 0));                          // cabina del operador
-  [[-0.55, -0.55], [-0.55, 0.55], [0.5, -0.55], [0.5, 0.55]].forEach(([x, z]) => g.add(vbCaja(0.07, 0.95, 0.07, M('#1f2937'), x, 2.1, z)));
-  g.add(vbCaja(1.3, 0.1, 1.3, M('#d97706'), 0, 2.6, 0));                            // protector superior
+  g.add(vbCaja(1.2, 1.2, 1.2, M('#f59e0b', { roughness: 0.5 }), 0, 0.85, 0));
+  g.add(vbCaja(0.5, 0.9, 1.15, M('#1f2937'), -0.45, 1.3, 0));
+  [[-0.5, -0.5], [-0.5, 0.5], [0.45, -0.5], [0.45, 0.5]].forEach(([x, z]) => g.add(vbCaja(0.07, 1.0, 0.07, M('#1f2937'), x, 1.95, z)));
+  g.add(vbCaja(1.2, 0.08, 1.2, M('#d97706'), 0, 2.45, 0));
   const mastil = new THREE.Group();
-  [-0.4, 0.4].forEach(z => mastil.add(vbCaja(0.15, 2, 0.15, M('#92400e'), 0.7, 1.2, z)));
+  [-0.38, 0.38].forEach(z => mastil.add(vbCaja(0.12, 2.1, 0.12, M('#334155'), 0.68, 1.1, z)));
   const horquillas = new THREE.Group();
-  [-0.3, 0.3].forEach(z => horquillas.add(vbCaja(1.2, 0.15, 0.4, M('#78350f'), 1.35, 0.15, z)));
-  if (conCarga) {
-    horquillas.add(vbCaja(1, 0.1, 1, M('#d4a373'), 1.35, 0.28, 0));
-    horquillas.add(vbCaja(0.8, 0.6, 0.8, M('#b45309'), 1.35, 0.63, 0));
-  }
+  [-0.28, 0.28].forEach(z => horquillas.add(vbCaja(1.1, 0.08, 0.16, M('#475569'), 1.25, 0.12, z)));
+  const carga = new THREE.Group();
+  carga.add(vbCaja(1, 0.1, 1, M('#d4a373'), 1.3, 0.24, 0));
+  carga.add(vbCaja(0.8, 0.6, 0.8, new THREE.MeshStandardMaterial({ map: vbTexturaCaja('#b45309'), roughness: 0.85 }), 1.3, 0.6, 0));
+  carga.visible = false;
+  horquillas.add(carga);
   mastil.add(horquillas);
   g.add(mastil);
-  const gR = new THREE.CylinderGeometry(0.25, 0.25, 0.2, 12), mR = M('#1f2937');
-  [[-0.4, 0.62], [-0.4, -0.62], [0.4, 0.62], [0.4, -0.62]].forEach(([x, z]) => {
-    const r = new THREE.Mesh(gR, mR); r.rotation.x = Math.PI / 2; r.position.set(x, 0.25, z); r.castShadow = true; g.add(r);
+  const gR = new THREE.CylinderGeometry(0.24, 0.24, 0.2, 12), mR = M('#111827');
+  [[-0.38, 0.6], [-0.38, -0.6], [0.4, 0.6], [0.4, -0.6]].forEach(([x, z]) => {
+    const r = new THREE.Mesh(gR, mR); r.rotation.x = Math.PI / 2; r.position.set(x, 0.24, z); r.castShadow = true; g.add(r);
   });
-  // Zona de toque más grande e invisible (facilita tocarlo en el celular)
-  const zona = new THREE.Mesh(new THREE.BoxGeometry(3, 2.8, 1.8), new THREE.MeshBasicMaterial({ visible: false }));
-  zona.position.set(0.5, 1.4, 0);
-  zona.userData.zonaToque = true;
+  const etiqueta = vbSprite(vbTexturaEtiqueta(id, { fondo: '#fbbf24', color: '#1f2937', ancho: 256, alto: 104, fuente: 54 }), 1.15, 0.47);
+  etiqueta.position.set(0, 3.0, 0);
+  g.add(etiqueta);
+  const zona = new THREE.Mesh(new THREE.BoxGeometry(2.8, 2.8, 1.8), new THREE.MeshBasicMaterial({ visible: false }));
+  zona.position.set(0.4, 1.4, 0);
   g.add(zona);
-  g.traverse(o => { o.userData.pick = { tipo: 'montacargas', id }; });
-  esc.add(g);
-  VB.clicables.push(g);
-  return { grupo: g, mats, horquillas, id };
+  g.traverse(o => { o.userData.pick = pick; });
+  return { grupo: g, mats, horquillas, carga };
 }
 
-/* ── Cajas, pallets y árboles ── */
+/* ── Pilas de cajas proporcionales al stock de cada bodega ── */
 const VB_COLORES_CAJA = ['#92400e', '#b45309', '#78350f', '#d97706'];
 let vbTexturasCaja = null;
 function vbTexturaCaja(color) {
@@ -4120,62 +4791,256 @@ function vbTexturaCaja(color) {
     vbTexturasCaja[color] = vbCanvas(128, 128, (c, w, h) => {
       c.fillStyle = color; c.fillRect(0, 0, w, h);
       c.fillStyle = 'rgba(255,255,255,.08)'; c.fillRect(0, 0, w, 10);
-      c.fillStyle = 'rgba(254,243,199,.75)'; c.fillRect(w / 2 - 9, 0, 18, h);      // cinta de embalaje
+      c.fillStyle = 'rgba(254,243,199,.75)'; c.fillRect(w / 2 - 9, 0, 18, h);
       c.strokeStyle = 'rgba(0,0,0,.25)'; c.lineWidth = 4; c.strokeRect(2, 2, w - 4, h - 4);
-      c.fillStyle = 'rgba(0,0,0,.18)'; c.fillRect(14, h - 34, 34, 18);                // etiqueta
+      c.fillStyle = 'rgba(0,0,0,.18)'; c.fillRect(14, h - 34, 34, 18);
     });
   }
   return vbTexturasCaja[color];
 }
-function vbPila(esc, x, z, n, semilla) {
-  const g = new THREE.Group();
-  g.add(vbCaja(1, 0.1, 1, vbMat('#d4a373'), 0, 0.05, 0));
-  for (let i = 0; i < n; i++) {
-    const color = VB_COLORES_CAJA[(i + semilla) % VB_COLORES_CAJA.length];
-    const caja = vbCaja(0.8, 0.6, 0.8, new THREE.MeshStandardMaterial({ map: vbTexturaCaja(color), roughness: 0.85 }), 0, 0.1 + 0.3 + i * 0.6, 0);
-    caja.rotation.y = ((i * 37 + semilla * 11) % 9 - 4) * 0.02;
-    g.add(caja);
+function vbCrearSlots(sitio) {
+  const g = sitio.grupo;
+  sitio.slots = [];
+  sitio.grupoPilas = new THREE.Group();
+  g.add(sitio.grupoPilas);
+  for (let zona = 0; zona < 4; zona++) {
+    const lado = zona % 2 === 0 ? -1 : 1;
+    const filas = zona < 2 ? [0, 1, 2, 3] : [4, 5, 6, 7];
+    [0, 1, 2].forEach(col => filas.forEach(fila => {
+      const x = lado * (VB.ancho / 2 + 2.3 + col * 1.85);
+      const z = -VB.fondo + 1.3 + fila * 1.75;
+      const grupo = new THREE.Group();
+      grupo.position.set(x, 0, z);
+      sitio.grupoPilas.add(grupo);
+      sitio.slots.push({ zona, x, z, col, fila, grupo, cajas: 0, mats: [] });
+    }));
   }
-  g.position.set(x, 0, z);
-  esc.add(g);
+  sitio.firmaPilas = '';
+  sitio.pines = [];
+  sitio.marcasZona = [0, 1, 2, 3].map(zona => {
+    const lado = zona % 2 === 0 ? -1 : 1;
+    const zIni = -VB.fondo + 1.3 + (zona < 2 ? 0 : 4) * 1.75;
+    const plano = new THREE.Mesh(new THREE.PlaneGeometry(5.9, 7.2), new THREE.MeshBasicMaterial({ color: VB_COLOR_ZONA[zona], transparent: true, opacity: 0.07, depthWrite: false }));
+    plano.rotation.x = -Math.PI / 2;
+    plano.position.set(lado * (VB.ancho / 2 + 4.15), 0.05, zIni + 2.6);
+    g.add(plano);
+    const rotulo = new THREE.Mesh(new THREE.PlaneGeometry(5.6, 0.9), new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false }));
+    rotulo.rotation.x = -Math.PI / 2;
+    rotulo.position.set(lado * (VB.ancho / 2 + 4.15), 0.07, zIni - 1.05);
+    g.add(rotulo);
+    return { plano, rotulo, firma: '' };
+  });
 }
-function vbArbol(esc, x, z, s = 1) {
-  const g = new THREE.Group();
-  const tronco = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.2, 1.2, 8), vbMat('#92400e'));
-  tronco.position.y = 0.6; tronco.castShadow = true;
-  const copa = new THREE.Mesh(new THREE.SphereGeometry(0.9, 8, 8), vbMat('#16a34a', { roughness: 0.9, flatShading: true }));
-  copa.position.y = 1.75; copa.castShadow = true; copa.receiveShadow = true;
-  const copa2 = new THREE.Mesh(new THREE.SphereGeometry(0.6, 8, 8), vbMat('#15803d', { roughness: 0.9, flatShading: true }));
-  copa2.position.set(0.1, 2.5, 0.05); copa2.castShadow = true;
-  g.add(tronco, copa, copa2);
-  g.position.set(x, 0, z); g.scale.setScalar(s);
-  esc.add(g);
+function vbCajasPorZona(zonas, sucId) {
+  const stock = vbProductos(sucId).reduce((t, p) => t + (Number(p.cantidad_actual) || 0), 0);
+  if (!stock || !zonas.length) return [0, 0, 0, 0];
+  const cap = vbCapacidad(stock, sucId).valor;
+  const total = Math.max(1, Math.round(Math.min(1, stock / cap) * VB.MAX_CAJAS));
+  const exactos = zonas.map(z => (z.stock / stock) * total);
+  const base = exactos.map(Math.floor);
+  let resto = total - base.reduce((a, b) => a + b, 0);
+  exactos.map((v, i) => [v - Math.floor(v), i]).sort((a, b) => b[0] - a[0]).forEach(([, i]) => { if (resto > 0) { base[i]++; resto--; } });
+  const out = [0, 0, 0, 0];
+  zonas.forEach((z, i) => { out[i] = Math.min(VB.CAJAS_ZONA, base[i] + (z.stock > 0 && base[i] === 0 ? 1 : 0)); });
+  return out;
+}
+function vbSincronizarPilas(sitio) {
+  const zonas = vbZonas(sitio.id);
+  sitio.zonas = zonas;
+  const porZona = vbCajasPorZona(zonas, sitio.id);
+  const firma = porZona.join(',') + '|' + zonas.map(z => z.nombre + z.criticos.length).join(',');
+  if (firma === sitio.firmaPilas) return;
+  sitio.firmaPilas = firma;
+  [0, 1, 2, 3].forEach(zona => {
+    let quedan = porZona[zona];
+    sitio.slots.filter(s => s.zona === zona).sort((a, b) => a.col - b.col || b.fila - a.fila).forEach((s, k) => {
+      const n = Math.min(3, quedan);
+      quedan -= n;
+      if (s.cajas === n) return;
+      s.cajas = n;
+      while (s.grupo.children.length) {
+        const h = s.grupo.children.pop();
+        if (h.geometry) h.geometry.dispose();
+        if (h.material) h.material.dispose();
+      }
+      s.mats = [];
+      if (!n) return;
+      const pallet = vbCaja(1.1, 0.12, 1.1, vbMat('#d4a373'), 0, 0.06, 0);
+      s.mats.push(pallet.material);
+      s.grupo.add(pallet);
+      for (let i = 0; i < n; i++) {
+        const mat = new THREE.MeshStandardMaterial({ map: vbTexturaCaja(VB_COLORES_CAJA[(i + k + zona) % 4]), roughness: 0.85 });
+        s.mats.push(mat);
+        const caja = vbCaja(0.9, 0.62, 0.9, mat, 0, 0.12 + 0.31 + i * 0.62, 0);
+        caja.rotation.y = ((i * 37 + k * 11) % 9 - 4) * 0.02;
+        s.grupo.add(caja);
+      }
+      s.grupo.traverse(o => { o.userData.pick = { tipo: 'pila', zona, sitio: sitio.id }; });
+    });
+    const z = zonas[zona];
+    const marca = sitio.marcasZona[zona];
+    const f = z ? `${z.letra}|${z.nombre}` : '';
+    marca.plano.visible = !!z;
+    marca.rotulo.visible = !!z;
+    if (z && marca.firma !== f) {
+      marca.firma = f;
+      const tex = vbCanvas(1024, 164, c => {
+        c.fillStyle = VB_COLOR_ZONA[zona]; c.globalAlpha = 0.9;
+        c.font = '800 92px Inter, Arial, sans-serif'; c.textBaseline = 'middle'; c.textAlign = 'center';
+        c.fillText(`ZONA ${z.letra} · ${z.nombre.toUpperCase()}`.slice(0, 30), 512, 82);
+      });
+      if (marca.rotulo.material.map) marca.rotulo.material.map.dispose();
+      marca.rotulo.material.map = tex;
+      marca.rotulo.material.needsUpdate = true;
+    }
+  });
+  // Pines rojos sobre las zonas con productos bajo el mínimo
+  sitio.pines.forEach(p => sitio.grupo.remove(p));
+  sitio.pines = [];
+  zonas.forEach(z => {
+    if (!z.criticos.length) return;
+    const s = sitio.slots.filter(x => x.zona === z.i && x.cajas > 0).sort((a, b) => a.col - b.col || b.fila - a.fila)[0];
+    if (!s) return;
+    const pin = vbSprite(vbTexturaPin('#ef4444'), 0.9, 1.25);
+    pin.position.set(s.x, 3.1, s.z);
+    pin.userData.pick = { tipo: 'pila', zona: z.i, sitio: sitio.id };
+    pin.userData.base = 3.1;
+    sitio.grupo.add(pin);
+    sitio.pines.push(pin);
+  });
+}
+let vbTexPin = null;
+function vbTexturaPin(color) {
+  if (!vbTexPin) vbTexPin = {};
+  if (!vbTexPin[color]) {
+    vbTexPin[color] = vbCanvas(128, 176, (c, w) => {
+      c.fillStyle = 'rgba(15,23,42,.18)'; c.beginPath(); c.ellipse(w / 2, 166, 26, 7, 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = color; c.beginPath();
+      c.moveTo(w / 2, 158); c.bezierCurveTo(w / 2 - 10, 120, 10, 98, 10, 62); c.arc(w / 2, 62, 54, Math.PI, 0); c.bezierCurveTo(w - 10, 98, w / 2 + 10, 120, w / 2, 158); c.fill();
+      c.fillStyle = '#ffffff'; c.beginPath(); c.arc(w / 2, 62, 22, 0, Math.PI * 2); c.fill();
+    });
+  }
+  return vbTexPin[color];
 }
 
-/* ── Marcadores flotantes de bahía (datos reales de "camiones") ── */
-const VB_COLOR_ESTADO = { cargando: '#22c55e', descargando: '#16a34a', esperando: '#eab308', listo: '#3b82f6', libre: '#6b7280' };
-const VB_TEXTO_ESTADO = { cargando: 'Cargando', descargando: 'Descargando', esperando: 'Esperando', listo: 'Listo', libre: 'Libre' };
-function vbBahias() { const conf = bahiasConfig(); return [0, 1, 2].map(i => conf[i] || `Bahía ${i + 1}`); }
-function vbCamiones() { return [...S.camiones.values()].filter(c => enSucursal(c, S.sucursalVista)); }
-function vbCamionEnBahia(i) { return ocupantesBahia(vbBahias()[i]).filter(c => enSucursal(c, S.sucursalVista))[0] || null; }
-function vbEstadoBahia(i) { const c = vbCamionEnBahia(i); return c ? c.estado : 'libre'; }
-function vbActualizarMarcadores() {
-  VB.marcadores.forEach((spr, i) => {
-    const estado = vbEstadoBahia(i);
-    const texto = `BAHÍA ${i + 1} · ${VB_TEXTO_ESTADO[estado] || estado}`;
-    if (spr.userData.texto === texto) return;
-    spr.userData.texto = texto;
-    const tex = vbCanvas(768, 200, (c, w, h) => {
-      c.fillStyle = VB_COLOR_ESTADO[estado] || '#6b7280';
-      c.beginPath(); c.roundRect(8, 8, w - 16, h - 16, 44); c.fill();
-      c.fillStyle = 'rgba(255,255,255,.25)'; c.beginPath(); c.arc(78, h / 2, 22, 0, Math.PI * 2); c.fill();
-      c.fillStyle = '#ffffff'; c.beginPath(); c.arc(78, h / 2, 12, 0, Math.PI * 2); c.fill();
-      c.font = '800 70px Inter, Arial, sans-serif'; c.textBaseline = 'middle'; c.fillText(texto, 120, h / 2 + 3);
-    });
-    if (spr.material.map) spr.material.map.dispose();
-    spr.material.map = tex;
-    spr.material.needsUpdate = true;
+/* ── Decoración: árboles, contenedor, cargador ── */
+function vbArbol(g, x, z, s = 1) {
+  const a = new THREE.Group();
+  const tronco = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.2, 1.2, 8), vbMat('#92400e'));
+  tronco.position.y = 0.6; tronco.castShadow = true;
+  const copa = new THREE.Mesh(new THREE.SphereGeometry(0.95, 10, 10), vbMat('#4ade80', { roughness: 0.9 }));
+  copa.position.y = 1.85; copa.scale.y = 1.25; copa.castShadow = true;
+  a.add(tronco, copa);
+  a.position.set(x, 0, z); a.scale.setScalar(s);
+  g.add(a);
+}
+
+/* ── Decoración de cada bodega: árboles, contenedor, cargador ── */
+function vbDecoracion(sitio) {
+  const g = sitio.grupo, W = VB.ancho;
+  [[-W / 2 - 12, -12, 1.1], [-W / 2 - 12.5, 3, 1], [W / 2 + 12, -12, 1.2], [W / 2 + 12.5, 4, 1],
+    [-6, -VB.fondo - 3.6, 1.2], [6, -VB.fondo - 3.8, 1]].forEach(([x, z, s]) => vbArbol(g, x, z, s));
+  const cont = new THREE.Group();
+  cont.add(vbCaja(6, 2.5, 2.4, vbMat('#0d9488'), 0, 1.25, 0));
+  for (let x = -2.8; x <= 2.8; x += 0.4) cont.add(vbCaja(0.06, 2.3, 2.46, vbMat('#0f766e'), x, 1.25, 0));
+  cont.position.set(-W / 2 - 8.5, 0, 7.6);
+  cont.rotation.y = 0.12;
+  g.add(cont);
+  const est = new THREE.Group();
+  est.add(vbCaja(0.9, 1.4, 0.5, vbMat('#334155'), 0, 0.7, 0));
+  est.add(vbCaja(0.5, 0.18, 0.06, vbMat('#22c55e', { emissive: '#22c55e', emissiveIntensity: 0.8 }), 0, 1.15, 0.28));
+  est.position.set(vbCarrilX(-1) - 0.2, 0, -VB.fondo - 0.6);
+  g.add(est);
+}
+
+/* ── La ciudad: suelo, avenidas, calles y manzanas alrededor de las bodegas ── */
+function vbAzar(semilla) {
+  let a = semilla >>> 0;
+  return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+function vbPosicionSitio(k, total) {
+  const cols = Math.min(total, 3), rows = Math.ceil(total / cols);
+  const col = k % cols, row = Math.floor(k / cols);
+  return { cx: (col - (cols - 1) / 2) * VB.SEP_X, cz: (row - (rows - 1) / 2) * -VB.SEP_Z + (rows > 1 ? 0 : 0), cols, rows };
+}
+function vbCiudad(g, sitios) {
+  const xs = sitios.map(s => s.cx), zs = sitios.map(s => s.cz);
+  const minX = Math.min(...xs) - 70, maxX = Math.max(...xs) + 70, minZ = Math.min(...zs) - 60, maxZ = Math.max(...zs) + 55;
+  const suelo = new THREE.Mesh(new THREE.PlaneGeometry(maxX - minX + 900, maxZ - minZ + 900), vbMat('#e6ecf3', { roughness: 0.95 }));
+  suelo.rotation.x = -Math.PI / 2;
+  suelo.position.set((minX + maxX) / 2, 0, (minZ + maxZ) / 2);
+  suelo.receiveShadow = true;
+  g.add(suelo);
+  // Avenidas (una por fila de bodegas, frente a sus portones)
+  VB.limites = { minX, maxX, minZ, maxZ };
+  [...new Set(zs)].forEach(cz => {
+    const z = cz + VB.CALLE, largo = maxX - minX;
+    vbPintura(g, largo, 3.8, '#cbd5e1', (minX + maxX) / 2, z, 0.03);
+    for (let x = minX; x < maxX; x += 3.2) vbPintura(g, 1.6, 0.16, '#ffffff', x, z, 0.045);
+    vbPintura(g, largo, 0.12, '#94a3b8', (minX + maxX) / 2, z - 1.95, 0.05);
+    vbPintura(g, largo, 0.12, '#94a3b8', (minX + maxX) / 2, z + 1.95, 0.05);
+    vbPintura(g, largo, 1.4, '#f1f5f9', (minX + maxX) / 2, z + 2.9, 0.04);       // vereda
   });
+  // Calles transversales entre bodegas
+  const cols = [...new Set(xs)].sort((a, b) => a - b);
+  const cortes = [cols[0] - VB.SEP_X / 2, ...cols.map(x => x + VB.SEP_X / 2)];
+  cortes.forEach(x => {
+    vbPintura(g, 3.4, maxZ - minZ, '#d3dbe6', x, (minZ + maxZ) / 2, 0.028);
+    for (let z = minZ; z < maxZ; z += 3.2) vbPintura(g, 0.16, 1.6, '#ffffff', x, z, 0.04);
+  });
+  // Manzanas de la ciudad: edificios bajos y árboles frente y detrás de cada bodega
+  const colores = ['#f8fafc', '#e2e8f0', '#dbeafe', '#f1f5f9', '#e0e7ff', '#cbd5e1'];
+  sitios.forEach((s, k) => {
+    const rnd = vbAzar(97 + k * 131);
+    // Delante de la avenida: casas bajas (no tapan la bodega); detrás: edificios más altos
+    [[VB.CALLE + 10, VB.CALLE + 32, true], [-VB.fondo - 9, -VB.fondo - 32, false]].forEach(([z0, z1, bajos]) => {
+      for (let x = -VB.SEP_X / 2 + 7; x < VB.SEP_X / 2 - 6; x += 9 + rnd() * 3) {
+        if (rnd() < 0.18) { vbArbol(g, s.cx + x, s.cz + (z0 + z1) / 2, 1 + rnd() * 0.4); continue; }
+        const w = 5 + rnd() * 3, d = 6 + rnd() * 9, h = bajos ? 1.4 + rnd() * 1.8 : 2.5 + rnd() * (rnd() < 0.25 ? 14 : 6);
+        const zc = s.cz + Math.min(z0, z1) + d / 2 + rnd() * (Math.abs(z1 - z0) - d);
+        const edif = vbCaja(w, h, d, vbMat(colores[Math.floor(rnd() * colores.length)], { roughness: 0.85 }), s.cx + x, h / 2, zc);
+        g.add(edif);
+        g.add(vbCaja(w + 0.2, 0.25, d + 0.2, vbMat('#94a3b8'), s.cx + x, h + 0.12, zc));
+      }
+    });
+    for (let i = 0; i < 6; i++) vbArbol(g, s.cx + (rnd() - 0.5) * (VB.SEP_X - 12), s.cz + VB.CALLE + 3.6, 0.7 + rnd() * 0.3);
+  });
+}
+
+/* ── Construcción de la ciudad completa (cambia con las sucursales o la cantidad de bahías) ── */
+function vbConstruirCiudad(datos, n) {
+  [...VB.camiones.values()].forEach(vbQuitarCamion);
+  if (VB.ciudad) {
+    VB.escena.remove(VB.ciudad);
+    VB.ciudad.traverse(o => { if (o.geometry) o.geometry.dispose(); });
+  }
+  if (VB.sel) vbCerrarPanel();
+  VB.nBahias = n;
+  VB.sep = n <= 5 ? 4.4 : 3.2;
+  VB.ancho = n * VB.sep + 2.4;
+  VB.firmaSitios = n + '|' + datos.map(s => s.id + (s.suc?.activa === false ? '0' : '1')).join(',');
+  const ciudad = new THREE.Group();
+  VB.sitios = datos.map((d, k) => {
+    const pos = vbPosicionSitio(k, datos.length);
+    const grupo = new THREE.Group();
+    grupo.position.set(pos.cx, 0, pos.cz);
+    ciudad.add(grupo);
+    return { id: d.id, suc: d.suc, idx: d.idx, cx: pos.cx, cz: pos.cz, grupo, bahias: [], slots: [], zonas: [], pines: [], montacargas: [], plan: null, firmaLetrero: '', firmaRotulo: '' };
+  });
+  vbCiudad(ciudad, VB.sitios);
+  VB.sitios.forEach(sitio => {
+    vbPatio(sitio);
+    vbEdificio(sitio);
+    vbCrearSlots(sitio);
+    vbDecoracion(sitio);
+    vbCrearMontacargas(sitio);
+  });
+  VB.escena.add(ciudad);
+  VB.ciudad = ciudad;
+  VB.foco = undefined;
+}
+function vbSitioFoco() {
+  return VB.sitios.find(s => s.id === S.sucursalVista && s.id) || (VB.sitios.length === 1 ? VB.sitios[0] : null);
 }
 
 /* ── Inicio ── */
@@ -4198,72 +5063,32 @@ function iniciarVistaBodega() {
   cont.prepend(renderer.domElement);
 
   const esc = new THREE.Scene();
-  esc.background = new THREE.Color('#dbeafe');
-  esc.fog = new THREE.Fog('#dbeafe', 30, 80);
-  // Intensidades × π: equivalen a 0.5 / 1.2 / 0.3 en el modo de luces clásico (Three r155+ usa luz física)
-  esc.add(new THREE.AmbientLight('#ffffff', 0.5 * Math.PI));
-  const sol = new THREE.DirectionalLight('#ffffff', 1.2 * Math.PI);
-  sol.position.set(15, 25, 10);
+  esc.background = new THREE.Color('#eaf1fb');
+  // Intensidades × π: Three r155+ usa luz física
+  esc.add(new THREE.AmbientLight('#ffffff', 0.55 * Math.PI));
+  const sol = new THREE.DirectionalLight('#ffffff', 1.1 * Math.PI);
+  sol.position.set(18, 30, 14);
   sol.castShadow = true;
   sol.shadow.mapSize.set(2048, 2048);
-  Object.assign(sol.shadow.camera, { near: 1, far: 60, left: -20, right: 20, top: 20, bottom: -20 });
+  Object.assign(sol.shadow.camera, { near: 1, far: 120, left: -42, right: 42, top: 42, bottom: -42 });
   sol.shadow.bias = -0.0005;
   sol.shadow.normalBias = 0.03;
-  esc.add(sol);
-  esc.add(new THREE.HemisphereLight('#87CEEB', '#8B7355', 0.3 * Math.PI));
+  esc.add(sol, sol.target);
+  esc.add(new THREE.HemisphereLight('#dbeafe', '#cbd5e1', 0.35 * Math.PI));
 
-  const camara = new THREE.PerspectiveCamera(45, 1, 0.1, 200);
-  camara.position.set(20, 18, 20);
+  // Cámara: posición (22, 20, 22) respecto a la bodega, mirando a su centro (0, 0, 0)
+  const camara = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 2500);
+  camara.position.set(22, 20, 22);
   camara.lookAt(0, 0, 0);
 
-  Object.assign(VB, { renderer, escena: esc, camara, raycaster: new THREE.Raycaster() });
-
-  vbSuelo(esc);
-  vbEdificio(esc);
-  // 3 camiones: 1 en movimiento, 2 estacionado en B2, 3 saliendo de B3
-  VB.camiones = [vbCamion(esc, 0), vbCamion(esc, 1), vbCamion(esc, 2)];
-  VB.camiones[1].grupo.position.set(VB.PUERTAS[1], 0, VB.ANDEN);
-  VB.camiones[1].grupo.rotation.y = -Math.PI / 2;
-  VB.camiones[2].grupo.position.set(5.6, 0, 6.9);
-  VB.camiones[2].grupo.rotation.y = -Math.PI / 2 + 0.5;
-  // 3 montacargas: 1 va y viene, 2 patrulla, 3 cargando en bahía
-  VB.montacargas = [vbMontacargas(esc, 0, true), vbMontacargas(esc, 1, false), vbMontacargas(esc, 2, true)];
-  VB.montacargas[0].grupo.position.set(3, 0, 2);
-  VB.montacargas[2].grupo.position.set(-1.95, 0, 2.1);
-  VB.montacargas[2].grupo.rotation.y = Math.PI / 2;
-  VB.montacargas[2].horquillas.position.y = 0.55;
-  // 6 pilas de cajas (3 a 5 cajas): frente a bahías, lado del edificio y patio
-  [[-8, 2.6, 4], [-7.9, 7.4, 3], [9.6, 1.9, 5], [9.6, -2.6, 3], [9.6, -5.6, 4], [-14, 9.2, 5]].forEach(([x, z, n], i) => vbPila(esc, x, z, n, i));
-  // 6 árboles en los bordes
-  [[-18, -12, 1.2], [-19, 4, 1], [-15, 15, 1.1], [17, -13, 1.25], [19, 3, 1], [14, 16, 1.1]].forEach(([x, z, s]) => vbArbol(esc, x, z, s));
-  // Marcadores de bahía (sprites a y = 6)
-  VB.marcadores = VB.PUERTAS.map(x => {
-    const spr = new THREE.Sprite(new THREE.SpriteMaterial({ transparent: true, depthWrite: false }));
-    spr.scale.set(3, 1, 1);
-    spr.position.set(x, 6, 0.4);
-    spr.renderOrder = 10;
-    spr.userData.pick = null;
-    esc.add(spr);
-    return spr;
-  });
-  vbActualizarMarcadores();
-
+  Object.assign(VB, { renderer, escena: esc, camara, sol, raycaster: new THREE.Raycaster() });
   VB.iniciado = true;
+  vbSincronizar();
+  vbVistaInicial(true);
   vbAjustarTamano();
   window.addEventListener('resize', vbAjustarTamano);
   if (window.ResizeObserver) new ResizeObserver(vbAjustarTamano).observe(cont);
-  const lienzo = renderer.domElement;
-  lienzo.addEventListener('click', ev => {
-    if (Date.now() - VB.ultimoToque < 600) return; // el toque ya se procesó
-    vbSeleccionarEn(ev.clientX, ev.clientY);
-  });
-  lienzo.addEventListener('touchstart', ev => {
-    const t = ev.changedTouches[0];
-    if (!t) return;
-    VB.ultimoToque = Date.now();
-    vbSeleccionarEn(t.clientX, t.clientY);
-  }, { passive: true });
-  lienzo.addEventListener('mousemove', debounce(ev => { lienzo.style.cursor = vbPick(ev.clientX, ev.clientY) ? 'pointer' : 'default'; }, 40));
+  vbEnlazarControles(renderer.domElement);
   document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && VB.sel) vbCerrarPanel(); });
   document.addEventListener('visibilitychange', actualizarVisibilidadBodega3D);
 }
@@ -4272,81 +5097,310 @@ function vbFallo(msg) {
   const f = $('#vb-fallo');
   if (f) { f.hidden = false; f.innerHTML = `<div class="empty-ic">${ic('warehouse')}</div><strong>Vista 3D no disponible</strong><span>${esc(msg)}</span>`; }
 }
+
+/* ── Cámara ── */
+function vbAspecto() {
+  const cont = $('#vb-canvas-wrap');
+  return cont && cont.clientHeight ? cont.clientWidth / cont.clientHeight : 1.5;
+}
+function vbVistaDefecto() { const a = vbAspecto(); return a < 1.1 ? 35 : a < 1.6 ? 32 : 29; }
+/* Alto visible necesario para ver todas las bodegas a la vez (vista general de la red) */
+function vbVistaRed(az) {
+  const f = new THREE.Vector3(-Math.sin(az) * VB.RADIO, -VB.ALTURA, -Math.cos(az) * VB.RADIO).normalize();
+  const r = new THREE.Vector3().crossVectors(f, new THREE.Vector3(0, 1, 0)).normalize();
+  const u = new THREE.Vector3().crossVectors(r, f).normalize();
+  const cx = VB.sitios.reduce((t, s) => t + s.cx, 0) / VB.sitios.length, cz = VB.sitios.reduce((t, s) => t + s.cz, 0) / VB.sitios.length;
+  let w = 0, h = 0;
+  VB.sitios.forEach(s => [[-30, -18], [30, -18], [-30, 17], [30, 17]].forEach(([dx, dz]) => {
+    const p = new THREE.Vector3(s.cx + dx - cx, 0, s.cz + dz - cz);
+    w = Math.max(w, Math.abs(p.dot(r))); h = Math.max(h, Math.abs(p.dot(u)));
+  }));
+  return { cx, cz, vista: Math.max(VB.ZOOM_MAX, Math.max(h * 2, (w * 2) / vbAspecto()) * 1.08) };
+}
+function vbVistaInicial(inmediato) {
+  const foco = vbSitioFoco();
+  let obj;
+  if (foco) {
+    obj = { azObj: VB.AZ0, vistaObj: vbVistaDefecto(), txObj: foco.cx, tzObj: foco.cz };
+    VB.zoomMax = VB.ZOOM_MAX;
+  } else {
+    const red = vbVistaRed(VB.AZ0);
+    obj = { azObj: VB.AZ0, vistaObj: red.vista, txObj: red.cx, tzObj: red.cz + 2 };
+    VB.zoomMax = red.vista * 1.3;
+  }
+  Object.assign(VB.cam, obj, { manual: false });
+  if (inmediato) Object.assign(VB.cam, { az: obj.azObj, vista: obj.vistaObj, tx: obj.txObj, tz: obj.tzObj });
+  VB.sitios.forEach(s => { if (s.rotulo) s.rotulo.visible = !foco; });
+}
+function vbAplicarCamara() {
+  const c = VB.cam, cam = VB.camara;
+  // Con zoom normal la cámara queda en (22, 20, 22) respecto al punto mirado; al alejarse se retrocede
+  // en la misma dirección para que nada quede detrás del plano de recorte (la proyección no cambia)
+  const lejos = c.vista > VB.ZOOM_MAX ? c.vista / 20 : 1;
+  cam.position.set(c.tx + VB.RADIO * Math.sin(c.az) * lejos, VB.ALTURA * lejos, c.tz + VB.RADIO * Math.cos(c.az) * lejos);
+  cam.lookAt(c.tx, 0, c.tz);
+  const mh = c.vista / 2, mw = mh * vbAspecto();
+  if (cam.top !== mh || cam.right !== mw) {
+    Object.assign(cam, { left: -mw, right: mw, top: mh, bottom: -mh });
+    cam.updateProjectionMatrix();
+  }
+  if (VB.sol) {                                   // el sol (y su sombra) sigue a la cámara
+    VB.sol.position.set(c.tx + 18, 30, c.tz + 14);
+    VB.sol.target.position.set(c.tx, 0, c.tz);
+    VB.sol.target.updateMatrixWorld();
+  }
+}
 function vbAjustarTamano() {
   const cont = $('#vb-canvas-wrap');
-  if (!VB.renderer || !cont || !cont.clientWidth) return;
-  const w = cont.clientWidth, h = VB.ALTO;
-  VB.renderer.setSize(w, h, true);
-  VB.camara.aspect = w / h;
-  // En pantallas angostas se abre un poco el ángulo para que entre toda la bodega
-  VB.camara.fov = w < 520 ? 62 : w < 820 ? 52 : 45;
-  VB.camara.updateProjectionMatrix();
+  if (!VB.renderer || !cont || !cont.clientWidth || !cont.clientHeight) return;
+  VB.renderer.setSize(cont.clientWidth, cont.clientHeight, false);
+  if (!VB.cam.manual) {
+    const foco = vbSitioFoco();
+    if (foco) VB.cam.vistaObj = vbVistaDefecto();
+    else { const red = vbVistaRed(VB.cam.azObj); VB.cam.vistaObj = red.vista; VB.zoomMax = red.vista * 1.3; }
+  }
+  VB.camara.top = 0; // fuerza recalcular la proyección
+  vbAplicarCamara();
   if (!VB.activo) vbDibujar(VB.reloj);
+}
+function vbZoom(factor) {
+  VB.cam.vistaObj = Math.min(VB.zoomMax, Math.max(VB.ZOOM_MIN, VB.cam.vistaObj * factor));
+  VB.cam.manual = true;
+}
+function vbCentrarBahia(i) {
+  const sitio = vbSitioFoco();
+  if (!VB.iniciado || !sitio || i < 0 || i >= VB.nBahias) return;
+  Object.assign(VB.cam, { txObj: sitio.cx + vbXBahia(i), tzObj: sitio.cz + 3, vistaObj: 15, manual: true });
+}
+
+/* ── Controles tipo juego ──
+   Arrastrar (1 dedo / clic izq.) = desplazarse por la ciudad · clic der. o Shift + arrastrar = girar (eje Y, ±60°)
+   Rueda / pellizco = zoom · 2 dedos girando = girar · flechas / WASD = mover · Q / E = girar · toque = ver datos */
+function vbGirar(delta) {
+  VB.cam.azObj = Math.min(VB.AZ0 + VB.GIRO_MAX, Math.max(VB.AZ0 - VB.GIRO_MAX, VB.cam.azObj + delta));
+  VB.cam.manual = true;
+}
+function vbDesplazar(dxPx, dyPx) {
+  const cont = $('#vb-canvas-wrap');
+  const upp = VB.cam.vista / (cont.clientHeight || 500);             // unidades del mundo por píxel
+  const az = VB.cam.az, senE = VB.ALTURA / Math.hypot(VB.RADIO, VB.ALTURA);
+  const rx = Math.cos(az), rz = -Math.sin(az);                       // derecha de la pantalla, sobre el suelo
+  const fx = -Math.sin(az), fz = -Math.cos(az);                      // "arriba" de la pantalla, sobre el suelo
+  const lim = VB.limites || { minX: -60, maxX: 60, minZ: -60, maxZ: 60 };
+  VB.cam.txObj = Math.min(lim.maxX + 20, Math.max(lim.minX - 20, VB.cam.txObj - rx * dxPx * upp + fx * dyPx * upp / senE));
+  VB.cam.tzObj = Math.min(lim.maxZ + 20, Math.max(lim.minZ - 20, VB.cam.tzObj - rz * dxPx * upp + fz * dyPx * upp / senE));
+  VB.cam.manual = true;
+}
+function vbEnlazarControles(lienzo) {
+  lienzo.tabIndex = 0;
+  lienzo.setAttribute('aria-label', 'Mapa 3D de la red de bodegas. Arrastra para moverte, rueda para zoom.');
+  lienzo.addEventListener('contextmenu', ev => ev.preventDefault());
+  lienzo.addEventListener('wheel', ev => { ev.preventDefault(); vbZoom(Math.exp(ev.deltaY * 0.0012)); }, { passive: false });
+  lienzo.addEventListener('pointerdown', ev => {
+    VB.punteros.set(ev.pointerId, { x: ev.clientX, y: ev.clientY, x0: ev.clientX, y0: ev.clientY });
+    if (VB.punteros.size === 1) VB.arrastre = { movido: false, modo: ev.button === 2 || ev.shiftKey || ev.ctrlKey ? 'girar' : 'mover' };
+    if (VB.punteros.size === 2) {
+      const [a, b] = [...VB.punteros.values()];
+      VB.pinza = { d: Math.hypot(a.x - b.x, a.y - b.y), ang: Math.atan2(b.y - a.y, b.x - a.x), mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2 };
+      VB.arrastre = { movido: true, modo: 'dos' };
+    }
+    try { lienzo.setPointerCapture(ev.pointerId); } catch (_) { /* sin captura */ }
+  });
+  lienzo.addEventListener('pointermove', ev => {
+    const p = VB.punteros.get(ev.pointerId);
+    if (!p) {
+      if (ev.pointerType === 'mouse' && !VB.cursorPendiente) {
+        VB.cursorPendiente = true;
+        setTimeout(() => { VB.cursorPendiente = false; if (!VB.arrastre) lienzo.style.cursor = vbPick(ev.clientX, ev.clientY) ? 'pointer' : ''; }, 60);
+      }
+      return;
+    }
+    const dx = ev.clientX - p.x, dy = ev.clientY - p.y;
+    p.x = ev.clientX; p.y = ev.clientY;
+    if (VB.punteros.size === 2 && VB.pinza) {
+      const [a, b] = [...VB.punteros.values()];
+      const d = Math.hypot(a.x - b.x, a.y - b.y), ang = Math.atan2(b.y - a.y, b.x - a.x);
+      const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      if (VB.pinza.d > 0 && d > 0) vbZoom(VB.pinza.d / d);
+      vbGirar(-vbAngulo(ang - VB.pinza.ang));
+      vbDesplazar(mx - VB.pinza.mx, my - VB.pinza.my);
+      VB.pinza = { d, ang, mx, my };
+      return;
+    }
+    if (!VB.arrastre) return;
+    if (!VB.arrastre.movido && Math.hypot(ev.clientX - p.x0, ev.clientY - p.y0) > 6) { VB.arrastre.movido = true; lienzo.classList.add('arrastrando'); }
+    if (!VB.arrastre.movido) return;
+    if (VB.arrastre.modo === 'girar') vbGirar(-dx * 0.006);
+    else vbDesplazar(dx, dy);
+  });
+  const soltar = ev => {
+    const p = VB.punteros.get(ev.pointerId);
+    VB.punteros.delete(ev.pointerId);
+    if (VB.punteros.size < 2) VB.pinza = null;
+    if (!p) return;
+    const fueClic = ev.type === 'pointerup' && VB.arrastre && !VB.arrastre.movido && VB.punteros.size === 0;
+    if (VB.punteros.size === 0) { VB.arrastre = null; lienzo.classList.remove('arrastrando'); }
+    else if (VB.punteros.size === 1) { const [q] = [...VB.punteros.values()]; q.x0 = q.x; q.y0 = q.y; VB.arrastre = { movido: true, modo: 'mover' }; }
+    if (fueClic) vbSeleccionarEn(ev.clientX, ev.clientY);
+  };
+  lienzo.addEventListener('pointerup', soltar);
+  lienzo.addEventListener('pointercancel', soltar);
+  lienzo.addEventListener('keydown', ev => {
+    const k = ev.key.toLowerCase(), paso = 40;
+    const mapa = { arrowleft: [paso, 0], a: [paso, 0], arrowright: [-paso, 0], d: [-paso, 0], arrowup: [0, paso], w: [0, paso], arrowdown: [0, -paso], s: [0, -paso] };
+    if (mapa[k]) { ev.preventDefault(); vbDesplazar(...mapa[k]); }
+    else if (k === 'q') vbGirar(0.15);
+    else if (k === 'e') vbGirar(-0.15);
+    else if (k === '+' || k === '=') vbZoom(1 / 1.2);
+    else if (k === '-') vbZoom(1.2);
+  });
+  $('#vb-ctl').addEventListener('click', ev => {
+    const b = ev.target.closest('[data-vb-ctl]');
+    if (!b) return;
+    const accion = b.dataset.vbCtl;
+    if (accion === 'mas') vbZoom(1 / 1.25);
+    else if (accion === 'menos') vbZoom(1.25);
+    else if (accion === 'izq') vbGirar(0.26);
+    else if (accion === 'der') vbGirar(-0.26);
+    else if (accion === 'red') vbEnfocarSitio('');
+    else { vbVistaInicial(false); vbCerrarPanel(); }
+  });
+}
+function vbEnlazarLateral() {
+  const docks = $('#vbl-docks');
+  if (!docks || docks._enlazado) return;
+  docks._enlazado = true;
+  docks.addEventListener('click', ev => {
+    const s = ev.target.closest('[data-vb-sitio]');
+    if (s) { vbEnfocarSitio(s.dataset.vbSitio); return; }
+    const b = ev.target.closest('[data-vb-bahia]');
+    if (!b) return;
+    const i = parseInt(b.dataset.vbBahia, 10);
+    vbCentrarBahia(i);
+    const sitio = vbSitioFoco();
+    if (VB.iniciado && sitio) vbSeleccionar({ tipo: 'bahia', id: i, sitio: sitio.id });
+  });
+}
+
+/* ── Sincronización con los datos (Supabase) ── */
+function vbSincronizar() {
+  if (!VB.iniciado) return;
+  const datos = vbSitiosDatos();
+  const n = vbCantidadBahias();
+  const firma = n + '|' + datos.map(s => s.id + (s.suc?.activa === false ? '0' : '1')).join(',');
+  if (firma !== VB.firmaSitios) vbConstruirCiudad(datos, n);
+  const vivos = new Set();
+  VB.sitios.forEach(sitio => {
+    const d = datos.find(x => x.id === sitio.id);
+    sitio.suc = d ? d.suc : null; sitio.idx = d ? d.idx : 0;
+    const plan = vbPlanDatos(sitio.id);
+    sitio.plan = plan;
+    plan.bahias.forEach((b, i) => vbPintarBahia(sitio, i, b));
+    plan.destinos.forEach((dest, id) => {
+      const c = S.camiones.get(id);
+      if (!c) return;
+      let obj = VB.camiones.get(id);
+      if (obj && obj.sitio !== sitio) { vbQuitarCamion(obj); obj = null; }
+      if (!obj) {
+        if (VB.camiones.size >= 40) return;
+        obj = vbCrearCamion(c, dest, sitio);
+        VB.camiones.set(id, obj);
+      }
+      vivos.add(id);
+      vbEtiquetaCamion(obj, c);
+      const clave = dest.tipo === 'bahia' ? `b${dest.b}` : dest.tipo === 'cola' ? `c${dest.x}` : dest.tipo === 'ruta' ? `r${dest.tope}` : 'salida';
+      if (dest.tipo === 'ruta') obj.dest = dest;
+      if (obj.clave === clave) return;
+      obj.clave = clave; obj.dest = dest;
+      if (obj.fuera) {
+        if (dest.tipo === 'salida') return;
+        obj.fuera = false; obj.grupo.visible = true; obj.etiqueta.material.opacity = 1;
+        obj.grupo.position.set(Math.max(vbEntradaX(sitio), dest.tipo === 'ruta' ? vbXRuta(obj) - 14 : -20), 0, VB.CALLE); obj.grupo.rotation.y = 0; obj.vel = 0;
+      }
+      vbPlanear(obj, dest);
+    });
+    vbSincronizarPilas(sitio);
+    const nombre = (sitio.suc?.nombre || S.empresa?.nombre || 'BODEGA').toUpperCase().slice(0, 22);
+    if (sitio.firmaLetrero !== nombre) {
+      sitio.firmaLetrero = nombre;
+      vbCambiarTextura(sitio.letrero, vbTexturaEtiqueta(nombre, { color: '#1e3a8a', ancho: 1024, alto: 150, fuente: 92 }));
+      sitio.letrero.scale.set(Math.min(VB.ancho - 2, 7.5), 1.1, 1);
+    }
+    const st = sitio.suc && sitio.suc.activa === false ? '#94a3b8' : plan.bahias.some(b => b.estado === 'problema') ? '#ef4444' : '#22c55e';
+    const rot = `${vbCodigoSitio(sitio.idx)} · ${sitio.suc?.nombre || S.empresa?.nombre || 'Bodega'}`;
+    if (sitio.firmaRotulo !== rot + st) {
+      sitio.firmaRotulo = rot + st;
+      vbCambiarTextura(sitio.rotulo, vbTexturaEtiqueta(rot.slice(0, 28), { punto: st, color: '#0f172a', ancho: 1024, alto: 200, fuente: 84 }));
+    }
+  });
+  [...VB.camiones.values()].forEach(obj => { if (!vivos.has(obj.id)) vbQuitarCamion(obj); });
+  const foco = vbSitioFoco();
+  const focoId = foco ? foco.id : null;
+  if (focoId !== VB.foco) {
+    const primera = VB.foco === undefined && !VB.activo;
+    VB.foco = focoId;
+    if (VB.sel) vbCerrarPanel();
+    vbVistaInicial(primera);
+  }
+}
+/* Lectura de la tabla camiones cada 3 s (además de supabase.channel) */
+function vbFirma(o) { return JSON.stringify(Object.keys(o).sort().map(k => [k, o[k]])); }
+async function vbLeerCamiones() {
+  if (S.demo || !S.sb || !S.perfil || VB.leyendo || document.hidden) return;
+  VB.leyendo = true;
+  try {
+    const { data, error } = await S.sb.from('camiones').select('*').eq('empresa_id', S.perfil.empresa_id);
+    if (error || !Array.isArray(data) || S.demo || !S.perfil) return;
+    const vistos = new Set();
+    data.forEach(c => {
+      vistos.add(c.id);
+      const previo = S.camiones.get(c.id);
+      if (!previo || vbFirma(previo) !== vbFirma(c)) aplicarCamion(c);
+    });
+    [...S.camiones.keys()].forEach(id => { if (!vistos.has(id)) quitarCamion(id); });
+  } catch (_) {
+    /* sin conexión: el canal en tiempo real reintenta solo */
+  } finally {
+    VB.leyendo = false;
+  }
 }
 
 /* ── Animación ── */
-// Camión 1: calle (x -20 → -4) → gira → retrocede a B1 → espera 4 s → sale → gira → calle (x -4 → 20)
-const VB_RUTA = (() => {
-  const v = 0.02 * 60, b1 = -4, giro = 1.2;
-  const tramos = [
-    { tipo: 'calle', desde: -20, hasta: b1, dur: (b1 + 20) / v },
-    { tipo: 'giro', desde: 0, hasta: -Math.PI / 2, dur: giro },
-    { tipo: 'reversa', desde: 12, hasta: 3.7, dur: (12 - 3.7) / v },
-    { tipo: 'espera', dur: 4 },
-    { tipo: 'avance', desde: 3.7, hasta: 12, dur: (12 - 3.7) / v },
-    { tipo: 'giro', desde: -Math.PI / 2, hasta: 0, dur: giro },
-    { tipo: 'calle', desde: b1, hasta: 20, dur: (20 - b1) / v },
-  ];
-  let t = 0;
-  tramos.forEach(s => { s.ini = t; t += s.dur; });
-  return { tramos, total: t, b1 };
-})();
-function vbPoseCamion1(seg) {
-  const t = seg % VB_RUTA.total;
-  const s = VB_RUTA.tramos.find(x => t >= x.ini && t < x.ini + x.dur) || VB_RUTA.tramos[VB_RUTA.tramos.length - 1];
-  const k = Math.min(1, (t - s.ini) / s.dur), suave = k * k * (3 - 2 * k);
-  const b1 = VB_RUTA.b1;
-  if (s.tipo === 'calle') return { x: s.desde + (s.hasta - s.desde) * k, z: VB.CALLE, yaw: 0, esperando: false };
-  if (s.tipo === 'giro') return { x: b1, z: VB.CALLE, yaw: s.desde + (s.hasta - s.desde) * suave, esperando: false };
-  if (s.tipo === 'reversa' || s.tipo === 'avance') return { x: b1, z: s.desde + (s.hasta - s.desde) * k, yaw: -Math.PI / 2, esperando: false };
-  return { x: b1, z: VB.ANDEN, yaw: -Math.PI / 2, esperando: true };
-}
-function vbAnimar(seg, dt) {
-  const c1 = VB.camiones[0];
-  const p = vbPoseCamion1(seg);
-  const g = c1.grupo;
-  const dx = p.x - g.position.x, dz = p.z - g.position.z, dist = Math.hypot(dx, dz);
-  if (dist > 0 && dist < 2) {
-    const sentido = (Math.cos(g.rotation.y) * dx - Math.sin(g.rotation.y) * dz) >= 0 ? 1 : -1;
-    c1.ruedas.forEach(r => { r.rotation.y += sentido * dist / 0.4; });
-  }
-  g.position.set(p.x, 0, p.z);
-  g.rotation.y = p.yaw;
-  c1.esperando = p.esperando;
-  // Montacargas 1: ida y vuelta entre x = 3 y x = 7 cada 3 s
-  const f1 = VB.montacargas[0];
-  const fase = (seg % 6) / 6;
-  f1.grupo.position.x = 3 + 4 * (0.5 - 0.5 * Math.cos(fase * Math.PI * 2));
-  f1.horquillas.position.y = 0.25 + 0.25 * Math.sin(seg * 2);
-  // Montacargas 2: patrulla en círculo lento cerca de las cajas
-  const f2 = VB.montacargas[1];
-  const ang = seg * 0.25;
-  f2.grupo.position.set(-11 + Math.cos(ang) * 2.2, 0, 5.4 + Math.sin(ang) * 2.2);
-  f2.grupo.rotation.y = -ang - Math.PI / 2; // mira hacia donde avanza
-  // Montacargas 3: estático cargando (horquillas suben y bajan suavemente)
-  VB.montacargas[2].horquillas.position.y = 0.45 + 0.15 * Math.sin(seg * 1.3);
-}
 function vbDibujar(seg, dt = 0) {
   if (!VB.renderer) return;
-  vbAnimar(seg, dt);
-  if (seg - VB.ultimoMarcador >= 5) { VB.ultimoMarcador = seg; vbActualizarMarcadores(); } // cada 5 s
+  const c = VB.cam, k = Math.min(1, dt * 4);
+  c.az += (c.azObj - c.az) * k;
+  c.vista += (c.vistaObj - c.vista) * k;
+  c.tx += (c.txObj - c.tx) * k;
+  c.tz += (c.tzObj - c.tz) * k;
+  vbAplicarCamara();
+  const escala = Math.min(3.2, Math.max(1, c.vista / 34));
+  if (VB.escalaEtiquetas !== escala) {
+    VB.escalaEtiquetas = escala;
+    VB.camiones.forEach(o => o.etiqueta.scale.set(3.6 * escala, 0.9 * escala, 1));
+    VB.sitios.forEach(s => {
+      if (s.rotulo) s.rotulo.scale.set(Math.max(16, c.vista * 0.2), Math.max(3.4, c.vista * 0.2 * 0.21), 1);
+      s.montacargas.forEach(m => { m.grupo.children.forEach(h => { if (h.isSprite) h.visible = c.vista < 60; }); });
+    });
+  }
+  VB.camiones.forEach(o => vbAnimarCamion(o, dt));
+  VB.sitios.forEach(s => {
+    s.montacargas.forEach(m => vbAnimarMontacargas(m, dt));
+    s.pines.forEach((p, i) => { p.position.y = p.userData.base + Math.sin(seg * 2.4 + i) * 0.15; });
+  });
+  if (seg - VB.ultimoSeg >= 1) {                  // una vez por segundo
+    VB.ultimoSeg = seg;
+    VB.actividad = vbHayActividad();
+    vbRenderLateralVivo();
+    if (VB.sel) vbRenderPanel();
+  }
   VB.renderer.render(VB.escena, VB.camara);
   vbPosicionarPanel();
 }
 function vbBucle(ms) {
   if (!VB.activo) { VB.raf = null; return; }
   const t = ms / 1000;
-  const dt = VB.ultimoT ? Math.min(0.1, t - VB.ultimoT) : 0;
+  const dt = VB.ultimoT ? Math.min(0.25, t - VB.ultimoT) : 0;
   VB.ultimoT = t;
   VB.reloj += dt;
   vbDibujar(VB.reloj, dt);
@@ -4355,46 +5409,73 @@ function vbBucle(ms) {
 function actualizarVisibilidadBodega3D() {
   const vista = $('#view-bodega');
   const visible = !!vista && !vista.hidden && !document.hidden && esGestor() && !$('#screen-app').hidden;
+  vbEnlazarLateral();
   if (visible && !VB.iniciado && !VB.fallo) iniciarVistaBodega();
+  const antes = VB.activo;
   VB.activo = visible && VB.iniciado;
-  if (!VB.activo && VB.raf) { cancelAnimationFrame(VB.raf); VB.raf = null; }
-  if (VB.activo) {
-    vbAjustarTamano();
-    renderVistaBodega();
-    VB.ultimoT = 0;
-    if (!VB.raf) VB.raf = requestAnimationFrame(vbBucle);
+  if (!VB.activo) {
+    if (VB.raf) { cancelAnimationFrame(VB.raf); VB.raf = null; }
+    VB.timers.forEach(clearInterval);
+    VB.timers = [];
+    return;
+  }
+  vbAjustarTamano();
+  renderVistaBodega();
+  VB.ultimoT = 0;
+  if (!VB.raf) VB.raf = requestAnimationFrame(vbBucle);
+  if (!antes || !VB.timers.length) {
+    VB.timers.forEach(clearInterval);
+    VB.timers = [setInterval(vbLeerCamiones, 3000), setInterval(() => { vbRenderKpis(); vbSincronizar(); }, 5000)];
   }
 }
 function detenerVistaBodega() {
   if (VB.iniciado) vbCerrarPanel();
   VB.activo = false;
   if (VB.raf) { cancelAnimationFrame(VB.raf); VB.raf = null; }
+  VB.timers.forEach(clearInterval);
+  VB.timers = [];
+  if (VB.iniciado) {
+    [...VB.camiones.values()].forEach(vbQuitarCamion);
+    VB.firmaSitios = '';
+    VB.foco = undefined;
+    VB.cam.manual = false;
+  }
 }
 
 /* ── Interactividad (Raycaster) ── */
+function vbSitioPorId(id) { return VB.sitios.find(s => s.id === id) || null; }
 function vbPick(cx, cy) {
-  if (!VB.iniciado) return null;
+  if (!VB.iniciado || !VB.ciudad) return null;
   const r = VB.renderer.domElement.getBoundingClientRect();
   const mouse = new THREE.Vector2(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1);
   VB.raycaster.setFromCamera(mouse, VB.camara);
-  const hit = VB.raycaster.intersectObjects(VB.clicables, true).find(h => h.object.userData.pick);
+  const hit = VB.raycaster.intersectObjects(VB.sitios.map(s => s.grupo), true)
+    .find(h => h.object.userData.pick && h.object.visible && (h.object.parent ? h.object.parent.visible !== false : true));
   if (!hit) return null;
   const pick = { ...hit.object.userData.pick };
+  const sitio = vbSitioPorId(pick.sitio);
   if (pick.tipo === 'edificio') {
-    // clic en el edificio → la bahía más cercana al punto tocado
+    if (!sitio) return null;
+    if (sitio !== vbSitioFoco()) return { tipo: 'sitio', id: sitio.id };
+    const local = sitio.grupo.worldToLocal(hit.point.clone());
     let mejor = 0;
-    VB.PUERTAS.forEach((x, i) => { if (Math.abs(hit.point.x - x) < Math.abs(hit.point.x - VB.PUERTAS[mejor])) mejor = i; });
-    return { tipo: 'bahia', id: mejor };
+    for (let i = 1; i < VB.nBahias; i++) if (Math.abs(local.x - vbXBahia(i)) < Math.abs(local.x - vbXBahia(mejor))) mejor = i;
+    return { tipo: 'bahia', id: mejor, sitio: sitio.id };
   }
+  if (pick.tipo === 'pila') return { tipo: 'pila', id: pick.zona, sitio: pick.sitio };
   return pick;
 }
 function vbSeleccionarEn(cx, cy) {
   const pick = vbPick(cx, cy);
   if (!pick) return vbCerrarPanel();
-  if (VB.sel && VB.sel.tipo === pick.tipo && VB.sel.id === pick.id) return vbCerrarPanel();
+  if (pick.tipo === 'sitio') { vbEnfocarSitio(pick.id); return; }
+  if (VB.sel && VB.sel.tipo === pick.tipo && VB.sel.id === pick.id && VB.sel.sitio === pick.sitio) return vbCerrarPanel();
+  vbSeleccionar(pick);
+}
+function vbSeleccionar(pick) {
   vbCerrarPanel();
   VB.sel = pick;
-  VB.ancla = vbAnclaPanel(); // el panel queda fijo donde estaba el objeto al tocarlo (fácil de cerrar aunque se mueva)
+  VB.ancla = vbAnclaPanel();
   vbBrillo(pick, true);
   const panel = $('#vb-panel');
   panel.hidden = false;
@@ -4402,6 +5483,7 @@ function vbSeleccionarEn(cx, cy) {
   panel.classList.remove('entra'); void panel.offsetWidth; panel.classList.add('entra');
   vbRenderPanel();
   vbPosicionarPanel();
+  vbRenderLateralVivo();
 }
 function vbCerrarPanel() {
   if (VB.sel) vbBrillo(VB.sel, false);
@@ -4409,36 +5491,42 @@ function vbCerrarPanel() {
   const panel = $('#vb-panel');
   if (panel) { panel.hidden = true; panel._html = null; }
 }
-function vbObjetoDe(pick) {
-  if (!pick) return null;
-  if (pick.tipo === 'camion') return VB.camiones[pick.id];
-  if (pick.tipo === 'montacargas') return VB.montacargas[pick.id];
-  if (pick.tipo === 'bahia') return { mats: VB.puertas[pick.id].userData.mats };
-  return null;
+function vbMatsDe(pick) {
+  if (!pick) return [];
+  if (pick.tipo === 'camion') return VB.camiones.get(pick.id)?.mats || [];
+  if (pick.tipo === 'montacargas') return vbTodosMontacargas()[pick.id]?.mats || [];
+  const sitio = vbSitioPorId(pick.sitio);
+  if (!sitio) return [];
+  if (pick.tipo === 'bahia') return sitio.bahias[pick.id]?.mats || [];
+  if (pick.tipo === 'pila') return sitio.slots.filter(s => s.zona === pick.id).flatMap(s => s.mats);
+  return [];
 }
 function vbBrillo(pick, encender) {
-  const obj = vbObjetoDe(pick);
-  if (obj) {
-    obj.mats.forEach(m => {
-      if (encender) {
-        if (!m.userData.orig) m.userData.orig = { c: m.emissive.getHex(), i: m.emissiveIntensity };
-        m.emissive.setHex(0xffff00);
-        m.emissiveIntensity = pick.tipo === 'bahia' ? 0.2 : 0.35;
-      } else if (m.userData.orig) {
-        m.emissive.setHex(m.userData.orig.c);
-        m.emissiveIntensity = m.userData.orig.i;
-        delete m.userData.orig;
-      }
-    });
-  }
+  vbMatsDe(pick).forEach(m => {
+    if (encender) {
+      if (!m.userData.orig) m.userData.orig = { c: m.emissive.getHex(), i: m.emissiveIntensity };
+      m.emissive.setHex(0xffff00);
+      m.emissiveIntensity = pick.tipo === 'bahia' ? 0.25 : 0.32;
+    } else if (m.userData.orig) {
+      m.emissive.setHex(m.userData.orig.c);
+      m.emissiveIntensity = m.userData.orig.i;
+      delete m.userData.orig;
+    }
+  });
 }
 function vbAnclaPanel() {
   const s = VB.sel;
   if (!s) return null;
-  if (s.tipo === 'camion') { const g = VB.camiones[s.id].grupo; return new THREE.Vector3(g.position.x, 3.3, g.position.z); }
-  if (s.tipo === 'montacargas') { const g = VB.montacargas[s.id].grupo; return new THREE.Vector3(g.position.x, 2.9, g.position.z); }
-  if (s.tipo === 'bahia') return new THREE.Vector3(VB.PUERTAS[s.id], 3.4, VB.FACHADA + 0.4);
-  if (s.tipo === 'almacen') return new THREE.Vector3(-10.5, 3.4, -2.5);
+  const v = new THREE.Vector3();
+  if (s.tipo === 'camion') { const g = VB.camiones.get(s.id)?.grupo; if (!g) return null; g.getWorldPosition(v); v.y = 4.6; return v; }
+  if (s.tipo === 'montacargas') { const m = vbTodosMontacargas()[s.id]; if (!m) return null; m.grupo.getWorldPosition(v); v.y = 3.4; return v; }
+  const sitio = vbSitioPorId(s.sitio);
+  if (!sitio) return null;
+  if (s.tipo === 'bahia') return sitio.grupo.localToWorld(new THREE.Vector3(vbXBahia(s.id), 4.8, 0.6));
+  if (s.tipo === 'pila') {
+    const sl = sitio.slots.filter(x => x.zona === s.id && x.cajas > 0).sort((a, b) => a.col - b.col || b.fila - a.fila)[0] || sitio.slots.find(x => x.zona === s.id);
+    return sitio.grupo.localToWorld(new THREE.Vector3(sl.x, 2.4, sl.z));
+  }
   return null;
 }
 function vbPosicionarPanel() {
@@ -4455,84 +5543,82 @@ function vbPosicionarPanel() {
   panel.style.setProperty('--ax', `${Math.max(18, Math.min(pw - 18, ax - x))}px`);
   panel.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
 }
+/* Seguimiento: Confirmado → Preparando → Cargado → En ruta → Entregado (+ avance real del viaje) */
+function vbSeguimientoHTML(c, pedido) {
+  const pasos = ['Confirmado', 'Preparando', 'Cargado', 'En ruta', 'Entregado'];
+  let k = 0;
+  if (c.estado === 'en_ruta') k = 3;
+  else if (c.estado === 'listo') k = 2;
+  else if (c.estado === 'cargando' || c.estado === 'descargando') k = Number(c.pallets_total) && Number(c.pallets_cargados) >= Number(c.pallets_total) ? 2 : 1;
+  if (pedido?.estado === 'entregado') k = 4;
+  else if (pedido && ['enviado', 'tarde'].includes(pedido.estado)) k = Math.max(k, 3);
+  const avance = c.estado === 'en_ruta' ? Math.round(vbProgresoRuta(c) * 100) : null;
+  const cortos = ['Pedido', 'Prepara', 'Cargado', 'En ruta', 'Entrega'];
+  return `<div class="vb-track" aria-label="Seguimiento: ${pasos[k]}">${pasos.map((t, i) => `<span class="${i < k ? 'ok' : i === k ? 'on' : ''}" title="${t}"><i></i><b>${cortos[i]}</b></span>`).join('')}</div>`
+    + (avance !== null ? `<div class="vb-viaje"><div class="vb-barra"><i style="--p:${avance}%;--c:#2563eb"></i></div><span>${avance}% del viaje · ${esc(textoEta(c).txt)}</span></div>` : '');
+}
 function vbFila(emoji, lbl, valor) {
   return `<div class="vb-fila"><span class="e" aria-hidden="true">${emoji}</span><span class="l">${lbl}</span><span class="v">${valor}</span></div>`;
-}
-function vbTiempoEnBahia(c) {
-  if (!c) return '—';
-  if (c.estado === 'en_ruta') return textoEta(c).txt;
-  const desde = c.hora_llegada && new Date(c.hora_llegada) < new Date() ? c.hora_llegada : c.estado_desde;
-  return desde ? fmtDuracion(Date.now() - new Date(desde).getTime()) : '—';
-}
-function vbTiempoEstimado(c) {
-  if (!c) {
-    const prox = vbCamiones().filter(x => x.estado === 'en_ruta').sort(ordenRuta)[0];
-    return prox ? `Próximo: ${prox.placa || 'camión'}, ${textoEta(prox).txt}` : 'Sin camiones en camino';
-  }
-  if (c.estado === 'listo') return 'Listo para salir';
-  if (c.estado === 'esperando') return `En espera hace ${fmtDuracion(Date.now() - new Date(c.estado_desde || Date.now()).getTime())}`;
-  const total = Number(c.pallets_total) || 0, hechos = Number(c.pallets_cargados) || 0, faltan = Math.max(0, total - hechos);
-  if (!total) return 'Sin pallets registrados';
-  if (!faltan) return 'Terminando';
-  const min = Math.max(0, (Date.now() - new Date(c.estado_desde || Date.now()).getTime()) / 60000);
-  const ritmo = hechos > 0 && min >= 1 ? min / hechos : 2.5; // min por pallet (2,5 si no hay historial)
-  return `≈ ${fmtDuracion(Math.ceil(faltan * ritmo) * 60000)}`;
-}
-function vbCamionReal(id) {
-  if (id === 0) {
-    return vbCamionEnBahia(0) || vbCamiones().filter(c => c.estado === 'en_ruta').sort(ordenRuta)[0] || null;
-  }
-  if (id === 1) return vbCamionEnBahia(1);
-  return vbCamionEnBahia(2) || vbCamiones().find(c => c.estado === 'listo') || null;
 }
 function vbRenderPanel() {
   const panel = $('#vb-panel');
   const s = VB.sel;
   if (!panel || !s) return;
   let titulo = '', sub = '', cuerpo = '', color = '#94a3b8';
+  const sitio = vbSitioPorId(s.sitio);
   if (s.tipo === 'camion') {
-    const c = vbCamionReal(s.id);
-    sub = ['Camión en movimiento', 'Camión en bahía 2', 'Camión saliendo de bahía 3'][s.id];
-    if (c) {
-      color = VB_COLOR_ESTADO[c.estado] || '#3b82f6';
-      titulo = c.placa || 'Sin placa';
-      cuerpo = vbFila('🚛', 'Placa', `<span class="mono">${esc(c.placa || '—')}</span>`)
-        + vbFila('📦', 'Pallets', `${fmtNum(c.pallets_cargados)} / ${fmtNum(c.pallets_total)}`)
-        + vbFila('⏱', c.estado === 'en_ruta' ? 'Llegada' : 'Tiempo en bahía', esc(vbTiempoEnBahia(c)))
-        + vbFila('🔄', 'Estado', `<span class="vb-pill" style="--c:${color}">${esc(c.estado === 'esperando' ? 'En espera' : (EST_CAMION[c.estado]?.label || c.estado))}</span>`);
-    } else {
-      titulo = 'Sin camión registrado';
-      cuerpo = `<p class="vb-nota">No hay un camión asignado a esta posición en Supabase.</p>`;
-    }
+    const c = S.camiones.get(s.id);
+    if (!c) return vbCerrarPanel();
+    color = VB_COLOR_CAMION[c.estado] || '#3b82f6';
+    titulo = c.placa || 'Sin placa';
+    sub = c.estado === 'en_ruta' ? 'Camión en camino' : c.bahia ? `Camión · ${c.bahia}` : 'Camión en patio';
+    const pedidos = [...S.pedidos.values()].filter(p => p.camion_id === c.id && p.estado !== 'entregado');
+    const carga = pedidos.length
+      ? `<ul class="vb-carga">${pedidos.slice(0, 3).map(p => `<li><b>${esc(p.numero || 'Pedido')}</b> · ${esc(p.cliente || '')}${p.productos_detalle ? `<span>${esc(p.productos_detalle)}</span>` : ''}</li>`).join('')}</ul>`
+      : '<p class="vb-nota">Sin pedidos asignados a este camión.</p>';
+    cuerpo = vbSeguimientoHTML(c, pedidos[0])
+      + vbFila('🚛', 'Placa', `<span class="mono">${esc(c.placa || '—')}</span>`)
+      + vbFila('📍', 'Destino', esc(c.destino || '—'))
+      + vbFila('📦', 'Pallets', `${fmtNum(c.pallets_cargados)} / ${fmtNum(c.pallets_total)}`)
+      + vbFila('⏱', c.estado === 'en_ruta' ? 'ETA' : 'Tiempo est.', esc(vbTiempoEstimado(c)))
+      + vbFila('🔄', 'Estado', `<span class="vb-pill" style="--c:${color}">${esc(EST_CAMION[c.estado]?.label || c.estado)}</span>`)
+      + `<div class="vb-sec-t">Mercadería (pedidos)</div>${carga}`;
   } else if (s.tipo === 'montacargas') {
-    const info = [
-      { id: 'MC-01', zona: 'Frente a bahía 3', estado: 'Moviendo pallets', bat: 81 },
-      { id: 'MC-02', zona: 'Patio oeste · cajas', estado: 'Patrullando', bat: 64 },
-      { id: 'MC-03', zona: 'Entre bahía 1 y 2', estado: 'Cargando camión', bat: 92 },
-    ][s.id];
+    const m = vbTodosMontacargas()[s.id];
+    if (!m) return vbCerrarPanel();
+    const z = m.zona !== null && m.zona !== undefined ? m.sitio.zonas[m.zona] : null;
     color = '#f59e0b';
-    titulo = info.id; sub = 'Montacargas';
-    cuerpo = vbFila('🟡', 'ID', `<span class="mono">${info.id}</span>`)
-      + vbFila('📍', 'Zona', esc(info.zona))
-      + vbFila('🔋', 'Estado operativo', `${esc(info.estado)} · ${info.bat}%`)
-      + `<p class="vb-nota">Equipo ilustrativo: los montacargas aún no tienen datos en Supabase.</p>`;
+    titulo = m.id; sub = `Montacargas · ${m.sitio.suc?.nombre || vbCodigoSitio(m.sitio.idx)}`;
+    cuerpo = vbFila('🟡', 'ID', `<span class="mono">${m.id}</span>`)
+      + vbFila('📦', 'Moviendo', esc(m.carga.visible ? (m.producto || 'Carga') : 'Nada (va vacío)'))
+      + vbFila('📍', 'Zona', esc(z ? `Zona ${z.letra} · ${z.nombre}` : m.bahia !== null && m.bahia !== undefined ? `Bahía B${m.bahia + 1}` : 'Pasillo'))
+      + vbFila('⚙️', 'Tarea', esc(m.tarea))
+      + vbFila('🔋', 'Batería', `${Math.round(m.bateria)}%`)
+      + `<p class="vb-nota">${VB.actividad ? '⚡ Hubo movimientos en el último minuto: trabaja más rápido.' : 'Sin movimientos recientes: patrulla lenta.'}</p>`;
   } else if (s.tipo === 'bahia') {
-    const b = vbBahias()[s.id];
-    const c = vbCamionEnBahia(s.id);
-    const estado = c ? c.estado : 'libre';
-    color = VB_COLOR_ESTADO[estado] || '#6b7280';
-    titulo = `Bahía ${s.id + 1}`; sub = b !== `Bahía ${s.id + 1}` ? b : (s.id === 0 ? 'Puerta abierta' : 'Puerta de carga');
-    cuerpo = vbFila('🏷️', 'Estado', `<span class="vb-pill" style="--c:${color}">${esc(VB_TEXTO_ESTADO[estado] || estado)}</span>`)
+    const b = sitio?.plan?.bahias[s.id];
+    if (!b) return vbCerrarPanel();
+    const c = b.ocupante;
+    color = VB_COLOR_BAHIA[b.estado];
+    titulo = `Bahía B${s.id + 1}`; sub = b.nombre;
+    cuerpo = vbFila('🏷️', 'Estado', `<span class="vb-pill" style="--c:${color}">${VB_TEXTO_BAHIA[b.estado]}</span>`)
       + vbFila('🚛', 'Camión', c ? `<span class="mono">${esc(c.placa || 'Sin placa')}</span>` : 'Ninguno')
       + vbFila('📦', 'Pallets', c ? `${fmtNum(c.pallets_cargados)} / ${fmtNum(c.pallets_total)}` : '—')
-      + vbFila('⏳', 'Tiempo estimado', esc(vbTiempoEstimado(c)));
-  } else if (s.tipo === 'almacen') {
-    const prods = [...S.productos.values()].filter(p => enSucursal(p, S.sucursalVista));
-    const suc = S.sucursales.find(x => x.id === S.sucursalVista);
-    color = '#2563eb'; titulo = 'Almacén trasero'; sub = suc ? `Inventario · ${suc.nombre}` : 'Resumen de inventario';
-    cuerpo = vbFila('📦', 'Productos', fmtNum(prods.length))
-      + vbFila('🔢', 'Stock total', fmtNum(prods.reduce((t, p) => t + (Number(p.cantidad_actual) || 0), 0)))
-      + vbFila('⚠️', 'Bajo mínimo', fmtNum(prods.filter(p => nivelStock(p) === 'bajo').length));
+      + vbFila('⏱', 'En bahía', esc(c ? vbTiempoEnBahia(c) : '—'))
+      + vbFila('⏳', 'Tiempo est.', esc(vbTiempoEstimado(c)))
+      + (b.asignados.length > 1 ? `<p class="vb-nota">⚠️ ${b.asignados.length} camiones asignados a esta bahía.</p>` : '')
+      + (s.id >= bahiasConfig().length ? '<p class="vb-nota">Bahía no configurada: agrégala en Camiones › Bahías.</p>' : '');
+  } else if (s.tipo === 'pila') {
+    const z = sitio?.zonas[s.id];
+    if (!z) return vbCerrarPanel();
+    const p = vbProductoFrecuente(z);
+    color = z.color;
+    titulo = `Zona ${z.letra}`; sub = z.nombre;
+    cuerpo = vbFila('⭐', 'Más frecuente', esc(p ? p.nombre : '—'))
+      + vbFila('🔢', 'Cantidad', p ? `${fmtNum(p.cantidad_actual)} ${esc(p.unidad || '')}` : '—')
+      + vbFila('📦', 'Total zona', fmtNum(z.stock))
+      + vbFila('🗂️', 'Productos', fmtNum(z.productos.length))
+      + (z.criticos.length ? `<p class="vb-nota rojo">🔴 Bajo el mínimo: ${esc(z.criticos.map(x => x.nombre).join(', '))}</p>` : '');
   }
   ponerHTML(panel, `
     <div class="vb-panel-head" style="--c:${color}">
@@ -4542,18 +5628,28 @@ function vbRenderPanel() {
     <div class="vb-panel-body">${cuerpo}</div>
     <span class="vb-flecha"></span>`);
 }
-function ponerHTML(el, html) { if (el && el._html !== html) { el.innerHTML = html; el._html = html; } }
 
-/* ── Datos en tiempo real (llamado por los cambios de Supabase vía supabase.channel) ── */
+/* ── Punto de entrada: lo llaman todos los cambios en vivo (supabase.channel) ── */
 function renderVistaBodega() {
   if (!esGestor() || !$('#view-bodega')) return;
-  const todas = bahiasConfig();
-  const ocupadas = todas.filter(b => ocupantesBahia(b).some(c => enSucursal(c, S.sucursalVista))).length;
-  const suc = S.sucursales.find(x => x.id === S.sucursalVista);
+  const sitios = vbSitiosDatos();
+  const suc = vbSucursal();
+  const planes = vbPlanesVista();
+  const ocupadas = planes.reduce((t, p) => t + p.bahias.filter(b => b.ocupante).length, 0);
+  const total = planes.reduce((t, p) => t + p.n, 0);
+  const enRuta = vbCamionesDe().filter(c => c.estado === 'en_ruta').length;
   const res = $('#vb-resumen');
-  if (res) res.textContent = `${suc ? `${suc.nombre}${suc.ciudad ? ' (' + suc.ciudad + ')' : ''} · ` : ''}${todas.length} bahías · ${ocupadas} ocupadas · ${vbCamiones().filter(c => c.estado === 'en_ruta').length} camiones en ruta`;
+  if (res) {
+    res.textContent = !suc && sitios.length > 1
+      ? `Red de ${sitios.length} bodegas · ${total} bahías · ${ocupadas} ocupadas · ${enRuta} camiones en ruta`
+      : `${suc ? `${suc.nombre}${suc.ciudad ? ' (' + suc.ciudad + ')' : ''} · ` : ''}${total} bahías · ${ocupadas} ocupadas · ${enRuta} camiones en ruta`;
+  }
+  const btnRed = $('#vb-ctl [data-vb-ctl="red"]');
+  if (btnRed) btnRed.hidden = sitios.length < 2;
+  vbRenderKpis();
+  vbRenderLateral();
   if (!VB.iniciado) return;
-  vbActualizarMarcadores();
+  vbSincronizar();
   if (VB.sel) vbRenderPanel();
 }
 
@@ -4582,6 +5678,7 @@ function datosDemo() {
     C(3, 'HTGB-88', 'Felipe Soto', 'esperando', 'Bahía 3', 12, 0, 'Sucursal Oriente', ahora - 140 * MIN, ahora - 140 * MIN),
     C(4, 'ZRWQ-05', 'Ana Muñoz', 'en_ruta', null, 20, 0, 'Centro de distribución', ahora + 47 * MIN, ahora - 30 * MIN),
     C(5, 'BNVC-63', 'Jorge Pino', 'en_ruta', null, 16, 0, 'Centro de distribución', ahora + 130 * MIN, ahora - 15 * MIN),
+    C(6, 'MXTR-21', 'Luis Vega', 'listo', 'Bahía 4', 14, 14, 'Supermercado Norte', ahora - 95 * MIN, ahora - 2 * MIN),
   ];
   const Pe = (n, numero, cliente, estado, camion, limite, entregado, creado) => ({ id: `demo-o${n}`, empresa_id: emp, numero, cliente, estado, camion_id: camion, fecha_limite: iso(limite), entregado_at: entregado ? iso(entregado) : null, created_at: iso(creado) });
   const inicioM = inicioMes().getTime();
@@ -4631,20 +5728,20 @@ function datosDemo() {
     X(6, 'demo-u3', 'Camila Fuentes', 'general', `@${miNombre} ¿revisas el stock de #Leche descremada 1 L antes del mediodía?`, 4,
       { producto_id: 'demo-p8', menciones_productos: ['demo-p8'], menciones_usuarios: [yo], leido_por: [] }),
   ];
-  const SU = (n, nombre, ciudad, direccion, latitud, longitud, activa = true) => ({ id: `demo-s${n}`, empresa_id: emp, nombre, ciudad, direccion, latitud, longitud, activa, created_at: iso(ahora - (10 - n) * D) });
+  const SU = (n, nombre, ciudad, direccion, latitud, longitud, capacidad_maxima, activa = true) => ({ id: `demo-s${n}`, empresa_id: emp, nombre, ciudad, direccion, latitud, longitud, capacidad_maxima, activa, created_at: iso(ahora - (10 - n) * D) });
   const sucursales = [
-    SU(1, 'Bodega Norte', 'Guayaquil', 'Av. Francisco de Orellana, Kennedy Norte', -2.1894, -79.8891),
-    SU(2, 'Bodega Sur', 'Guayaquil', 'Av. 25 de Julio, sector Puerto Marítimo', -2.2100, -79.9200),
-    SU(3, 'Bodega Quito', 'Quito', 'Av. Amazonas y Naciones Unidas', -0.1807, -78.4678),
-    SU(4, 'Bodega Cuenca', 'Cuenca', 'Av. de las Américas y Ordóñez Lasso', -2.9001, -79.0059, false),
+    SU(1, 'Bodega Norte', 'Guayaquil', 'Av. Francisco de Orellana, Kennedy Norte', -2.1894, -79.8891, 900),
+    SU(2, 'Bodega Sur', 'Guayaquil', 'Av. 25 de Julio, sector Puerto Marítimo', -2.2100, -79.9200, 600),
+    SU(3, 'Bodega Quito', 'Quito', 'Av. Amazonas y Naciones Unidas', -0.1807, -78.4678, 800),
+    SU(4, 'Bodega Cuenca', 'Cuenca', 'Av. de las Américas y Ordóñez Lasso', -2.9001, -79.0059, 400, false),
   ];
   const sucDe = { 'demo-p1': 1, 'demo-p2': 1, 'demo-p3': 2, 'demo-p4': 1, 'demo-p5': 2, 'demo-p6': 2, 'demo-p7': 3, 'demo-p8': 1, 'demo-p9': 3, 'demo-p10': 3,
-    'demo-c1': 1, 'demo-c2': 1, 'demo-c3': 1, 'demo-c4': 3, 'demo-c5': 2 };
+    'demo-c1': 1, 'demo-c2': 1, 'demo-c3': 1, 'demo-c4': 3, 'demo-c5': 2, 'demo-c6': 1 };
   productos.forEach(x => { x.sucursal_id = `demo-s${sucDe[x.id]}`; });
   camiones.forEach(x => { x.sucursal_id = `demo-s${sucDe[x.id]}`; });
   const detalles = ['48 packs Bebida cola 1,5 L', '12 cajas Galletas surtidas, 6 cajas Aceite de oliva', '30 bandejas Huevos', '20 fardos Arroz integral', '10 bolsas Café en grano', '8 packs Papel higiénico', '15 cajas Leche descremada', '24 unidades Detergente líquido'];
   pedidos.forEach((x, i) => { x.productos_detalle = detalles[i % detalles.length]; });
-  const empresa = { ...(S.empresaReal || S.empresa || {}), nombre: 'Comercial Los Andes', logo_texto: 'CA', bahias: ['Bahía 1', 'Bahía 2', 'Bahía 3', 'Bahía 4'] };
+  const empresa = { ...(S.empresaReal || S.empresa || {}), nombre: 'Comercial Los Andes', logo_texto: 'CA', bahias: ['Bahía 1', 'Bahía 2', 'Bahía 3', 'Bahía 4', 'Bahía 5'] };
   return { empresa, productos, camiones, pedidos, alertas, movimientos, mov7, mensajes, sucursales };
 }
 async function activarDemo(activar) {
@@ -5810,15 +6907,21 @@ function formSucursal(id) {
       { name: 'latitud', label: 'Latitud', required: true, value: s?.latitud ?? centro.lat.toFixed(4), maxlength: 14, placeholder: '-2.1894' },
       { name: 'longitud', label: 'Longitud', required: true, value: s?.longitud ?? centro.lng.toFixed(4), maxlength: 14, placeholder: '-79.8891' },
       { name: 'activa', label: 'Estado', type: 'select', value: s ? String(!!s.activa) : 'true', options: [{ value: 'true', label: 'Activa' }, { value: 'false', label: 'Inactiva' }] },
+      { name: 'capacidad_maxima', label: 'Capacidad máxima (unidades)', type: 'number', min: 1, max: 99999999, value: s?.capacidad_maxima ?? '', help: 'Se usa en la Vista Bodega: stock / capacidad.' },
     ],
     textoBoton: s ? 'Guardar cambios' : 'Crear sucursal',
     alGuardar: async v => {
       const lat = Number(String(v.latitud).replace(',', '.')), lng = Number(String(v.longitud).replace(',', '.'));
       if (!Number.isFinite(lat) || lat < -90 || lat > 90) throw errorUsuario('La latitud debe ser un número entre -90 y 90 (ej: -2.1894).');
       if (!Number.isFinite(lng) || lng < -180 || lng > 180) throw errorUsuario('La longitud debe ser un número entre -180 y 180 (ej: -79.8891).');
-      const datos = { nombre: v.nombre, ciudad: v.ciudad, direccion: v.direccion, latitud: lat, longitud: lng, activa: v.activa !== 'false' };
-      const q = s ? S.sb.from('sucursales').update(datos).eq('id', s.id) : S.sb.from('sucursales').insert({ ...datos, empresa_id: S.perfil.empresa_id });
-      const { data, error } = await q.select().single();
+      const datos = { nombre: v.nombre, ciudad: v.ciudad, direccion: v.direccion, latitud: lat, longitud: lng, activa: v.activa !== 'false', capacidad_maxima: v.capacidad_maxima };
+      const guardar = d => (s ? S.sb.from('sucursales').update(d).eq('id', s.id) : S.sb.from('sucursales').insert({ ...d, empresa_id: S.perfil.empresa_id })).select().single();
+      let { data, error } = await guardar(datos);
+      if (error && esColumnaFaltante(error)) {
+        const { capacidad_maxima, ...resto } = datos;
+        ({ data, error } = await guardar(resto));
+        if (!error) toast('Se guardó todo excepto la capacidad: vuelve a ejecutar mejoras2.sql en Supabase.', 'warning', 7000);
+      }
       if (error) throw error;
       const i = S.sucursales.findIndex(x => x.id === data.id);
       if (i >= 0) S.sucursales[i] = data; else S.sucursales.push(data);

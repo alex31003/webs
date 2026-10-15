@@ -11,6 +11,7 @@
 --           • Tabla "sucursales" (mapa Red de Bodegas) con 3 bodegas demo
 --           • Columna "sucursal_id" en productos y camiones
 --           • Columna "productos_detalle" en pedidos (hoja Pedidos del Excel)
+--           • Vista Bodega: capacidad máxima por sucursal y 5 bahías en la demo
 -- ════════════════════════════════════════════════════════════════════════
 
 
@@ -151,6 +152,9 @@ create table if not exists public.sucursales (
   created_at  timestamptz not null default now()
 );
 create index if not exists sucursales_empresa_idx on public.sucursales (empresa_id, created_at);
+-- Capacidad máxima de cada bodega (Vista Bodega: "stock / capacidad")
+alter table public.sucursales add column if not exists capacidad_maxima integer
+  check (capacidad_maxima is null or capacidad_maxima > 0);
 
 -- La empresa de la sucursal siempre es la del usuario que la crea
 create or replace function public.tg_sucursal_preparar()
@@ -275,6 +279,25 @@ begin
    where empresa_id = v_emp and sucursal_id is null and placa in ('ABC-123', 'XYZ-789');
   update public.camiones set sucursal_id = v_quito
    where empresa_id = v_emp and sucursal_id is null and placa = 'LMN-456';
+end;
+$$;
+
+
+-- ── 5b. VISTA BODEGA: bahías B1–B10 y capacidad de la empresa demo ─────
+-- La columna "bahia" de camiones ya existe en setup.sql; esto solo la asegura.
+alter table public.camiones add column if not exists bahia text;
+
+do $$
+declare
+  v_emp uuid := '11111111-1111-1111-1111-111111111111';
+begin
+  -- La empresa demo pasa de 4 a 5 bahías (solo si sigue con las 4 originales)
+  update public.empresas
+     set bahias = array['Bahía 1', 'Bahía 2', 'Bahía 3', 'Bahía 4', 'Bahía 5']
+   where id = v_emp and bahias = array['Bahía 1', 'Bahía 2', 'Bahía 3', 'Bahía 4'];
+  update public.sucursales set capacidad_maxima = 600 where empresa_id = v_emp and nombre = 'Bodega Norte' and capacidad_maxima is null;
+  update public.sucursales set capacidad_maxima = 300 where empresa_id = v_emp and nombre = 'Bodega Sur'   and capacidad_maxima is null;
+  update public.sucursales set capacidad_maxima = 600 where empresa_id = v_emp and nombre = 'Bodega Quito' and capacidad_maxima is null;
 end;
 $$;
 
