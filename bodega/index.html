@@ -17,6 +17,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script src="config.js"></script>
 <style>
 /* ═══════════════════════ TOKENS ═══════════════════════ */
@@ -825,95 +826,148 @@ html[data-theme="dark"] .w-ok { background: #15803d; }
 .chart-box canvas { display: block; }
 .chart-msg { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 13.5px; text-align: center; padding: 20px; }
 
-/* ── 1. VISTA BODEGA (isométrica) ── */
-.iso-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; align-items: start; }
-.iso-card { overflow: hidden; }
-.iso-wrap {
-  --s: 1; --iso-sky: #e8f4fd; --iso-ground: #d3efd9; --iso-yard: #e2e8f0; --iso-road: #94a3b8; --iso-line: #ffffff;
-  position: relative; overflow: hidden; height: calc(560px * var(--s)); background: var(--iso-sky);
-  background-image: radial-gradient(circle at 20% 10%, rgba(255,255,255,.9), transparent 45%);
+/* ── 1. VISTA BODEGA 3D (Three.js) ── */
+.wt { position: relative; }
+.wt-stage {
+  position: relative; overflow: hidden; border-radius: 18px; border: 1px solid var(--border); box-shadow: var(--shadow);
+  height: max(580px, calc(100dvh - var(--topbar-h) - 48px));
+  background: linear-gradient(180deg, #e0f2fe 0%, #f0f9ff 100%);
 }
-html[data-theme="dark"] .iso-wrap { --iso-sky: #0b1a2e; --iso-ground: #163a2c; --iso-yard: #334155; --iso-road: #1f2937; --iso-line: #94a3b8; background-image: radial-gradient(circle at 20% 10%, rgba(96,165,250,.18), transparent 45%); }
-.iso-stage { position: absolute; top: 0; left: 50%; width: 800px; height: 560px; margin-left: calc(-400px * var(--s)); transform: scale(var(--s)); transform-origin: 0 0; overflow: hidden; }
-.iso-world { position: absolute; left: 50%; top: 58%; width: 560px; height: 560px; margin: -280px 0 0 -280px; transform: rotateX(60deg) rotateZ(-45deg); transform-style: preserve-3d; }
-.iso-world * { transform-style: preserve-3d; }
-.iso-ground { position: absolute; inset: 0; border-radius: 28px; background: var(--iso-ground); box-shadow: 0 0 0 10px color-mix(in srgb, var(--iso-ground) 60%, transparent); }
-.iso-yard { position: absolute; left: 40px; top: 300px; width: 480px; height: 132px; background: var(--iso-yard); }
-.iso-yard .park { position: absolute; top: 0; width: 3px; height: 70px; background: var(--iso-line); opacity: .8; }
-.iso-road { position: absolute; left: -520px; top: 432px; width: 1600px; height: 70px; background: var(--iso-road); }
-.iso-road-line { position: absolute; left: -520px; top: 465px; width: 1600px; height: 4px; background: repeating-linear-gradient(90deg, var(--iso-line) 0 20px, transparent 20px 38px); opacity: .9; }
-.iso-cubo { position: absolute; }
-.iso-cubo .f { position: absolute; left: 0; top: 0; backface-visibility: visible; }
-.iso-cubo .f-top { width: 100%; height: 100%; transform: translateZ(var(--h)); background: var(--c1); }
-.iso-cubo .f-n { transform-origin: top; transform: rotateX(90deg); background: var(--cn, var(--c2)); }
-.iso-cubo .f-s { transform-origin: bottom; transform: rotateX(-90deg); background: var(--cs, var(--c2)); }
-.iso-cubo .f-w { transform-origin: left; transform: rotateY(-90deg); background: var(--cw, var(--c3)); }
-.iso-cubo .f-e { transform-origin: right; transform: rotateY(90deg); background: var(--ce, var(--c3)); }
-.iso-nave { --c1: repeating-linear-gradient(90deg, #3b82f6 0 22px, #3478ee 22px 24px); --c2: #2563eb; --c3: #1e40af; }
-.iso-door { position: absolute; bottom: 0; width: 76px; height: 74px; background: repeating-linear-gradient(to bottom, #1e293b 0 6px, #334155 6px 8px); border: 3px solid #1e3a8a; border-bottom: 0; }
-.iso-door .luz { position: absolute; left: -3px; right: -3px; top: -11px; height: 6px; border-radius: 3px; background: var(--tc, #94a3b8); box-shadow: 0 0 10px var(--tc, transparent); }
-.iso-door .num { position: absolute; left: 50%; top: -30px; transform: translateX(-50%); color: #fff; font: 800 11px/1 Inter, sans-serif; opacity: .9; }
-.iso-truck { position: absolute; left: 0; top: 0; animation: isoTruck 16s linear infinite; }
-.iso-truck.b { animation-delay: -8s; }
-@keyframes isoTruck {
-  0%   { transform: translate(-420px, 465px) rotateZ(0deg); }
-  28%  { transform: translate(var(--dx), 465px) rotateZ(0deg); }
-  34%  { transform: translate(var(--dx), 465px) rotateZ(90deg); }
-  46%  { transform: translate(var(--dx), 352px) rotateZ(90deg); }
-  70%  { transform: translate(var(--dx), 352px) rotateZ(90deg); }
-  80%  { transform: translate(var(--dx), 465px) rotateZ(90deg); }
-  86%  { transform: translate(var(--dx), 465px) rotateZ(0deg); }
-  100% { transform: translate(940px, 465px) rotateZ(0deg); }
+#wt-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.wt-labels { position: absolute; inset: 0; pointer-events: none; }
+.wt-glass {
+  background: color-mix(in srgb, var(--card) 90%, transparent); color: var(--text);
+  -webkit-backdrop-filter: blur(12px) saturate(160%); backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid color-mix(in srgb, var(--border) 85%, transparent); border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, .1), 0 1px 3px rgba(15, 23, 42, .06);
 }
-.iso-trailer { --c1: #ffffff; --c2: #f1f5f9; --c3: #cbd5e1; }
-.iso-cab { --c1: #e2e8f0; --c2: #f8fafc; --c3: #94a3b8;
-  --cs: linear-gradient(to bottom, #f8fafc 0 14%, #0f172a 14% 48%, #f8fafc 48%);
-  --cn: linear-gradient(to top, #f8fafc 0 14%, #0f172a 14% 48%, #f8fafc 48%);
-  --ce: linear-gradient(to right, #e2e8f0 0 14%, #0f172a 14% 52%, #e2e8f0 52%); }
-.iso-sombra { position: absolute; background: rgba(15, 23, 42, .16); border-radius: 6px; filter: blur(3px); }
-.iso-fork { position: absolute; animation: isoFork 7s ease-in-out infinite; }
-.iso-fork.b { animation-duration: 9s; animation-delay: -3s; }
-@keyframes isoFork { 0%, 8% { transform: translateX(0); } 45%, 55% { transform: translateX(var(--dist)); } 92%, 100% { transform: translateX(0); } }
-.iso-montacargas { --c1: #fbbf24; --c2: #f59e0b; --c3: #d97706; }
-.iso-mastil { --c1: #475569; --c2: #334155; --c3: #1e293b; }
-.iso-caja { --c1: #e7c08f; --c2: #d6a56b; --c3: #b9874f; }
-.iso-pallet { --c1: #b7791f; --c2: #a16207; --c3: #854d0e; }
-.iso-bb { position: absolute; width: 0; height: 0; }
-.iso-bb > .bb { position: absolute; left: 0; bottom: 0; transform: translateX(-50%); }
-.iso-arbol { display: flex; flex-direction: column; align-items: center; }
-.iso-arbol .copa { width: 34px; height: 34px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #4ade80, #16a34a 70%); box-shadow: inset -4px -4px 0 rgba(0,0,0,.12); }
-.iso-arbol .copa + .copa { width: 26px; height: 26px; margin-top: -40px; margin-left: 18px; }
-.iso-arbol .tronco { width: 6px; height: 14px; background: #92400e; border-radius: 2px; margin-top: -2px; }
-.iso-pill {
-  --tc: #64748b;
-  display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 5px 11px 6px; border-radius: 12px; white-space: nowrap;
-  background: var(--card); color: var(--text); border: 2px solid var(--tc); box-shadow: 0 6px 14px rgba(15, 23, 42, .18);
-  font: 600 11px/1.25 Inter, sans-serif; animation: isoBob 2.6s ease-in-out infinite; position: relative;
+.wt-fallback { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 24px; color: var(--muted); }
+.wt-fallback .empty-ic { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #fff; color: #2563eb; }
+.wt-fallback strong { color: #0f172a; font-size: 16px; }
+
+/* Etiquetas proyectadas desde la escena */
+.wt-tag, .wt-pin { position: absolute; left: 0; top: 0; pointer-events: auto; border: 0; cursor: pointer; will-change: transform; font-family: inherit; }
+.wt-tag:not([class*="tone-"]) { --tc: #64748b; }
+.wt-tag {
+  display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 5px 10px 6px; border-radius: 10px; white-space: nowrap;
+  background: #ffffff; color: #0f172a; box-shadow: 0 6px 16px rgba(15, 23, 42, .16); border: 2px solid var(--tc); font-size: 11px; font-weight: 600; line-height: 1.25;
+  transition: box-shadow var(--t), border-width var(--t);
 }
-.iso-pill b { font-size: 11.5px; font-weight: 800; color: var(--tc); text-transform: uppercase; letter-spacing: .04em; }
-.iso-pill::after { content: ''; position: absolute; left: 50%; bottom: -7px; margin-left: -6px; border: 6px solid transparent; border-bottom: 0; border-top-color: var(--tc); }
-.iso-pill.flash { animation: isoBob 2.6s ease-in-out infinite, flash 1.1s ease; }
-@keyframes isoBob { 50% { transform: translateY(-5px); } }
-.iso-letrero { padding: 4px 10px; border-radius: 6px; background: #0f172a; color: #fff; font: 800 12px/1.2 Inter, sans-serif; letter-spacing: .02em; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,.25); }
-.iso-nube { position: absolute; width: 120px; height: 34px; border-radius: 999px; background: rgba(255,255,255,.85); filter: blur(1px); animation: isoNube 60s linear infinite; }
-.iso-nube::before { content: ''; position: absolute; left: 24px; top: -18px; width: 54px; height: 44px; border-radius: 50%; background: inherit; }
-html[data-theme="dark"] .iso-nube { background: rgba(148,163,184,.14); }
-@keyframes isoNube { from { transform: translateX(-160px); } to { transform: translateX(960px); } }
-.iso-leyenda { position: absolute; left: 12px; bottom: 12px; display: flex; gap: 10px; flex-wrap: wrap; font-size: 11.5px; font-weight: 600; color: #334155; background: rgba(255,255,255,.75); padding: 6px 10px; border-radius: 8px; backdrop-filter: blur(4px); }
-html[data-theme="dark"] .iso-leyenda { background: rgba(15,23,42,.7); color: #cbd5e1; }
-.iso-leyenda span { display: inline-flex; align-items: center; gap: 5px; }
-.iso-leyenda i { width: 9px; height: 9px; border-radius: 50%; background: var(--tc); }
-.iso-panel .live-mini { font-size: 11.5px; font-weight: 700; color: var(--green); letter-spacing: .04em; }
-.iso-bay-list { list-style: none; margin: 0; padding: 6px 0; }
-.iso-bay { --tc: var(--muted); display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; column-gap: 10px; row-gap: 6px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border-2); transition: background var(--t); }
-.iso-bay:last-child { border-bottom: 0; }
-.iso-bay .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--tc); box-shadow: 0 0 0 4px var(--ts, transparent); }
-.iso-bay strong { font-size: 14px; }
-.iso-bay .meta { grid-column: 2 / -1; font-size: 12.5px; color: var(--muted); }
-.iso-bay .progress { grid-column: 2 / -1; height: 7px; }
-.iso-ruta { padding: 12px 16px 16px; border-top: 1px solid var(--border-2); font-size: 12.5px; color: var(--muted); display: flex; flex-direction: column; gap: 6px; }
-.iso-ruta strong { color: var(--text); font-size: 13px; }
-.iso-ruta .fila { display: flex; justify-content: space-between; gap: 8px; }
+.wt-tag b { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--tc); }
+.wt-tag::after { content: ''; position: absolute; left: 50%; bottom: -7px; margin-left: -6px; border: 6px solid transparent; border-bottom: 0; border-top-color: var(--tc); }
+.wt-tag.sel { box-shadow: 0 0 0 4px color-mix(in srgb, var(--tc) 28%, transparent), 0 8px 20px rgba(15, 23, 42, .2); }
+.wt-pin {
+  --tc: #2563eb;
+  display: flex; align-items: center; gap: 0; padding: 0; border-radius: 999px; background: var(--tc); color: #fff;
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--tc) 45%, transparent); height: 34px; min-width: 34px; transition: gap var(--t), padding var(--t);
+}
+.wt-pin.nivel-bajo { --tc: #dc2626; }
+.wt-pin.nivel-medio { --tc: #ca8a04; }
+.wt-pin.nivel-ok { --tc: #2563eb; }
+.wt-pin::after { content: ''; position: absolute; left: 50%; bottom: -8px; margin-left: -7px; border: 7px solid transparent; border-bottom: 0; border-top-color: var(--tc); }
+.wt-pin .pin-ic { width: 34px; height: 34px; display: grid; place-items: center; flex: none; }
+.wt-pin .pin-ic .ic { width: 17px; height: 17px; }
+.wt-pin .pin-txt { max-width: 0; overflow: hidden; white-space: nowrap; font-size: 12px; font-weight: 700; transition: max-width 250ms ease, padding 250ms ease; }
+.wt-pin:hover .pin-txt, .wt-pin.sel .pin-txt, .wt-pin:focus-visible .pin-txt { max-width: 200px; padding-right: 12px; }
+.wt-pin.sel { box-shadow: 0 0 0 4px color-mix(in srgb, var(--tc) 30%, transparent), 0 6px 14px rgba(15, 23, 42, .2); }
+
+/* KPIs flotantes (arriba a la izquierda) */
+.wt-kpis { position: absolute; top: 14px; left: 14px; display: flex; gap: 10px; flex-wrap: wrap; max-width: calc(100% - 360px); }
+.wt-kpi { display: flex; align-items: center; gap: 10px; padding: 10px 14px 10px 10px; min-width: 168px; }
+.wt-kpi-ic { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: var(--ts); color: var(--tc); flex: none; }
+.wt-kpi-lbl { display: block; font-size: 11.5px; font-weight: 600; color: var(--muted); }
+.wt-kpi strong { display: block; font-size: 21px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.wt-kpi small { display: block; font-size: 11px; font-weight: 600; color: var(--tc); }
+
+/* Detalle del objeto seleccionado (arriba a la derecha) */
+.wt-detalle { position: absolute; top: 14px; right: 14px; width: 310px; max-height: calc(100% - 270px); min-height: 0; overflow: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.wt-det-head { display: flex; align-items: flex-start; gap: 10px; }
+.wt-det-head > div { flex: 1; min-width: 0; }
+.wt-det-head h4 { font-size: 16px; font-weight: 800; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.wt-det-kind { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.wt-det-ic { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: var(--ts); color: var(--tc); flex: none; }
+.wt-detalle .badge { align-self: flex-start; }
+.wt-prog .progress > span { background: var(--tc, var(--primary)); }
+.wt-dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; margin: 0; font-size: 12.5px; }
+.wt-dl dt { color: var(--muted); }
+.wt-dl dd { margin: 0; font-weight: 600; text-align: right; overflow-wrap: anywhere; }
+.wt-libre { display: flex; align-items: center; gap: 8px; color: var(--green); font-weight: 600; font-size: 13px; }
+.wt-stock { display: flex; align-items: baseline; gap: 8px; }
+.wt-stock strong { font-size: 30px; font-weight: 800; letter-spacing: -.03em; line-height: 1; color: var(--tc); font-variant-numeric: tabular-nums; }
+.wt-stock .stock-label { margin-left: auto; }
+.wt-detalle .stockbar { flex: none; }
+
+/* Seguimiento de pedido (abajo a la izquierda) y lista con pestañas (abajo a la derecha) */
+.wt-panel { padding: 12px 14px; }
+.wt-tracking { position: absolute; left: 14px; bottom: 14px; width: min(560px, calc(100% - 420px)); }
+.wt-lista { position: absolute; right: 14px; bottom: 14px; width: 370px; max-height: 240px; display: flex; flex-direction: column; padding: 8px; }
+.wt-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.wt-head h4 { font-size: 13.5px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.wt-head h4 .ic { color: var(--primary); }
+.wt-nav { display: flex; align-items: center; gap: 2px; font-size: 12px; }
+.wt-nav .muted { margin-right: 4px; }
+.wt-flip .ic { transform: scaleX(-1); }
+.wt-track { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 200px); gap: 14px; align-items: center; }
+.wt-steps { list-style: none; margin: 0; padding: 0; display: flex; }
+.wt-steps li { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; position: relative; font-size: 11px; font-weight: 600; color: var(--muted); text-align: center; }
+.wt-steps li::before { content: ''; position: absolute; top: 15px; left: -50%; width: 100%; height: 3px; background: var(--border); z-index: 0; }
+.wt-steps li:first-child::before { display: none; }
+.wt-steps li.ok::before, .wt-steps li.now::before { background: #2563eb; }
+.wt-steps .st-ic { position: relative; z-index: 1; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--card); border: 2px solid var(--border); color: var(--muted-2); }
+.wt-steps .st-ic .ic { width: 15px; height: 15px; }
+.wt-steps li.ok .st-ic { background: #2563eb; border-color: #2563eb; color: #fff; }
+.wt-steps li.now .st-ic { background: #2563eb; border-color: #2563eb; color: #fff; box-shadow: 0 0 0 5px rgba(37, 99, 235, .18); }
+.wt-steps li.now { color: var(--text); }
+.wt-steps li.now.late .st-ic { background: var(--red); border-color: var(--red); box-shadow: 0 0 0 5px var(--red-soft); }
+.wt-steps li.now.late::before { background: var(--red); }
+.wt-ship { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; align-items: center; padding: 10px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); text-align: left; transition: border-color var(--t), box-shadow var(--t); }
+.wt-ship:hover { border-color: #93c5fd; box-shadow: 0 4px 12px rgba(37, 99, 235, .12); }
+.wt-ship-ic { grid-row: span 2; width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: var(--blue-soft); color: var(--blue); }
+.wt-ship-txt { display: flex; flex-direction: column; min-width: 0; gap: 2px; }
+.wt-ship-txt b { font-size: 13px; }
+.wt-ship-txt > span:not(.badge) { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wt-ship-txt .badge { align-self: flex-start; height: 20px; font-size: 11px; }
+.wt-ship-meta { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 8px; font-size: 11.5px; color: var(--muted); border-top: 1px dashed var(--border); padding-top: 6px; margin-top: 2px; }
+.wt-ship-meta .restante { font-size: 11.5px; }
+.wt-tabs { display: flex; gap: 4px; padding: 2px; margin-bottom: 4px; border-bottom: 1px solid var(--border-2); }
+.wt-tabs button { flex: 1; border: 0; background: transparent; padding: 8px 6px; border-radius: 8px; font-size: 12.5px; font-weight: 600; color: var(--muted); transition: background var(--t), color var(--t); }
+.wt-tabs button span { font-size: 11px; padding: 1px 6px; border-radius: 999px; background: var(--border-2); margin-left: 3px; }
+.wt-tabs button.on { background: var(--blue-soft); color: var(--blue); }
+.wt-tabs button.on span { background: color-mix(in srgb, var(--blue) 16%, transparent); }
+.wt-rows { list-style: none; margin: 0; padding: 0; overflow: auto; min-height: 0; }
+.wt-row { display: grid; grid-template-columns: 74px minmax(0, 1fr) auto; gap: 8px; align-items: center; width: 100%; padding: 8px; border: 0; border-radius: 8px; background: transparent; text-align: left; font-size: 12.5px; transition: background var(--t); }
+.wt-row:hover { background: var(--surface-2); }
+.wt-row-id { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wt-row-txt { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wt-row .badge { height: 22px; font-size: 11px; }
+.wt-vacio { display: flex; align-items: center; gap: 8px; padding: 12px; color: var(--muted); font-size: 13px; }
+.wt-vacio .ic { color: var(--green); }
+
+@media (max-width: 1179px) {
+  .wt-stage { height: max(460px, 66dvh); }
+  .wt-kpis { max-width: calc(100% - 28px); }
+  .wt-detalle { top: auto; bottom: 12px; right: 12px; max-height: 60%; }
+  .wt-tracking, .wt-lista { position: static; width: auto; max-height: none; margin-top: 14px; }
+  .wt-lista .wt-rows { max-height: 320px; }
+}
+.wt-tag .n { display: none; }
+@media (max-width: 767px) {
+  .wt-stage { height: max(330px, calc(100vw * 0.78 + 50px)); border-radius: 14px; }
+  .wt-tag { width: 24px; height: 24px; padding: 0; border-radius: 50%; background: var(--tc); justify-content: center; border-color: #fff; }
+  .wt-tag b, .wt-tag span { display: none; }
+  .wt-tag .n { display: block; font-style: normal; color: #fff; font-size: 12px; font-weight: 800; }
+  .wt-tag::after { bottom: -6px; border-width: 5px; margin-left: -5px; border-top-color: var(--tc); }
+  .wt-kpis { top: 8px; left: 8px; right: 8px; max-width: none; flex-wrap: nowrap; gap: 6px; }
+  .wt-kpi { flex: 1; min-width: 0; padding: 6px 8px; gap: 6px; }
+  .wt-kpi-ic { display: none; }
+  .wt-kpi strong { font-size: 16px; }
+  .wt-kpi-lbl, .wt-kpi small { font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wt-detalle { left: 8px; right: 8px; bottom: 8px; width: auto; max-height: 58%; padding: 12px; }
+  .wt-pin { height: 28px; min-width: 28px; }
+  .wt-pin .pin-ic { width: 28px; height: 28px; }
+  .wt-track { grid-template-columns: minmax(0, 1fr); }
+  .wt-steps li { font-size: 10px; }
+}
 
 /* ── 10. CHAT INTERNO ── */
 .chat-fab {
@@ -1007,9 +1061,6 @@ html[data-theme="dark"] .msg .prod-chip { background: rgba(255,255,255,.06); }
 .pwa-banner .t strong { display: block; color: var(--text); font-size: 14px; }
 @keyframes sheetIn { from { transform: translateY(40px); opacity: .4; } }
 
-@media (max-width: 1100px) {
-  .iso-layout { grid-template-columns: minmax(0, 1fr); }
-}
 @media (max-width: 767px) {
   .bottom-nav { grid-template-columns: repeat(5, 1fr); }
   .bn-link { font-size: 10.5px; }
@@ -1301,23 +1352,18 @@ html[data-theme="dark"] .link-btn { color: #00ff88; }
         </div>
       </section>
 
-      <!-- ── VISTA BODEGA ── -->
+      <!-- ── VISTA BODEGA (Three.js) ── -->
       <section class="view" id="view-bodega" data-view="bodega" hidden>
-        <div class="page-head">
-          <div>
-            <h1>Vista Bodega</h1>
-            <p id="iso-resumen">Estado de las bahías en tiempo real</p>
+        <div class="wt" id="wt">
+          <div class="wt-stage" id="wt-stage">
+            <canvas id="wt-canvas" aria-label="Vista 3D de la bodega con camiones, montacargas y bahías"></canvas>
+            <div class="wt-labels" id="wt-labels"></div>
+            <div class="wt-kpis" id="wt-kpis"></div>
+            <div class="wt-detalle wt-glass" id="wt-detalle" hidden></div>
+            <div class="wt-fallback" id="wt-fallback" hidden></div>
           </div>
-        </div>
-        <div class="iso-layout">
-          <div class="card iso-card">
-            <div class="iso-wrap" id="iso-wrap"><div class="iso-stage" id="iso-stage" aria-label="Ilustración de la bodega con sus bahías"></div></div>
-          </div>
-          <aside class="card iso-panel">
-            <div class="card-head"><h3><i data-ic="warehouse"></i> Bahías</h3><span class="live-mini">● EN VIVO</span></div>
-            <ul class="iso-bay-list" id="iso-bays"></ul>
-            <div class="iso-ruta" id="iso-ruta"></div>
-          </aside>
+          <div class="wt-panel wt-tracking wt-glass" id="wt-tracking"></div>
+          <div class="wt-panel wt-lista wt-glass" id="wt-lista"></div>
         </div>
       </section>
 
@@ -1773,8 +1819,6 @@ function aplicarMarca() {
   const color = colorValido(S.empresa?.color_primario) ? S.empresa.color_primario.trim() : '#2563eb';
   document.documentElement.style.setProperty('--color-primary', color);
   aplicarLogo();
-  const letrero = document.getElementById('iso-letrero');
-  if (letrero) letrero.textContent = S.empresa?.nombre || APP_NOMBRE;
   $$('.company-name').forEach(el => { el.textContent = S.empresa?.nombre || APP_NOMBRE; });
   document.title = S.empresa?.nombre ? `${S.empresa.nombre} · ${APP_NOMBRE}` : APP_NOMBRE;
 }
@@ -2177,7 +2221,7 @@ function aplicarRuta() {
   cerrarPopover();
   window.scrollTo({ top: 0 });
   if (S.vista === 'dashboard') animarKPIs();
-  if (S.vista === 'bodega') { renderVistaBodega(); requestAnimationFrame(escalarEscena); }
+  actualizarVisibilidadBodega3D();
 }
 
 /* ═══════════════ KPIs ═══════════════ */
@@ -2239,6 +2283,7 @@ function renderKPIs(animar) {
   }
   ['#sb-count-ped', '#bn-count-ped'].forEach(s => { const el = $(s); el.hidden = !k.vencidos; el.textContent = k.vencidos; });
   const elInv = $('#sb-count-inv'); elInv.hidden = !k.bajos; elInv.textContent = k.bajos;
+  renderVistaBodega();
 }
 
 /* ═══════════════ ALERTAS ═══════════════ */
@@ -3452,6 +3497,17 @@ function manejarAccion(accion, el, ev) {
     case 'abrir-config': return abrirConfiguracion();
     case 'chat-toggle': return alternarChat();
     case 'chat-producto': return irAProducto(id);
+    case 'wt-sel': return seleccionarBodega3D(el.dataset.tipo, el.dataset.id, el.dataset.bahia);
+    case 'wt-cerrar': bodega3D.seleccion = null; return renderVistaBodega();
+    case 'wt-tab': bodega3D.tab = el.dataset.tab; return renderVistaBodega();
+    case 'wt-pedido': bodega3D.pedidoIdx += parseInt(el.dataset.delta, 10) || 0; return renderVistaBodega();
+    case 'wt-camion': {
+      const c = S.camiones.get(id);
+      const i = c ? bahiasEscena3D().indexOf(c.bahia) : -1;
+      if (c && c.estado !== 'en_ruta' && c.bahia) return seleccionarBodega3D('bahia', i >= 0 ? String(i) : '', c.bahia);
+      location.hash = '#/camiones';
+      return undefined;
+    }
     default: return undefined;
   }
 }
@@ -3754,134 +3810,635 @@ function exportarPDF() {
   }
 }
 
-/* ═══════════════ 1. VISTA BODEGA ISOMÉTRICA ═══════════════ */
-function cubo(cls, x, y, w, d, h, z = 0, extraSur = '') {
-  return `<div class="iso-cubo ${cls}" style="left:${x}px;top:${y}px;width:${w}px;height:${d}px;--h:${h}px;${z ? `transform:translateZ(${z}px);` : ''}">
-    <div class="f f-n" style="width:${w}px;height:${h}px"></div>
-    <div class="f f-e" style="left:${w - h}px;width:${h}px;height:${d}px"></div>
-    <div class="f f-w" style="width:${h}px;height:${d}px"></div>
-    <div class="f f-s" style="top:${d - h}px;width:${w}px;height:${h}px">${extraSur}</div>
-    <div class="f f-top"></div>
-  </div>`;
+/* ═══════════════ 1. VISTA BODEGA 3D (Three.js) ═══════════════
+   Escena isométrica fija + paneles flotantes con datos reales de Supabase.
+   El 3D es decorativo-animado; etiquetas, pines y paneles muestran el
+   estado real (bahías, camiones, productos, pedidos) y se actualizan en vivo. */
+const W3 = {
+  AZ: 45, EL: 35,                       // cámara: 45° horizontal, 35° vertical
+  PUERTAS_X: [-6, 0, 6],                // bahías 1, 2 y 3 en la fachada
+  FACHADA_Z: -2,                        // fachada frontal del edificio
+  ANDEN_Z: 2.2,                         // centro del camión estacionado en el andén
+  CALLE_Z: 11,                          // carril por donde llegan los camiones
+  PILAS: [
+    { x: -16.5, z: 7.6, capas: 4 }, { x: -9, z: 7.6, capas: 2 },
+    { x: 3, z: 7.8, capas: 3 }, { x: 11.5, z: 7.8, capas: 1 },
+  ],
+  ARBOLES: [[-20, -12, 1.15], [-20.5, 1.5, 1], [19.5, -12, 1.2], [20, 2.5, 0.95], [8, -13.6, 1.05]],
+  LIMITES: { x: [-17.5, 17.5], y: [0, 5], z: [-10.5, 12.8] },
+  LIMITES_MOVIL: { x: [-14, 14], y: [0, 4.5], z: [-10, 11.5] },
+};
+const bodega3D = {
+  iniciado: false, fallo: null, activo: false, raf: null,
+  renderer: null, escena: null, camara: null, raycaster: null, objetivo: null,
+  puertas: [], camion1: null, montacargas: [], clicables: [], etiquetas: [],
+  seleccion: null, tab: 'bahias', pedidoIdx: 0, reducido: false,
+};
+
+function hayThree() { return typeof window.THREE !== 'undefined' && window.THREE.WebGLRenderer; }
+function m3(color, extra = {}) { return new THREE.MeshStandardMaterial({ color, roughness: 0.82, metalness: 0.02, ...extra }); }
+function caja3(w, h, d, material, x = 0, y = 0, z = 0, sombra = true) {
+  const malla = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+  malla.position.set(x, y, z);
+  malla.castShadow = sombra;
+  malla.receiveShadow = true;
+  return malla;
 }
-function billboard(x, y, z, html, cls = '') {
-  return `<div class="iso-bb ${cls}" style="left:${x}px;top:${y}px;transform:translateZ(${z}px) rotateZ(45deg) rotateX(-60deg)"><div class="bb">${html}</div></div>`;
+function texturaCanvas(ancho, alto, dibujar) {
+  const c = document.createElement('canvas');
+  c.width = ancho; c.height = alto;
+  const ctx = c.getContext('2d');
+  if (!ctx.roundRect) ctx.roundRect = function (x, y, w, h) { this.rect(x, y, w, h); };
+  dibujar(ctx, ancho, alto);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 4;
+  return t;
 }
-function pila(x, y, niveles) {
-  let html = cubo('iso-pallet', x, y, 36, 36, 5);
-  for (let i = 0; i < niveles; i++) html += cubo('iso-caja', x + 2, y + 2, 32, 32, 13, 5 + i * 14);
-  return html;
+
+/* ── Modelos ── */
+function crearSuelo(escena) {
+  const g = new THREE.Group();
+  const base = caja3(44, 0.5, 32, m3('#cbd5e1'), 0, -0.25, 0, false);
+  const suelo = new THREE.Mesh(new THREE.PlaneGeometry(44, 32), m3('#e2e8f0', { roughness: 0.95 }));
+  suelo.rotation.x = -Math.PI / 2; suelo.position.y = 0.001; suelo.receiveShadow = true;
+  g.add(base, suelo);
+  const pintura = (w, d, color, x, z) => {
+    const p = new THREE.Mesh(new THREE.PlaneGeometry(w, d), m3(color, { roughness: 0.7, polygonOffset: true, polygonOffsetFactor: -2 }));
+    p.rotation.x = -Math.PI / 2; p.position.set(x, 0.012, z); p.receiveShadow = true;
+    g.add(p);
+  };
+  // Andén (concreto más claro) y calle de acceso
+  pintura(22, 2.2, '#f1f5f9', 0, -0.9);
+  pintura(44, 3.6, '#cbd5e1', 0, W3.CALLE_Z);
+  for (let x = -20; x < 22; x += 3.2) pintura(1.6, 0.14, '#ffffff', x, W3.CALLE_Z);
+  // Franjas amarillas: zona de carga de cada bahía
+  W3.PUERTAS_X.forEach(px => {
+    pintura(0.14, 7.4, '#facc15', px - 1.75, 2.0);
+    pintura(0.14, 7.4, '#facc15', px + 1.75, 2.0);
+  });
+  pintura(26, 0.16, '#facc15', 0, 5.75);
+  pintura(26, 0.16, '#facc15', 0, 9.1);
+  // Línea de seguridad junto a la fachada
+  for (let i = 0; i < 24; i++) pintura(0.45, 0.22, i % 2 ? '#111827' : '#facc15', -10.35 + i * 0.9, 0.1);
+  escena.add(g);
 }
-function arbol(x, y, doble) {
-  return billboard(x, y, 0, `<div class="iso-arbol"><div class="copa"></div>${doble ? '<div class="copa"></div>' : ''}<div class="tronco"></div></div>`);
+function crearEdificio(escena) {
+  const g = new THREE.Group();
+  const azul = m3('#1d4ed8'), blanco = m3('#f8fafc');
+  // Cuerpo principal 20 × 4 × 8: fachada y fondo azules, paredes laterales blancas
+  const cuerpo = new THREE.Mesh(new THREE.BoxGeometry(20, 4, 8), [blanco, blanco, azul, azul, azul, azul]);
+  cuerpo.position.set(0, 2, -6); cuerpo.castShadow = true; cuerpo.receiveShadow = true;
+  g.add(cuerpo);
+  g.add(caja3(20.04, 0.35, 8.04, m3('#1e3a8a'), 0, 0.175, -6, false)); // zócalo
+  // Techo a dos aguas con ligera pendiente
+  const ang = THREE.MathUtils.degToRad(9), L = 4.45, alzada = L * Math.sin(ang), techo = m3('#3b82f6', { roughness: 0.55 });
+  [1, -1].forEach(lado => {
+    const losa = caja3(20.8, 0.22, L, techo, 0, 4 + alzada - (L / 2) * Math.sin(ang) + 0.1, -6 + lado * (L / 2) * Math.cos(ang));
+    losa.rotation.x = lado * ang;
+    g.add(losa);
+  });
+  g.add(caja3(20.9, 0.2, 0.28, m3('#60a5fa'), 0, 4 + alzada + 0.18, -6)); // cumbrera
+  const frontis = new THREE.Shape([new THREE.Vector2(-4, 0), new THREE.Vector2(4, 0), new THREE.Vector2(0, alzada + 0.05)]);
+  [10.001, -10.001].forEach(x => {
+    const tri = new THREE.Mesh(new THREE.ShapeGeometry(frontis), m3('#f8fafc', { side: THREE.DoubleSide }));
+    tri.rotation.y = x > 0 ? Math.PI / 2 : -Math.PI / 2;
+    tri.position.set(x, 4, -6); tri.castShadow = true;
+    g.add(tri);
+  });
+  // Tragaluces en el techo
+  for (let x = -7.5; x <= 7.5; x += 5) {
+    const tl = caja3(2.2, 0.06, 1.3, m3('#bfdbfe', { roughness: 0.25, metalness: 0.1 }), x, 4 + alzada - 1.1 * Math.sin(ang) + 0.24, -6 + 1.1 * Math.cos(ang), false);
+    tl.rotation.x = ang;
+    g.add(tl);
+  }
+  // 3 puertas de bahía con marco, cortina enrollada, luz de estado y topes
+  const z = W3.FACHADA_Z;
+  W3.PUERTAS_X.forEach((px, i) => {
+    const p = new THREE.Group();
+    p.add(caja3(3.5, 3.15, 0.14, m3('#e2e8f0'), 0, 1.58, 0.02, false));
+    p.add(caja3(3.0, 2.8, 0.16, m3('#0f172a', { roughness: 0.6 }), 0, 1.4, 0.05, false));
+    for (let k = 0; k < 4; k++) p.add(caja3(3.0, 0.18, 0.2, m3('#cbd5e1'), 0, 2.72 - k * 0.2, 0.07, false));
+    const luzMat = new THREE.MeshStandardMaterial({ color: '#94a3b8', emissive: '#94a3b8', emissiveIntensity: 0.9 });
+    const luz = caja3(3.0, 0.12, 0.14, luzMat, 0, 3.08, 0.12, false);
+    p.add(luz);
+    [-1.3, 1.3].forEach(dx => p.add(caja3(0.3, 0.45, 0.3, m3('#111827'), dx, 0.45, 0.22)));
+    p.add(caja3(3.0, 0.06, 1.2, m3('#94a3b8', { metalness: 0.4, roughness: 0.4 }), 0, 0.04, 0.65, false));
+    p.position.set(px, 0, z);
+    p.userData.sel = { tipo: 'bahia', id: i };
+    p.traverse(o => { o.userData.sel = { tipo: 'bahia', id: i }; });
+    g.add(p);
+    bodega3D.puertas.push({ grupo: p, luz: luzMat });
+    bodega3D.clicables.push(p);
+  });
+  // Letrero "BODEGA" en la fachada
+  const tex = texturaCanvas(1024, 160, (c, w, h) => {
+    c.fillStyle = '#ffffff'; c.beginPath(); c.roundRect(0, 0, w, h, 26); c.fill();
+    c.fillStyle = '#1d4ed8'; c.beginPath(); c.roundRect(28, 26, 108, 108, 20); c.fill();
+    c.strokeStyle = '#ffffff'; c.lineWidth = 9; c.lineJoin = 'round';
+    c.beginPath(); c.moveTo(48, 72); c.lineTo(82, 52); c.lineTo(116, 72); c.lineTo(116, 116); c.lineTo(48, 116); c.closePath(); c.stroke();
+    c.beginPath(); c.moveTo(62, 116); c.lineTo(62, 88); c.lineTo(102, 88); c.lineTo(102, 116); c.stroke();
+    c.fillStyle = '#0f172a'; c.font = '800 104px Inter, Arial, sans-serif'; c.textBaseline = 'middle';
+    c.fillText('BODEGA', 168, 86);
+  });
+  const matLetrero = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.6 });
+  const letrero = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 0.69), matLetrero);
+  letrero.position.set(3, 3.6, z + 0.03);
+  g.add(letrero);
+  const lateral = new THREE.Mesh(new THREE.PlaneGeometry(6.4, 1.0), matLetrero);  // también en la pared lateral blanca
+  lateral.rotation.y = Math.PI / 2;
+  lateral.position.set(10.02, 2.55, -6);
+  g.add(lateral);
+  escena.add(g);
 }
-function camionIso(cls, dx) {
-  return `<div class="iso-truck ${cls}" style="--dx:${dx}px">
-    <div class="iso-sombra" style="left:-48px;top:-15px;width:96px;height:36px"></div>
-    ${cubo('iso-trailer', -46, -17, 70, 34, 36)}
-    ${cubo('iso-cab', 26, -17, 20, 34, 27)}
-  </div>`;
+function crearCamion(escena, transparente) {
+  const g = new THREE.Group();
+  const mats = [];
+  const M = (color, extra) => { const mm = m3(color, extra); if (transparente) { mm.transparent = true; } mats.push(mm); return mm; };
+  const logo = texturaCanvas(1024, 400, (c, w, h) => {
+    c.fillStyle = '#ffffff'; c.fillRect(0, 0, w, h);
+    c.fillStyle = '#e2e8f0'; c.fillRect(0, h - 26, w, 26);
+    c.fillStyle = '#1d4ed8'; c.beginPath(); c.roundRect(300, 130, 110, 110, 22); c.fill();
+    c.fillStyle = '#fff'; c.font = '800 60px Inter, Arial, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('B', 355, 188);
+    c.textAlign = 'left'; c.fillStyle = '#1e3a8a'; c.font = '800 64px Inter, Arial, sans-serif'; c.fillText(APP_NOMBRE.split(' ')[0], 432, 165);
+    c.font = '600 40px Inter, Arial, sans-serif'; c.fillStyle = '#64748b'; c.fillText(APP_NOMBRE.split(' ').slice(1).join(' ') || 'Logística', 432, 222);
+  });
+  const blanco = M('#ffffff'), lado = M('#ffffff', { map: logo });
+  // Remolque (caja blanca larga): se mira hacia +x
+  const remolque = new THREE.Mesh(new THREE.BoxGeometry(6, 2.5, 2.2), [blanco, blanco, blanco, blanco, lado, lado]);
+  remolque.position.set(-1, 1.85, 0); remolque.castShadow = true; remolque.receiveShadow = true;
+  g.add(remolque);
+  g.add(caja3(7.6, 0.25, 1.4, M('#334155'), 0, 0.55, 0));
+  // Cabina azul oscuro con parabrisas
+  g.add(caja3(1.9, 2.1, 2.2, M('#1e40af', { roughness: 0.45 }), 2.95, 1.55, 0));
+  g.add(caja3(0.06, 0.8, 1.9, M('#0f172a', { roughness: 0.15, metalness: 0.3 }), 3.92, 2.05, 0, false));
+  [-1.11, 1.11].forEach(zz => g.add(caja3(0.9, 0.6, 0.04, M('#0f172a', { roughness: 0.15 }), 3.1, 2.1, zz, false)));
+  g.add(caja3(0.1, 0.35, 2.0, M('#e2e8f0'), 3.93, 0.75, 0, false));
+  // Ruedas (cilindros negros que giran)
+  const ruedas = [];
+  const geoR = new THREE.CylinderGeometry(0.46, 0.46, 0.34, 20);
+  const matR = M('#111827', { roughness: 0.9 });
+  [-3.1, -2.1, 2.9].forEach(x => [-1.02, 1.02].forEach(zz => {
+    const r = new THREE.Mesh(geoR, matR);
+    r.rotation.x = Math.PI / 2; r.position.set(x, 0.46, zz); r.castShadow = true;
+    g.add(r); ruedas.push(r);
+  }));
+  escena.add(g);
+  return { grupo: g, ruedas, mats, ultimo: null };
 }
-function montacargas(cls, x, y, dist) {
-  return `<div class="iso-fork ${cls}" style="left:${x}px;top:${y}px;--dist:${dist}px">
-    ${cubo('iso-montacargas', 0, 0, 26, 18, 14)}
-    ${cubo('iso-mastil', 26, 0, 4, 18, 32)}
-    ${cubo('iso-pallet', 31, 1, 16, 16, 3, 6)}
-    ${cubo('iso-caja', 32, 2, 14, 14, 12, 9)}
-  </div>`;
+function crearMontacargas(escena, conCarga) {
+  const g = new THREE.Group();
+  const naranja = m3('#f59e0b', { roughness: 0.5 }), oscuro = m3('#1f2937'), gris = m3('#475569', { metalness: 0.4, roughness: 0.45 });
+  g.add(caja3(1.5, 0.75, 1.1, naranja, 0, 0.62, 0));                  // cuerpo
+  g.add(caja3(0.5, 0.55, 1.1, m3('#d97706'), -0.6, 1.1, 0));            // contrapeso
+  g.add(caja3(0.42, 0.4, 0.5, oscuro, -0.05, 1.18, 0));                // asiento
+  [[-0.55, -0.5], [-0.55, 0.5], [0.55, -0.5], [0.55, 0.5]].forEach(([x, z]) => g.add(caja3(0.08, 1.2, 0.08, oscuro, x, 1.6, z)));
+  g.add(caja3(1.25, 0.08, 1.12, oscuro, 0, 2.22, 0));                  // techo protector
+  [-0.4, 0.4].forEach(z => g.add(caja3(0.1, 2.3, 0.1, gris, 0.8, 1.15, z))); // mástil
+  const horquillas = new THREE.Group();                                 // forma en L: horquillas al frente
+  horquillas.add(caja3(0.1, 0.6, 0.95, gris, 0.86, 0.3, 0));
+  [-0.3, 0.3].forEach(z => horquillas.add(caja3(1.15, 0.07, 0.16, gris, 1.45, 0.04, z)));
+  if (conCarga) {
+    horquillas.add(caja3(1.0, 0.12, 0.95, m3('#a16207'), 1.5, 0.14, 0));
+    horquillas.add(caja3(0.85, 0.6, 0.8, m3('#92400e'), 1.5, 0.5, 0));
+  }
+  horquillas.position.y = 0.12;
+  g.add(horquillas);
+  const geoR = new THREE.CylinderGeometry(0.24, 0.24, 0.2, 14), matR = m3('#111827');
+  [[-0.45, -0.58], [-0.45, 0.58], [0.5, -0.58], [0.5, 0.58]].forEach(([x, z]) => { const r = new THREE.Mesh(geoR, matR); r.rotation.x = Math.PI / 2; r.position.set(x, 0.24, z); r.castShadow = true; g.add(r); });
+  escena.add(g);
+  return { grupo: g, horquillas };
 }
-const ISO_PUERTAS = [{ x: 60 }, { x: 170 }, { x: 280 }];
-function bahiasEscena() {
-  const conf = bahiasConfig();
-  return [0, 1, 2].map(i => conf[i] || `Bahía ${i + 1}`);
+function crearPila(escena, { x, z, capas }, idx) {
+  const g = new THREE.Group();
+  g.add(caja3(1.9, 0.18, 1.9, m3('#a16207'), 0, 0.09, 0));
+  const tonos = ['#92400e', '#9a4a12', '#8a3c0c'];
+  for (let c = 0; c < capas; c++) {
+    [[-0.45, -0.45], [0.45, -0.45], [-0.45, 0.45], [0.45, 0.45]].forEach(([dx, dz], k) => {
+      g.add(caja3(0.86, 0.6, 0.86, m3(tonos[(c + k) % tonos.length]), dx, 0.18 + 0.3 + c * 0.62, dz));
+    });
+    g.add(caja3(1.76, 0.03, 0.12, m3('#d6a56b'), 0, 0.18 + 0.61 + c * 0.62, 0, false));
+  }
+  g.position.set(x, 0, z);
+  g.traverse(o => { o.userData.sel = { tipo: 'pila', id: idx }; });
+  escena.add(g);
+  bodega3D.clicables.push(g);
+  return g;
 }
-function construirEscena() {
-  const stage = $('#iso-stage');
-  if (!stage || stage.dataset.listo) return;
-  const NX = 80, NY = 80, NW = 400, ND = 220, NH = 120;
-  const puertas = ISO_PUERTAS.map((p, i) => `<div class="iso-door" data-puerta="${i}" style="left:${p.x}px"><span class="luz"></span><span class="num">${i + 1}</span></div>`).join('');
-  let mundo = `
-    <div class="iso-ground"></div>
-    <div class="iso-road"></div><div class="iso-road-line"></div>
-    <div class="iso-yard">${ISO_PUERTAS.map(p => `<span class="park" style="left:${p.x + 40 - 1}px"></span>`).join('')}</div>
-    ${cubo('iso-nave', NX, NY, NW, ND, NH, 0, puertas)}
-    ${billboard(NX + 30, NY + 80, NH + 4, `<div class="iso-letrero" id="iso-letrero">${esc(S.empresa?.nombre || APP_NOMBRE)}</div>`)}
-    ${pila(46, 318, 3)}${pila(46, 360, 2)}${pila(88, 318, 1)}
-    ${pila(262, 316, 2)}${pila(302, 316, 1)}
-    ${pila(498, 110, 3)}${pila(498, 152, 2)}${pila(498, 194, 3)}
-    ${montacargas('a', 100, 404, 150)}
-    ${montacargas('b', 470, 404, -110)}
-    ${camionIso('a', NX + ISO_PUERTAS[0].x + 40)}
-    ${camionIso('b', NX + ISO_PUERTAS[2].x + 40)}
-    ${arbol(22, 30, true)}${arbol(30, 220, false)}${arbol(250, 26, true)}${arbol(520, 40, false)}${arbol(530, 330, true)}${arbol(20, 270, true)}
-    <div id="iso-pills"></div>`;
-  stage.innerHTML = `
-    <div class="iso-nube" style="top:40px;animation-delay:-12s"></div>
-    <div class="iso-nube" style="top:90px;animation-delay:-38s;transform:scale(.7)"></div>
-    <div class="iso-world">${mundo}</div>
-    <div class="iso-leyenda">${Object.values(EST_CAMION).filter(e => e.label !== 'En ruta').map(e => `<span class="tone-${e.tone}"><i></i>${esc(e.label)}</span>`).join('')}<span class="tone-green"><i style="background:#16a34a"></i>Libre</span></div>`;
-  stage.dataset.listo = '1';
-  escalarEscena();
-  if (window.ResizeObserver && !escalarEscena.obs) {
-    escalarEscena.obs = new ResizeObserver(() => escalarEscena());
-    escalarEscena.obs.observe($('#iso-wrap'));
+function crearArbol(escena, x, z, esc) {
+  const g = new THREE.Group();
+  const tronco = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.24, 1.4, 10), m3('#92400e'));
+  tronco.position.y = 0.7; tronco.castShadow = true;
+  const copa = new THREE.Mesh(new THREE.SphereGeometry(1.15, 20, 16), m3('#16a34a', { roughness: 0.9 }));
+  copa.position.y = 2.15; copa.castShadow = true; copa.receiveShadow = true;
+  const copa2 = new THREE.Mesh(new THREE.SphereGeometry(0.7, 16, 12), m3('#22c55e', { roughness: 0.9 }));
+  copa2.position.set(0.45, 2.7, 0.3); copa2.castShadow = true;
+  g.add(tronco, copa, copa2);
+  g.position.set(x, 0, z); g.scale.setScalar(esc);
+  escena.add(g);
+}
+
+/* ── Inicio, cámara y bucle ── */
+function iniciarBodega3D() {
+  if (bodega3D.iniciado || bodega3D.fallo) return;
+  const lienzo = $('#wt-canvas');
+  if (!lienzo) return;
+  if (!hayThree()) return falloBodega3D('No se pudo cargar Three.js. Revisa tu conexión a internet y recarga la página.');
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas: lienzo, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  } catch (err) {
+    return falloBodega3D('Tu navegador no permite gráficos 3D (WebGL). Activa la aceleración por hardware o prueba con otro navegador.');
+  }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setClearColor(0x000000, 0);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  const escena = new THREE.Scene();
+  // Luces: ambiente 0.6 y direccional 0.8 desde arriba-derecha (× π = equivalente
+  // a esas intensidades en el modo de iluminación física de Three r155+)
+  escena.add(new THREE.AmbientLight(0xffffff, 0.6 * Math.PI));
+  const sol = new THREE.DirectionalLight(0xffffff, 0.8 * Math.PI);
+  sol.position.set(16, 26, 12);
+  sol.castShadow = true;
+  sol.shadow.mapSize.set(2048, 2048);
+  Object.assign(sol.shadow.camera, { left: -28, right: 28, top: 24, bottom: -24, near: 1, far: 80 });
+  sol.shadow.bias = -0.0004;
+  sol.shadow.normalBias = 0.03;
+  sol.shadow.radius = 4;
+  escena.add(sol);
+
+  crearSuelo(escena);
+  crearEdificio(escena);
+  W3.PILAS.forEach((p, i) => crearPila(escena, p, i));
+  W3.ARBOLES.forEach(([x, z, s]) => crearArbol(escena, x, z, s));
+  bodega3D.camion1 = crearCamion(escena, true);
+  const camion2 = crearCamion(escena, false);
+  camion2.grupo.position.set(W3.PUERTAS_X[1], 0, W3.ANDEN_Z);
+  camion2.grupo.rotation.y = -Math.PI / 2; // estacionado de reversa en la bahía 2
+  camion2.grupo.traverse(o => { o.userData.sel = { tipo: 'bahia', id: 1 }; });
+  bodega3D.clicables.push(camion2.grupo);
+  bodega3D.camion1.grupo.traverse(o => { o.userData.sel = { tipo: 'bahia', id: 0 }; });
+  bodega3D.clicables.push(bodega3D.camion1.grupo);
+  const fA = crearMontacargas(escena, true);
+  const fB = crearMontacargas(escena, false);
+  fA.grupo.position.set(4.8, 0, 7.8);
+  fB.grupo.position.set(-10.8, 0, 7.6); fB.grupo.rotation.y = Math.PI;
+  bodega3D.montacargas = [
+    { ...fA, base: 4.8, recorrido: 3.8, periodo: 7, fase: 0 },
+    { ...fB, base: -10.8, recorrido: -2.8, periodo: 8.5, fase: 2.2 },
+  ];
+
+  const camara = new THREE.OrthographicCamera(-10, 10, 10, -10, 0.1, 200);
+  Object.assign(bodega3D, { renderer, escena, camara, raycaster: new THREE.Raycaster(), objetivo: new THREE.Vector3(0, 1.2, 0), iniciado: true });
+  bodega3D.reducido = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  crearEtiquetas3D();
+  ajustarCamara3D();
+  if (window.ResizeObserver) new ResizeObserver(() => { if (bodega3D.iniciado) { ajustarCamara3D(); if (!bodega3D.activo) dibujarBodega3D(performance.now() / 1000); } }).observe($('#wt-stage'));
+  else window.addEventListener('resize', ajustarCamara3D);
+  lienzo.addEventListener('click', clicBodega3D);
+  lienzo.addEventListener('mousemove', debounce(hoverBodega3D, 30));
+  document.addEventListener('visibilitychange', actualizarVisibilidadBodega3D);
+}
+function falloBodega3D(msg) {
+  bodega3D.fallo = msg;
+  const f = $('#wt-fallback');
+  if (f) { f.hidden = false; f.innerHTML = `<div class="empty-ic">${ic('warehouse')}</div><strong>Vista 3D no disponible</strong><span>${esc(msg)}</span>`; }
+}
+function posicionarCamara3D(azGrados) {
+  const { camara, objetivo } = bodega3D;
+  const az = THREE.MathUtils.degToRad(azGrados), el = THREE.MathUtils.degToRad(W3.EL), r = 70;
+  camara.position.set(objetivo.x + r * Math.cos(el) * Math.sin(az), objetivo.y + r * Math.sin(el), objetivo.z + r * Math.cos(el) * Math.cos(az));
+  camara.lookAt(objetivo);
+  camara.updateMatrixWorld();
+}
+function margenesEscena() {
+  const ancho = window.innerWidth;
+  if (ancho >= 1180) return { arriba: 80, abajo: 150, izq: 10, der: 10 };
+  if (ancho >= 768) return { arriba: 86, abajo: 20, izq: 12, der: 12 };
+  return { arriba: 58, abajo: 4, izq: 2, der: 2 };
+}
+function ajustarCamara3D() {
+  const { renderer, camara } = bodega3D;
+  const stage = $('#wt-stage');
+  if (!renderer || !stage) return;
+  const w = Math.max(1, stage.clientWidth), h = Math.max(1, stage.clientHeight);
+  renderer.setSize(w, h, false);
+  posicionarCamara3D(W3.AZ);
+  const inv = camara.matrixWorldInverse, v = new THREE.Vector3();
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  const { x: X, y: Y, z: Z } = window.innerWidth < 768 ? W3.LIMITES_MOVIL : W3.LIMITES;
+  for (const x of X) for (const y of Y) for (const z of Z) {
+    v.set(x, y, z).applyMatrix4(inv);
+    minX = Math.min(minX, v.x); maxX = Math.max(maxX, v.x); minY = Math.min(minY, v.y); maxY = Math.max(maxY, v.y);
+  }
+  // Zoom fijo que muestra toda la bodega, dejando espacio para los paneles flotantes
+  const m = margenesEscena();
+  const util = { w: Math.max(80, w - m.izq - m.der), h: Math.max(80, h - m.arriba - m.abajo) };
+  const s = Math.max((maxX - minX) / util.w, (maxY - minY) / util.h); // unidades por píxel
+  const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+  const centroPx = { x: m.izq + util.w / 2, y: m.arriba + util.h / 2 };
+  camara.left = cx - centroPx.x * s;
+  camara.right = camara.left + w * s;
+  camara.top = cy + centroPx.y * s;
+  camara.bottom = camara.top - h * s;
+  camara.updateProjectionMatrix();
+}
+const suave = k => (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2);
+function poseCamion1(t) {
+  // Ciclo de 10 s: entra por la izquierda → retrocede a la bahía 1 → espera 3 s → sale
+  const BX = W3.PUERTAS_X[0], CZ = W3.CALLE_Z, AZ = W3.ANDEN_Z, GIRO = -Math.PI / 2;
+  const tramo = (a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
+  if (t < 2.4) return { x: -26 + (BX + 26) * suave(tramo(0, 2.4)), z: CZ, yaw: 0, alfa: Math.min(1, t / 0.6) };
+  if (t < 3.2) return { x: BX, z: CZ, yaw: GIRO * suave(tramo(2.4, 3.2)), alfa: 1 };
+  if (t < 4.4) return { x: BX, z: CZ + (AZ - CZ) * suave(tramo(3.2, 4.4)), yaw: GIRO, alfa: 1 };
+  if (t < 7.4) return { x: BX, z: AZ, yaw: GIRO, alfa: 1 };
+  if (t < 8.4) return { x: BX, z: AZ + (CZ - AZ) * suave(tramo(7.4, 8.4)), yaw: GIRO, alfa: 1 };
+  if (t < 8.9) return { x: BX, z: CZ, yaw: GIRO * (1 - suave(tramo(8.4, 8.9))), alfa: 1 };
+  const k = tramo(8.9, 10);
+  return { x: BX + 20 * k * k, z: CZ, yaw: 0, alfa: 1 - Math.max(0, (t - 9.4) / 0.6) };
+}
+function animarBodega3D(seg) {
+  const c1 = bodega3D.camion1;
+  const t = bodega3D.reducido ? 5.5 : seg % 10;
+  const p = poseCamion1(t);
+  c1.grupo.position.set(p.x, 0, p.z);
+  c1.grupo.rotation.y = p.yaw;
+  c1.mats.forEach(mm => { mm.opacity = p.alfa; mm.depthWrite = p.alfa > 0.98; });
+  c1.grupo.visible = p.alfa > 0.01;
+  if (c1.ultimo) {
+    const d = Math.hypot(p.x - c1.ultimo.x, p.z - c1.ultimo.z);
+    const adelante = Math.cos(p.yaw) * (p.x - c1.ultimo.x) - Math.sin(p.yaw) * (p.z - c1.ultimo.z) >= 0 ? 1 : -1;
+    if (d < 2) c1.ruedas.forEach(r => { r.rotation.y -= adelante * d / 0.46; });
+  }
+  c1.ultimo = { x: p.x, z: p.z };
+  bodega3D.montacargas.forEach(f => {
+    const fase = bodega3D.reducido ? 0 : ((seg + f.fase) % f.periodo) / f.periodo;
+    const ida = 0.5 - 0.5 * Math.cos(fase * Math.PI * 2);
+    f.grupo.position.x = f.base + f.recorrido * ida;
+    f.horquillas.position.y = 0.12 + 0.35 * Math.max(0, Math.sin(fase * Math.PI * 2 - Math.PI / 2));
+  });
+}
+function dibujarBodega3D(seg) {
+  const { renderer, escena, camara } = bodega3D;
+  if (!renderer) return;
+  // Respiración de cámara: ±2° en 20 s
+  posicionarCamara3D(W3.AZ + (bodega3D.reducido ? 0 : 2 * Math.sin((seg / 20) * Math.PI * 2)));
+  animarBodega3D(seg);
+  renderer.render(escena, camara);
+  posicionarEtiquetas3D();
+}
+function bucleBodega3D(ms) {
+  if (!bodega3D.activo) { bodega3D.raf = null; return; }
+  dibujarBodega3D(ms / 1000);
+  bodega3D.raf = requestAnimationFrame(bucleBodega3D);
+}
+function actualizarVisibilidadBodega3D() {
+  const vista = $('#view-bodega');
+  const visible = !!vista && !vista.hidden && !document.hidden && esGestor() && !$('#screen-app').hidden;
+  if (visible && !bodega3D.iniciado && !bodega3D.fallo) iniciarBodega3D();
+  bodega3D.activo = visible && bodega3D.iniciado;
+  if (!bodega3D.activo && bodega3D.raf) { cancelAnimationFrame(bodega3D.raf); bodega3D.raf = null; }
+  if (bodega3D.activo) {
+    ajustarCamara3D();
+    renderVistaBodega();
+    if (!bodega3D.raf) bodega3D.raf = requestAnimationFrame(bucleBodega3D);
   }
 }
-function escalarEscena() {
-  const wrap = $('#iso-wrap');
-  if (!wrap || !wrap.clientWidth) return;
-  wrap.style.setProperty('--s', Math.min(1.3, wrap.clientWidth / 800).toFixed(4));
+
+/* ── Etiquetas sobre la escena (HTML proyectado desde 3D) ── */
+function crearEtiquetas3D() {
+  const cont = $('#wt-labels');
+  cont.innerHTML = '';
+  bodega3D.etiquetas = [];
+  W3.PUERTAS_X.forEach((x, i) => {
+    const el = document.createElement('button');
+    el.className = 'wt-tag';
+    el.dataset.action = 'wt-sel'; el.dataset.tipo = 'bahia'; el.dataset.id = String(i);
+    cont.appendChild(el);
+    bodega3D.etiquetas.push({ el, pos: new THREE.Vector3(x, 4.95, W3.FACHADA_Z + 0.2) });
+  });
+  W3.PILAS.forEach((p, i) => {
+    const el = document.createElement('button');
+    el.className = 'wt-pin';
+    el.dataset.action = 'wt-sel'; el.dataset.tipo = 'pila'; el.dataset.id = String(i);
+    cont.appendChild(el);
+    bodega3D.etiquetas.push({ el, pos: new THREE.Vector3(p.x, 0.3 + p.capas * 0.62 + 1.1, p.z) });
+  });
 }
+function posicionarEtiquetas3D() {
+  const stage = $('#wt-stage');
+  if (!stage) return;
+  const w = stage.clientWidth, h = stage.clientHeight, v = new THREE.Vector3();
+  bodega3D.etiquetas.forEach(({ el, pos }) => {
+    v.copy(pos).project(bodega3D.camara);
+    el.style.transform = `translate(${((v.x + 1) / 2 * w).toFixed(1)}px, ${((1 - v.y) / 2 * h).toFixed(1)}px) translate(-50%, -100%)`;
+  });
+}
+function bahiasEscena3D() { const conf = bahiasConfig(); return [0, 1, 2].map(i => conf[i] || `Bahía ${i + 1}`); }
 function estadoBahia(b) {
   const c = ocupantesBahia(b)[0];
   if (!c) return { c: null, tone: 'green', label: 'Libre' };
   const e = EST_CAMION[c.estado] || { label: c.estado, tone: 'gray' };
   return { c, tone: e.tone, label: e.label };
 }
+const TONO_HEX = { green: '#16a34a', yellow: '#eab308', red: '#dc2626', blue: '#2563eb', indigo: '#6366f1', cyan: '#06b6d4', gray: '#94a3b8' };
+function productosCriticos() {
+  return [...S.productos.values()]
+    .sort((a, b) => (a.cantidad_actual / Math.max(1, a.cantidad_minima)) - (b.cantidad_actual / Math.max(1, b.cantidad_minima)))
+    .slice(0, W3.PILAS.length);
+}
+
+/* ── Paneles flotantes (datos reales, en vivo) ── */
+function ponerHTML(el, html) {
+  if (el && el._html !== html) { el.innerHTML = html; el._html = html; }
+}
 function renderVistaBodega() {
-  if (!esGestor() || !$('#iso-stage')) return;
-  construirEscena();
-  const letrero = $('#iso-letrero');
-  if (letrero) letrero.textContent = S.empresa?.nombre || APP_NOMBRE;
-  // Pills flotantes y luces de cada puerta (estado real de "camiones")
-  const pills = $('#iso-pills');
-  const escena = bahiasEscena();
-  const previas = pills ? Object.fromEntries($$('.iso-bb', pills).map(el => [el.dataset.bahia, el.dataset.firma])) : {};
-  if (pills) {
-    pills.innerHTML = escena.map((b, i) => {
+  const raiz = $('#wt');
+  if (!raiz || !esGestor() || $('#view-bodega').hidden) return;
+  const bahias = bahiasEscena3D();
+  const criticos = productosCriticos();
+  // Luces de las puertas y etiquetas de bahías / pines de productos
+  bahias.forEach((b, i) => {
+    const st = estadoBahia(b);
+    const p = bodega3D.puertas[i];
+    if (p) { p.luz.color.set(TONO_HEX[st.tone]); p.luz.emissive.set(TONO_HEX[st.tone]); }
+    const et = $(`#wt-labels .wt-tag[data-id="${i}"]`);
+    if (et) {
+      et.className = `wt-tag tone-${st.tone}${bodega3D.seleccion?.tipo === 'bahia' && bodega3D.seleccion.id === i ? ' sel' : ''}`;
+      et.innerHTML = `<i class="n">${i + 1}</i><b>${esc(b)}</b><span>${esc(st.label)}${st.c ? ' · ' + esc(st.c.placa || 'Sin placa') : ''}</span>`;
+      et.setAttribute('aria-label', `${b}: ${st.label}`);
+    }
+  });
+  W3.PILAS.forEach((_, i) => {
+    const pin = $(`#wt-labels .wt-pin[data-id="${i}"]`);
+    if (!pin) return;
+    const prod = criticos[i];
+    pin.hidden = !prod;
+    if (!prod) return;
+    const n = nivelStock(prod);
+    pin.className = `wt-pin nivel-${n}${bodega3D.seleccion?.tipo === 'pila' && bodega3D.seleccion.id === i ? ' sel' : ''}`;
+    pin.innerHTML = `<span class="pin-ic">${ic('package')}</span><span class="pin-txt">${esc(prod.nombre)}</span>`;
+    pin.setAttribute('aria-label', `${prod.nombre}: ${fmtNum(prod.cantidad_actual)} ${prod.unidad || ''}`);
+  });
+  // KPIs flotantes
+  const k = calcularKPIs();
+  ponerHTML($('#wt-kpis'), [
+    { icon: 'package', lbl: 'Stock total', val: fmtNum(k.stock), sub: k.bajos ? `${k.bajos} bajo mínimo` : 'Todo sobre el mínimo', tone: k.bajos ? 'red' : 'green' },
+    { icon: 'truck', lbl: 'Camiones en sitio', val: fmtNum(k.enSitio), sub: `${k.enRuta} en ruta`, tone: k.esperando ? 'yellow' : 'blue' },
+    { icon: 'target', lbl: 'Entregas a tiempo', val: k.pct === null ? '—' : `${k.pct}%`, sub: k.pct === null ? 'Sin entregas este mes' : 'Este mes', tone: k.pct === null ? 'gray' : k.pct >= 90 ? 'green' : k.pct >= 70 ? 'yellow' : 'red' },
+  ].map(x => `<div class="wt-kpi wt-glass tone-${x.tone}"><span class="wt-kpi-ic">${ic(x.icon)}</span><div><span class="wt-kpi-lbl">${x.lbl}</span><strong>${x.val}</strong><small>${esc(x.sub)}</small></div></div>`).join(''));
+  renderSeguimiento3D();
+  renderLista3D(bahias);
+  renderDetalle3D(bahias, criticos);
+}
+const PASOS_PEDIDO = [['confirmado', 'Confirmado', 'clipboard'], ['preparando', 'Preparando', 'package'], ['enviado', 'Enviado', 'truck'], ['entregado', 'Entregado', 'checkCircle']];
+function renderSeguimiento3D() {
+  const cont = $('#wt-tracking');
+  const activos = [...S.pedidos.values()].filter(p => p.estado !== 'entregado').sort(ordenarPedidos);
+  if (!activos.length) {
+    ponerHTML(cont, `<div class="wt-head"><h4>${ic('route')} Seguimiento de pedidos</h4></div><div class="wt-vacio">${ic('checkCircle')} No hay pedidos activos. ¡Todo entregado!</div>`);
+    return;
+  }
+  bodega3D.pedidoIdx = ((bodega3D.pedidoIdx % activos.length) + activos.length) % activos.length;
+  const p = activos[bodega3D.pedidoIdx];
+  const idxPaso = { confirmado: 0, preparando: 1, enviado: 2, entregado: 3, tarde: 2 }[p.estado] ?? 0;
+  const atrasado = p.estado === 'tarde' || esVencido(p);
+  const cam = p.camion_id ? S.camiones.get(p.camion_id) : null;
+  const r = restante(p);
+  ponerHTML(cont, `
+    <div class="wt-head">
+      <h4>${ic('route')} Seguimiento de pedido</h4>
+      <div class="wt-nav">
+        <span class="muted">${bodega3D.pedidoIdx + 1} de ${activos.length}</span>
+        <button class="btn-icon sm" data-action="wt-pedido" data-delta="-1" aria-label="Pedido anterior">${ic('chevronLeft')}</button>
+        <button class="btn-icon sm wt-flip" data-action="wt-pedido" data-delta="1" aria-label="Pedido siguiente">${ic('chevronLeft')}</button>
+      </div>
+    </div>
+    <div class="wt-track">
+      <ol class="wt-steps">${PASOS_PEDIDO.map(([, lbl, icono], i) => `<li class="${i < idxPaso ? 'ok' : i === idxPaso ? (atrasado ? 'now late' : 'now') : ''}"><span class="st-ic">${ic(i < idxPaso ? 'check' : icono)}</span><span class="st-lbl">${lbl}</span></li>`).join('')}</ol>
+      <button class="wt-ship" data-action="abrir-pedido" data-id="${esc(p.id)}">
+        <span class="wt-ship-ic">${ic('clipboard')}</span>
+        <span class="wt-ship-txt"><b>${esc(p.numero || 'Sin número')}</b><span>${esc(p.cliente || '—')}</span>
+          <span class="badge tone-${atrasado ? 'red' : (EST_PEDIDO[p.estado]?.tone || 'gray')}">${atrasado ? 'Atrasado' : esc(EST_PEDIDO[p.estado]?.label || p.estado)}</span></span>
+        <span class="wt-ship-meta">${cam ? esc(cam.placa || 'Sin placa') : 'Sin camión'}<b class="restante ${r.cls}" data-ped="${esc(p.id)}">${esc(r.txt)}</b></span>
+      </button>
+    </div>`);
+}
+function renderLista3D(bahias) {
+  const cont = $('#wt-lista');
+  const todas = bahiasConfig();
+  const ocupadas = todas.filter(b => ocupantesBahia(b).length).length;
+  const cams = [...S.camiones.values()];
+  const peds = [...S.pedidos.values()].filter(p => p.estado !== 'entregado').sort(ordenarPedidos);
+  const tabs = [['bahias', 'Bahías', `${ocupadas}/${todas.length}`], ['camiones', 'Camiones', cams.length], ['pedidos', 'Pedidos', peds.length]];
+  let filas = '';
+  if (bodega3D.tab === 'bahias') {
+    filas = todas.map(b => {
       const st = estadoBahia(b);
-      const firma = `${st.label}|${st.c?.placa || ''}`;
-      const x = 80 + ISO_PUERTAS[i].x + 38, y = 300;
-      const html = `<div class="iso-pill tone-${st.tone}${previas[b] && previas[b] !== firma ? ' flash' : ''}"><b>${esc(b)}</b><span>${esc(st.label)}${st.c ? ' · ' + esc(st.c.placa || 'Sin placa') : ''}</span></div>`;
-      return billboard(x, y, 150 + i * 36, html).replace('class="iso-bb ', `data-bahia="${esc(b)}" data-firma="${esc(firma)}" class="iso-bb `);
+      const i = bahias.indexOf(b);
+      return `<li><button class="wt-row" data-action="wt-sel" data-tipo="bahia" data-id="${i >= 0 ? i : ''}" data-bahia="${esc(b)}">
+        <span class="wt-row-id">${esc(b)}</span><span class="wt-row-txt">${st.c ? `${esc(st.c.placa || 'Sin placa')} · ${esc(st.c.conductor || 'Sin conductor')}` : 'Disponible'}</span>
+        <span class="badge tone-${st.tone}">${esc(st.label)}</span></button></li>`;
+    }).join('');
+  } else if (bodega3D.tab === 'camiones') {
+    filas = cams.sort((a, b) => String(a.placa).localeCompare(String(b.placa))).map(c => {
+      const e = EST_CAMION[c.estado] || { label: c.estado, tone: 'gray' };
+      const lugar = c.estado === 'en_ruta' ? textoEta(c).txt : (c.bahia || 'En patio');
+      return `<li><button class="wt-row" data-action="wt-camion" data-id="${esc(c.id)}">
+        <span class="wt-row-id mono">${esc(c.placa || 'Sin placa')}</span><span class="wt-row-txt">${esc(lugar)}</span>
+        <span class="badge tone-${e.tone}">${esc(e.label)}</span></button></li>`;
+    }).join('');
+  } else {
+    filas = peds.map(p => {
+      const atrasado = p.estado === 'tarde' || esVencido(p);
+      return `<li><button class="wt-row" data-action="abrir-pedido" data-id="${esc(p.id)}">
+        <span class="wt-row-id mono">${esc(p.numero || '—')}</span><span class="wt-row-txt">${esc(p.cliente || '—')}</span>
+        <span class="badge tone-${atrasado ? 'red' : (EST_PEDIDO[p.estado]?.tone || 'gray')}">${atrasado ? 'Atrasado' : esc(EST_PEDIDO[p.estado]?.label || p.estado)}</span></button></li>`;
     }).join('');
   }
-  escena.forEach((b, i) => {
-    const puerta = $(`.iso-door[data-puerta="${i}"]`);
-    if (puerta) puerta.className = `iso-door tone-${estadoBahia(b).tone}`;
-  });
-  // Panel lateral
-  const lista = $('#iso-bays');
-  if (!lista) return;
-  const todas = bahiasConfig();
-  lista.innerHTML = todas.length ? todas.map(b => {
+  ponerHTML(cont, `
+    <div class="wt-tabs" role="tablist">${tabs.map(([k, lbl, n]) => `<button role="tab" aria-selected="${bodega3D.tab === k}" class="${bodega3D.tab === k ? 'on' : ''}" data-action="wt-tab" data-tab="${k}">${lbl} <span>${n}</span></button>`).join('')}</div>
+    <ul class="wt-rows">${filas || '<li class="wt-vacio">Nada que mostrar</li>'}</ul>`);
+}
+function renderDetalle3D(bahias, criticos) {
+  const cont = $('#wt-detalle');
+  const sel = bodega3D.seleccion;
+  if (!sel) { cont.hidden = true; return; }
+  let html = '';
+  if (sel.tipo === 'bahia') {
+    const b = sel.bahia || bahias[sel.id];
+    if (!b) { cont.hidden = true; return; }
     const st = estadoBahia(b);
     const c = st.c;
     const total = Number(c?.pallets_total) || 0, carg = Number(c?.pallets_cargados) || 0;
-    return `<li class="iso-bay tone-${st.tone}" data-bahia="${esc(b)}">
-      <span class="dot"></span><strong>${esc(b)}</strong><span class="badge tone-${st.tone}">${esc(st.label)}</span>
-      <span class="meta">${c ? `${esc(c.placa || 'Sin placa')} · ${esc(c.conductor || 'Sin conductor')} · ${fmtNum(carg)}/${fmtNum(total)} pallets` : 'Disponible para recibir un camión'}</span>
-      ${c ? `<div class="progress"><span style="width:${total ? Math.round(carg / total * 100) : 0}%"></span></div>` : ''}
-    </li>`;
-  }).join('') : '<li class="empty"><strong>No hay bahías configuradas</strong></li>';
-  const enRuta = [...S.camiones.values()].filter(c => c.estado === 'en_ruta').sort(ordenRuta);
-  const prox = enRuta[0];
-  const ruta = $('#iso-ruta');
-  if (ruta) ruta.innerHTML = `<div class="fila"><span>Camiones en ruta</span><strong>${enRuta.length}</strong></div>
-    ${prox ? `<div class="fila"><span>Próxima llegada: ${esc(prox.placa || 'Sin placa')}</span><strong data-eta="${esc(prox.hora_llegada || '')}">${esc(textoEta(prox).txt)}</strong></div>` : ''}`;
-  const libres = todas.filter(b => !ocupantesBahia(b).length).length;
-  const res = $('#iso-resumen');
-  if (res) res.textContent = `${todas.length} bahías · ${todas.length - libres} ocupadas · ${libres} libres · actualizado en tiempo real`;
+    const pct = total ? Math.round((carg / total) * 100) : 0;
+    html = `
+      <div class="wt-det-head">
+        <span class="wt-det-ic tone-${st.tone}">${ic(c ? 'truck' : 'warehouse')}</span>
+        <div><span class="wt-det-kind">Bahía de carga</span><h4>${esc(b)}</h4></div>
+        <button class="btn-icon sm" data-action="wt-cerrar" aria-label="Cerrar detalle">${ic('x')}</button>
+      </div>
+      <span class="badge tone-${st.tone}">${esc(st.label)}${c ? ' · ' + esc(c.placa || 'Sin placa') : ''}</span>
+      ${c ? `
+        <div class="wt-prog"><div class="pallets-top"><span>Pallets cargados</span><strong>${fmtNum(carg)} de ${fmtNum(total)}</strong></div><div class="progress tone-${st.tone}"><span style="width:${pct}%"></span></div></div>
+        <dl class="wt-dl">
+          <dt>Conductor</dt><dd>${esc(c.conductor || '—')}</dd>
+          <dt>Destino</dt><dd>${esc(c.destino || '—')}</dd>
+          <dt>En este estado</dt><dd>${c.estado_desde ? esc(fmtDuracion(Date.now() - new Date(c.estado_desde).getTime())) : '—'}</dd>
+          <dt>Llegada</dt><dd>${esc(fmtHora(c.hora_llegada))}</dd>
+        </dl>
+        <div class="field"><label for="wt-estado">Cambiar estado</label>
+          <select class="select sm" id="wt-estado" data-action="estado-camion" data-id="${esc(c.id)}">${opcionesEstadoCamion(c.estado)}</select></div>`
+      : `<p class="wt-libre">${ic('checkCircle')} Disponible para recibir un camión.</p>`}
+      <a class="btn btn-sm btn-block" href="#/camiones">${ic('truck')} Ver camiones y bahías</a>`;
+  } else {
+    const p = criticos[sel.id];
+    if (!p) { cont.hidden = true; return; }
+    const n = nivelStock(p);
+    html = `
+      <div class="wt-det-head">
+        <span class="wt-det-ic nivel-${n}" style="background:var(--ts);color:var(--tc)">${ic('package')}</span>
+        <div><span class="wt-det-kind">Producto · ${esc(p.codigo || 'Sin código')}</span><h4>${esc(p.nombre)}</h4></div>
+        <button class="btn-icon sm" data-action="wt-cerrar" aria-label="Cerrar detalle">${ic('x')}</button>
+      </div>
+      <div class="wt-stock nivel-${n}"><strong>${fmtNum(p.cantidad_actual)}</strong><span>${esc(p.unidad || 'unidades')}</span><span class="stock-label">${NIVEL_LABEL[n]}</span></div>
+      <div class="stockbar nivel-${n}"><span style="width:${pctStock(p)}%"></span></div>
+      <dl class="wt-dl">
+        <dt>Mínimo</dt><dd>${fmtNum(p.cantidad_minima)} ${esc(p.unidad || '')}</dd>
+        <dt>Ubicación</dt><dd>${esc(p.ubicacion || '—')}</dd>
+        <dt>Actualizado</dt><dd>${esc(hace(p.updated_at) || '—')}</dd>
+      </dl>
+      <button class="btn btn-primary btn-sm btn-block" data-action="mov" data-id="${esc(p.id)}">${ic('plus')} Registrar movimiento</button>`;
+  }
+  cont.hidden = false;
+  ponerHTML(cont, html);
+}
+function seleccionarBodega3D(tipo, id, bahiaNombre) {
+  if (tipo === 'bahia' && (id === '' || id === undefined || id === null || Number.isNaN(id))) {
+    bodega3D.seleccion = { tipo: 'bahia', id: -1, bahia: bahiaNombre };
+  } else {
+    bodega3D.seleccion = { tipo, id: Number(id) };
+  }
+  renderVistaBodega();
+}
+function rayoBodega3D(ev) {
+  const { camara, raycaster, clicables } = bodega3D;
+  const r = ev.target.getBoundingClientRect();
+  const p = new THREE.Vector2(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+  raycaster.setFromCamera(p, camara);
+  const hit = raycaster.intersectObjects(clicables, true).find(h => h.object.userData.sel && h.object.visible !== false);
+  return hit ? hit.object.userData.sel : null;
+}
+function clicBodega3D(ev) {
+  if (!bodega3D.iniciado) return;
+  const sel = rayoBodega3D(ev);
+  if (sel) seleccionarBodega3D(sel.tipo, sel.id);
+}
+function hoverBodega3D(ev) {
+  if (!bodega3D.iniciado) return;
+  ev.target.style.cursor = rayoBodega3D(ev) ? 'pointer' : 'default';
 }
 
 /* ═══════════════ 7. MODO DEMO ═══════════════ */
@@ -4557,6 +5114,8 @@ function iniciarMejorasTrabajador() {
   iniciarChat();
 }
 function detenerMejoras() {
+  bodega3D.activo = false;
+  if (bodega3D.raf) { cancelAnimationFrame(bodega3D.raf); bodega3D.raf = null; }
   detenerChat();
   if (S.demo) { S.demo = false; $('#screen-app').classList.remove('modo-demo'); $('#demo-pill').hidden = true; $$('.demo-toggle').forEach(t => { t.checked = false; }); }
   S.empresaReal = null;
