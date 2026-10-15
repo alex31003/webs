@@ -833,7 +833,35 @@ html[data-theme="dark"] .w-ok { background: #15803d; }
   height: max(580px, calc(100dvh - var(--topbar-h) - 48px));
   background: linear-gradient(180deg, #e0f2fe 0%, #f0f9ff 100%);
 }
-#wt-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#wt-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; -webkit-tap-highlight-color: transparent; }
+.wt-pop {
+  position: absolute; left: 0; top: 0; z-index: 6; width: 268px; max-width: calc(100% - 16px);
+  background: #ffffff; color: #0f172a; border-radius: 12px; border: 1px solid #e2e8f0;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, .16), 0 2px 6px rgba(15, 23, 42, .08);
+  will-change: transform; --ax: 50%;
+}
+.wt-pop.entra { animation: wtPopIn 200ms ease-out; }
+@keyframes wtPopIn { from { opacity: 0; margin-top: 10px; } to { opacity: 1; margin-top: 0; } }
+.wt-pop-head { display: flex; align-items: flex-start; gap: 8px; padding: 12px 10px 8px 14px; border-bottom: 1px solid #f1f5f9; border-top: 4px solid var(--tc, #94a3b8); border-radius: 12px 12px 0 0; }
+.wt-pop-head > div { flex: 1; min-width: 0; }
+.wt-pop-head strong { display: block; font-size: 15px; font-weight: 800; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.wt-pop-tipo { display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #64748b; }
+.wt-pop .btn-icon { color: #64748b; }
+.wt-pop .btn-icon:hover { background: #f1f5f9; color: #0f172a; }
+.wt-pop-body { padding: 8px 14px 10px; display: flex; flex-direction: column; gap: 7px; }
+.wt-pop-fila { display: grid; grid-template-columns: 20px auto minmax(0, 1fr); align-items: center; gap: 6px; font-size: 12.5px; }
+.wt-pop-fila .e { font-size: 14px; line-height: 1; }
+.wt-pop-fila .l { color: #64748b; }
+.wt-pop-fila .v { text-align: right; font-weight: 700; overflow-wrap: anywhere; }
+.wt-pop-fila .progress { grid-column: 2 / -1; height: 6px; background: #f1f5f9; }
+.wt-pop-fila .progress > span { background: var(--tc, #2563eb); }
+.wt-pop-fila .badge { height: 22px; font-size: 11px; }
+.wt-pop-nota { font-size: 11.5px; color: #64748b; line-height: 1.4; }
+.wt-pop-pie { display: flex; gap: 6px; padding: 0 14px 12px; }
+.wt-pop-pie > * { flex: 1; }
+.wt-pop-pie .select { background-color: #fff; color: #0f172a; border-color: #e2e8f0; }
+.wt-pop-flecha { position: absolute; left: var(--ax); bottom: -7px; width: 14px; height: 14px; margin-left: -7px; background: #fff; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; transform: rotate(45deg); }
+.wt-pop.abajo .wt-pop-flecha { bottom: auto; top: -7px; transform: rotate(225deg); }
 .wt-labels { position: absolute; inset: 0; pointer-events: none; }
 .wt-glass {
   background: color-mix(in srgb, var(--card) 90%, transparent); color: var(--text);
@@ -952,7 +980,9 @@ html[data-theme="dark"] .w-ok { background: #15803d; }
 }
 .wt-tag .n { display: none; }
 @media (max-width: 767px) {
-  .wt-stage { height: max(330px, calc(100vw * 0.78 + 50px)); border-radius: 14px; }
+  .wt-stage { height: 350px; border-radius: 14px; }
+  .wt-pop { width: 236px; }
+  .wt-pop-fila { font-size: 12px; }
   .wt-tag { width: 24px; height: 24px; padding: 0; border-radius: 50%; background: var(--tc); justify-content: center; border-color: #fff; }
   .wt-tag b, .wt-tag span { display: none; }
   .wt-tag .n { display: block; font-style: normal; color: #fff; font-size: 12px; font-weight: 800; }
@@ -1358,6 +1388,7 @@ html[data-theme="dark"] .link-btn { color: #00ff88; }
           <div class="wt-stage" id="wt-stage">
             <canvas id="wt-canvas" aria-label="Vista 3D de la bodega con camiones, montacargas y bahías"></canvas>
             <div class="wt-labels" id="wt-labels"></div>
+            <div class="wt-pop" id="wt-pop" role="dialog" aria-label="Detalle del objeto" hidden></div>
             <div class="wt-kpis" id="wt-kpis"></div>
             <div class="wt-detalle wt-glass" id="wt-detalle" hidden></div>
             <div class="wt-fallback" id="wt-fallback" hidden></div>
@@ -3499,6 +3530,7 @@ function manejarAccion(accion, el, ev) {
     case 'chat-producto': return irAProducto(id);
     case 'wt-sel': return seleccionarBodega3D(el.dataset.tipo, el.dataset.id, el.dataset.bahia);
     case 'wt-cerrar': bodega3D.seleccion = null; return renderVistaBodega();
+    case 'wt-pop-cerrar': return cerrarPop3D();
     case 'wt-tab': bodega3D.tab = el.dataset.tab; return renderVistaBodega();
     case 'wt-pedido': bodega3D.pedidoIdx += parseInt(el.dataset.delta, 10) || 0; return renderVistaBodega();
     case 'wt-camion': {
@@ -3825,13 +3857,13 @@ const W3 = {
     { x: 3, z: 7.8, capas: 3 }, { x: 11.5, z: 7.8, capas: 1 },
   ],
   ARBOLES: [[-20, -12, 1.15], [-20.5, 1.5, 1], [19.5, -12, 1.2], [20, 2.5, 0.95], [8, -13.6, 1.05]],
-  LIMITES: { x: [-17.5, 17.5], y: [0, 5], z: [-10.5, 12.8] },
-  LIMITES_MOVIL: { x: [-14, 14], y: [0, 4.5], z: [-10, 11.5] },
+  LIMITES: { x: [-15, 15], y: [0, 5], z: [-10.5, 11.5] },
+  LIMITES_MOVIL: { x: [-12.5, 12.5], y: [0, 4.5], z: [-10, 9.5] },
 };
 const bodega3D = {
   iniciado: false, fallo: null, activo: false, raf: null,
   renderer: null, escena: null, camara: null, raycaster: null, objetivo: null,
-  puertas: [], camion1: null, montacargas: [], clicables: [], etiquetas: [],
+  puertas: [], camion1: null, camiones: [], montacargas: [], pilas: [], clicables: [], etiquetas: [], pop: null,
   seleccion: null, tab: 'bahias', pedidoIdx: 0, reducido: false,
 };
 
@@ -3920,17 +3952,39 @@ function crearEdificio(escena) {
     p.add(caja3(3.0, 2.8, 0.16, m3('#0f172a', { roughness: 0.6 }), 0, 1.4, 0.05, false));
     for (let k = 0; k < 4; k++) p.add(caja3(3.0, 0.18, 0.2, m3('#cbd5e1'), 0, 2.72 - k * 0.2, 0.07, false));
     const luzMat = new THREE.MeshStandardMaterial({ color: '#94a3b8', emissive: '#94a3b8', emissiveIntensity: 0.9 });
+    luzMat.userData.esLuz = true;
     const luz = caja3(3.0, 0.12, 0.14, luzMat, 0, 3.08, 0.12, false);
     p.add(luz);
     [-1.3, 1.3].forEach(dx => p.add(caja3(0.3, 0.45, 0.3, m3('#111827'), dx, 0.45, 0.22)));
     p.add(caja3(3.0, 0.06, 1.2, m3('#94a3b8', { metalness: 0.4, roughness: 0.4 }), 0, 0.04, 0.65, false));
     p.position.set(px, 0, z);
     p.userData.sel = { tipo: 'bahia', id: i };
-    p.traverse(o => { o.userData.sel = { tipo: 'bahia', id: i }; });
+    p.traverse(o => { o.userData.sel = { tipo: 'bahia', id: i }; o.userData.pick = { obj: 'bahia', id: i }; });
     g.add(p);
     bodega3D.puertas.push({ grupo: p, luz: luzMat });
     bodega3D.clicables.push(p);
   });
+  // Detalles: nervaduras de la fachada, canaleta, bajadas de agua, ventanas, puerta de personal y ventiladores
+  const nervio = m3('#1e40af');
+  for (let x = -9.5; x <= 9.5; x += 1) {
+    if (W3.PUERTAS_X.some(px => Math.abs(x - px) < 1.9)) continue;
+    g.add(caja3(0.08, 2.75, 0.06, nervio, x, 1.72, z + 0.02, false));
+  }
+  g.add(caja3(20.3, 0.14, 0.18, m3('#93c5fd'), 0, 3.98, z + 0.06, false));
+  [-9.85, 9.85].forEach(x => { const t = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 3.9, 8), m3('#cbd5e1')); t.position.set(x, 1.95, z + 0.1); t.castShadow = true; g.add(t); });
+  [-7.3, -4.7].forEach(zz => {
+    g.add(caja3(0.08, 0.75, 1.5, m3('#e2e8f0'), 10.03, 1.15, zz, false));
+    g.add(caja3(0.1, 0.6, 1.35, m3('#93c5fd', { roughness: 0.2, metalness: 0.2 }), 10.05, 1.15, zz, false));
+  });
+  g.add(caja3(0.1, 1.95, 0.95, m3('#475569'), 10.05, 0.98, -9.05, false));
+  g.add(caja3(0.6, 0.08, 1.3, m3('#1e3a8a'), 10.3, 2.1, -9.05));
+  for (let x = -8; x <= 8; x += 5.3) {
+    const yTecho = 4 + alzada - 2 * Math.tan(ang);
+    const vent = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 0.5, 14), m3('#cbd5e1', { metalness: 0.5, roughness: 0.35 }));
+    vent.position.set(x, yTecho + 0.25, -8); vent.castShadow = true; g.add(vent);
+    const tapa = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.08, 14), m3('#94a3b8', { metalness: 0.5 }));
+    tapa.position.set(x, yTecho + 0.54, -8); g.add(tapa);
+  }
   // Letrero "BODEGA" en la fachada
   const tex = texturaCanvas(1024, 160, (c, w, h) => {
     c.fillStyle = '#ffffff'; c.beginPath(); c.roundRect(0, 0, w, h, 26); c.fill();
@@ -4020,7 +4074,8 @@ function crearPila(escena, { x, z, capas }, idx) {
     g.add(caja3(1.76, 0.03, 0.12, m3('#d6a56b'), 0, 0.18 + 0.61 + c * 0.62, 0, false));
   }
   g.position.set(x, 0, z);
-  g.traverse(o => { o.userData.sel = { tipo: 'pila', id: idx }; });
+  g.traverse(o => { o.userData.sel = { tipo: 'pila', id: idx }; o.userData.pick = { obj: 'pila', id: idx }; });
+  bodega3D.pilas[idx] = g;
   escena.add(g);
   bodega3D.clicables.push(g);
   return g;
@@ -4077,10 +4132,11 @@ function iniciarBodega3D() {
   const camion2 = crearCamion(escena, false);
   camion2.grupo.position.set(W3.PUERTAS_X[1], 0, W3.ANDEN_Z);
   camion2.grupo.rotation.y = -Math.PI / 2; // estacionado de reversa en la bahía 2
-  camion2.grupo.traverse(o => { o.userData.sel = { tipo: 'bahia', id: 1 }; });
+  camion2.grupo.traverse(o => { o.userData.sel = { tipo: 'bahia', id: 1 }; o.userData.pick = { obj: 'camion', id: 1 }; });
   bodega3D.clicables.push(camion2.grupo);
-  bodega3D.camion1.grupo.traverse(o => { o.userData.sel = { tipo: 'bahia', id: 0 }; });
+  bodega3D.camion1.grupo.traverse(o => { o.userData.sel = { tipo: 'bahia', id: 0 }; o.userData.pick = { obj: 'camion', id: 0 }; });
   bodega3D.clicables.push(bodega3D.camion1.grupo);
+  bodega3D.camiones = [bodega3D.camion1, camion2];
   const fA = crearMontacargas(escena, true);
   const fB = crearMontacargas(escena, false);
   fA.grupo.position.set(4.8, 0, 7.8);
@@ -4089,6 +4145,14 @@ function iniciarBodega3D() {
     { ...fA, base: 4.8, recorrido: 3.8, periodo: 7, fase: 0 },
     { ...fB, base: -10.8, recorrido: -2.8, periodo: 8.5, fase: 2.2 },
   ];
+  bodega3D.montacargas.forEach((f, i) => {
+    const zona = new THREE.Mesh(new THREE.BoxGeometry(3.4, 2.8, 1.8), new THREE.MeshBasicMaterial({ visible: false }));
+    zona.position.set(0.6, 1.4, 0);
+    zona.userData.hitbox = true;
+    f.grupo.add(zona);
+    f.grupo.traverse(o => { o.userData.pick = { obj: 'montacargas', id: i }; });
+    bodega3D.clicables.push(f.grupo);
+  });
 
   const camara = new THREE.OrthographicCamera(-10, 10, 10, -10, 0.1, 200);
   Object.assign(bodega3D, { renderer, escena, camara, raycaster: new THREE.Raycaster(), objetivo: new THREE.Vector3(0, 1.2, 0), iniciado: true });
@@ -4097,8 +4161,7 @@ function iniciarBodega3D() {
   ajustarCamara3D();
   if (window.ResizeObserver) new ResizeObserver(() => { if (bodega3D.iniciado) { ajustarCamara3D(); if (!bodega3D.activo) dibujarBodega3D(performance.now() / 1000); } }).observe($('#wt-stage'));
   else window.addEventListener('resize', ajustarCamara3D);
-  lienzo.addEventListener('click', clicBodega3D);
-  lienzo.addEventListener('mousemove', debounce(hoverBodega3D, 30));
+  enlazarToques3D(lienzo);
   document.addEventListener('visibilitychange', actualizarVisibilidadBodega3D);
 }
 function falloBodega3D(msg) {
@@ -4176,6 +4239,7 @@ function animarBodega3D(seg) {
   bodega3D.montacargas.forEach(f => {
     const fase = bodega3D.reducido ? 0 : ((seg + f.fase) % f.periodo) / f.periodo;
     const ida = 0.5 - 0.5 * Math.cos(fase * Math.PI * 2);
+    f.fase01 = fase; f.ida = ida;
     f.grupo.position.x = f.base + f.recorrido * ida;
     f.horquillas.position.y = 0.12 + 0.35 * Math.max(0, Math.sin(fase * Math.PI * 2 - Math.PI / 2));
   });
@@ -4188,6 +4252,10 @@ function dibujarBodega3D(seg) {
   animarBodega3D(seg);
   renderer.render(escena, camara);
   posicionarEtiquetas3D();
+  if (bodega3D.pop) {
+    if (bodega3D.pop.obj === 'montacargas' && seg - (bodega3D.ultPop || 0) > 0.25) { bodega3D.ultPop = seg; renderPop3D(); }
+    posicionarPop3D();
+  }
 }
 function bucleBodega3D(ms) {
   if (!bodega3D.activo) { bodega3D.raf = null; return; }
@@ -4292,6 +4360,7 @@ function renderVistaBodega() {
   renderSeguimiento3D();
   renderLista3D(bahias);
   renderDetalle3D(bahias, criticos);
+  renderPop3D();
 }
 const PASOS_PEDIDO = [['confirmado', 'Confirmado', 'clipboard'], ['preparando', 'Preparando', 'package'], ['enviado', 'Enviado', 'truck'], ['entregado', 'Entregado', 'checkCircle']];
 function renderSeguimiento3D() {
@@ -4423,22 +4492,228 @@ function seleccionarBodega3D(tipo, id, bahiaNombre) {
   }
   renderVistaBodega();
 }
+/* ── Interactividad: tocar objetos 3D (mouse y táctil) → panel flotante ── */
+const POP_ESTADO = { en_ruta: 'En ruta', esperando: 'En espera', cargando: 'Cargando', descargando: 'Descargando', listo: 'Listo' };
+const MONTACARGAS_INFO = [
+  { id: 'MC-01', bateria: 82, zonas: [2, 3] },   // va y vuelve entre la Zona 3 y la Zona 4
+  { id: 'MC-02', bateria: 67, zonas: [1, 0] },   // va y vuelve entre la Zona 2 y la Zona 1
+];
+function visibleEnEscena(o) { for (let n = o; n; n = n.parent) if (n.visible === false) return false; return true; }
 function rayoBodega3D(ev) {
   const { camara, raycaster, clicables } = bodega3D;
-  const r = ev.target.getBoundingClientRect();
+  const r = bodega3D.renderer.domElement.getBoundingClientRect();
   const p = new THREE.Vector2(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
   raycaster.setFromCamera(p, camara);
-  const hit = raycaster.intersectObjects(clicables, true).find(h => h.object.userData.sel && h.object.visible !== false);
-  return hit ? hit.object.userData.sel : null;
+  const hit = raycaster.intersectObjects(clicables, true).find(h => h.object.userData.pick && visibleEnEscena(h.object));
+  return hit ? hit.object.userData.pick : null;
 }
-function clicBodega3D(ev) {
-  if (!bodega3D.iniciado) return;
-  const sel = rayoBodega3D(ev);
-  if (sel) seleccionarBodega3D(sel.tipo, sel.id);
+// Un "toque" = pointerdown + pointerup sin arrastrar (sirve para mouse, dedo y lápiz)
+function enlazarToques3D(lienzo) {
+  let inicio = null;
+  lienzo.addEventListener('pointerdown', ev => { inicio = { x: ev.clientX, y: ev.clientY, t: performance.now() }; });
+  lienzo.addEventListener('pointerup', ev => {
+    if (!inicio || !bodega3D.iniciado) return;
+    const movio = Math.hypot(ev.clientX - inicio.x, ev.clientY - inicio.y) > 10 || performance.now() - inicio.t > 700;
+    inicio = null;
+    if (movio) return;
+    const pick = rayoBodega3D(ev);
+    if (pick) abrirPop3D(pick); else cerrarPop3D();
+  });
+  lienzo.addEventListener('pointercancel', () => { inicio = null; });
+  lienzo.addEventListener('pointermove', debounce(ev => {
+    if (ev.pointerType === 'mouse' && bodega3D.iniciado) lienzo.style.cursor = rayoBodega3D(ev) ? 'pointer' : 'default';
+  }, 30));
+  document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && bodega3D.pop) cerrarPop3D(); });
 }
-function hoverBodega3D(ev) {
-  if (!bodega3D.iniciado) return;
-  ev.target.style.cursor = rayoBodega3D(ev) ? 'pointer' : 'default';
+function grupoDePick(pick) {
+  if (!pick) return null;
+  if (pick.obj === 'camion') return bodega3D.camiones[pick.id]?.grupo;
+  if (pick.obj === 'montacargas') return bodega3D.montacargas[pick.id]?.grupo;
+  if (pick.obj === 'bahia') return bodega3D.puertas[pick.id]?.grupo;
+  if (pick.obj === 'pila') return bodega3D.pilas[pick.id];
+  return null;
+}
+// Iluminación suave en amarillo del objeto seleccionado
+function resaltar3D(grupo, encender) {
+  if (!grupo) return;
+  grupo.traverse(o => {
+    if (!o.isMesh || o.userData.hitbox) return;
+    (Array.isArray(o.material) ? o.material : [o.material]).forEach(mt => {
+      if (!mt || !mt.emissive || mt.userData.esLuz) return;
+      if (encender) {
+        if (!mt.userData.emisivaOriginal) mt.userData.emisivaOriginal = { c: mt.emissive.getHex(), i: mt.emissiveIntensity };
+        mt.emissive.set('#fde68a');
+        mt.emissiveIntensity = 0.42;
+      } else if (mt.userData.emisivaOriginal) {
+        mt.emissive.setHex(mt.userData.emisivaOriginal.c);
+        mt.emissiveIntensity = mt.userData.emisivaOriginal.i;
+        delete mt.userData.emisivaOriginal;
+      }
+    });
+  });
+}
+function abrirPop3D(pick) {
+  const mismo = bodega3D.pop && bodega3D.pop.obj === pick.obj && bodega3D.pop.id === pick.id;
+  cerrarPop3D(true);
+  if (mismo) return; // tocar de nuevo el mismo objeto lo cierra
+  bodega3D.pop = { obj: pick.obj, id: pick.id };
+  resaltar3D(grupoDePick(pick), true);
+  const el = $('#wt-pop');
+  el.hidden = false;
+  el._html = null;
+  el.classList.remove('entra'); void el.offsetWidth; el.classList.add('entra');
+  renderPop3D();
+  posicionarPop3D();
+}
+function cerrarPop3D(silencioso) {
+  if (bodega3D.pop) resaltar3D(grupoDePick(bodega3D.pop), false);
+  bodega3D.pop = null;
+  const el = $('#wt-pop');
+  if (el) { el.hidden = true; el._html = null; }
+  if (!silencioso && bodega3D.iniciado && !bodega3D.activo) dibujarBodega3D(performance.now() / 1000);
+}
+function anclaPop3D() {
+  const p = bodega3D.pop;
+  if (!p) return null;
+  if (p.obj === 'camion') {
+    const g = bodega3D.camiones[p.id]?.grupo;
+    return g ? new THREE.Vector3(g.position.x, 3.5, g.position.z) : null;
+  }
+  if (p.obj === 'montacargas') { const g = bodega3D.montacargas[p.id]?.grupo; return g ? new THREE.Vector3(g.position.x + (p.id ? -0.5 : 0.5), 2.7, g.position.z) : null; }
+  if (p.obj === 'bahia') return new THREE.Vector3(W3.PUERTAS_X[p.id], 3.3, W3.FACHADA_Z + 0.3);
+  if (p.obj === 'pila') { const s = W3.PILAS[p.id]; return new THREE.Vector3(s.x, 0.4 + s.capas * 0.62, s.z); }
+  return null;
+}
+function posicionarPop3D() {
+  const el = $('#wt-pop'), stage = $('#wt-stage');
+  if (!el || el.hidden || !bodega3D.pop) return;
+  const ancla = anclaPop3D();
+  const objeto = grupoDePick(bodega3D.pop);
+  el.style.visibility = ancla && (!objeto || objeto.visible) ? 'visible' : 'hidden';
+  if (!ancla) return;
+  const w = stage.clientWidth, h = stage.clientHeight;
+  const v = ancla.project(bodega3D.camara);
+  const ax = (v.x + 1) / 2 * w, ay = (1 - v.y) / 2 * h;
+  const pw = el.offsetWidth, ph = el.offsetHeight, margen = 8, flecha = 14;
+  const x = Math.min(w - pw / 2 - margen, Math.max(pw / 2 + margen, ax));
+  const abajo = ay - ph - flecha < margen;
+  const y = abajo ? Math.min(h - ph - margen, ay + flecha + 26) : ay - ph - flecha;
+  el.classList.toggle('abajo', abajo);
+  el.style.setProperty('--ax', `${Math.max(16, Math.min(pw - 16, ax - (x - pw / 2)))}px`);
+  el.style.transform = `translate(${(x - pw / 2).toFixed(1)}px, ${y.toFixed(1)}px)`;
+}
+function camionDeEscena(i) {
+  const b = bahiasEscena3D();
+  const real = estadoBahia(b[i]).c;
+  if (real) return { c: real, bahia: b[i], llegando: false };
+  if (i === 0) {
+    const prox = [...S.camiones.values()].filter(c => c.estado === 'en_ruta').sort(ordenRuta)[0];
+    if (prox) return { c: prox, bahia: b[i], llegando: true };
+  }
+  return { c: null, bahia: b[i], llegando: false };
+}
+function minutosDesde(iso) { return iso ? Math.max(0, (Date.now() - new Date(iso).getTime()) / 60000) : 0; }
+function tiempoEnBahia(c) {
+  if (!c) return '—';
+  if (c.estado === 'en_ruta') return c.hora_llegada ? textoEta(c).txt.replace(/^l/, 'L') : 'Sin hora estimada';
+  const llegada = c.hora_llegada && new Date(c.hora_llegada) < new Date() ? c.hora_llegada : c.estado_desde;
+  return llegada ? fmtDuracion(Date.now() - new Date(llegada).getTime()) : '—';
+}
+function tiempoEstimado(c) {
+  if (!c) {
+    const prox = [...S.camiones.values()].filter(x => x.estado === 'en_ruta').sort(ordenRuta)[0];
+    return prox ? `Próximo: ${prox.placa || 'camión'} ${textoEta(prox).txt}` : 'Sin camiones en camino';
+  }
+  if (c.estado === 'listo') return 'Listo para salir';
+  if (c.estado === 'en_ruta') return textoEta(c).txt.replace(/^l/, 'L');
+  if (c.estado === 'esperando') return `En espera hace ${fmtDuracion(minutosDesde(c.estado_desde) * 60000)}`;
+  const total = Number(c.pallets_total) || 0, hechos = Number(c.pallets_cargados) || 0, faltan = Math.max(0, total - hechos);
+  if (!total) return 'Sin pallets registrados';
+  if (!faltan) return 'Terminando';
+  const min = minutosDesde(c.estado_desde);
+  const ritmo = hechos > 0 && min >= 1 ? min / hechos : 2.5; // minutos por pallet (2,5 si aún no hay historial)
+  return `≈ ${fmtDuracion(Math.ceil(faltan * ritmo) * 60000)} para terminar`;
+}
+function zonaProductos(i) {
+  // Las pilas representan 4 zonas; cada zona agrupa productos (la zona i empieza por el producto crítico i)
+  const lista = [...S.productos.values()].sort((a, b) => (a.cantidad_actual / Math.max(1, a.cantidad_minima)) - (b.cantidad_actual / Math.max(1, b.cantidad_minima)));
+  return lista.filter((_, k) => k % W3.PILAS.length === i);
+}
+function filaPop(emoji, lbl, valor, extra = '') {
+  return `<div class="wt-pop-fila"><span class="e" aria-hidden="true">${emoji}</span><span class="l">${lbl}</span><span class="v">${valor}</span>${extra}</div>`;
+}
+function renderPop3D() {
+  const el = $('#wt-pop');
+  const p = bodega3D.pop;
+  if (!el || !p) return;
+  let titulo = '', tipo = '', tono = 'gray', cuerpo = '', pie = '';
+  if (p.obj === 'camion') {
+    const { c, bahia, llegando } = camionDeEscena(p.id);
+    tipo = llegando ? `Camión · llegando a ${bahia}` : `Camión · ${bahia}`;
+    if (c) {
+      const e = EST_CAMION[c.estado] || { tone: 'gray' };
+      tono = e.tone;
+      const total = Number(c.pallets_total) || 0, carg = Number(c.pallets_cargados) || 0;
+      titulo = c.placa || 'Sin placa';
+      cuerpo = filaPop('🚛', 'Placa', `<span class="mono">${esc(c.placa || '—')}</span>`)
+        + filaPop('📦', 'Pallets', `${fmtNum(carg)} / ${fmtNum(total)}`, `<div class="progress tone-${tono}"><span style="width:${total ? Math.round(carg / total * 100) : 0}%"></span></div>`)
+        + filaPop('⏱', c.estado === 'en_ruta' ? 'Llegada' : 'En bahía', esc(tiempoEnBahia(c)))
+        + filaPop('🔄', 'Estado', `<span class="badge tone-${tono}">${esc(POP_ESTADO[c.estado] || c.estado)}</span>`);
+      pie = `<select class="select sm" data-action="estado-camion" data-id="${esc(c.id)}" aria-label="Cambiar estado del camión">${opcionesEstadoCamion(c.estado)}</select>`;
+    } else {
+      titulo = 'Sin camión registrado';
+      cuerpo = `<p class="wt-pop-nota">No hay un camión asignado a ${esc(bahia)} en Supabase. Asígnalo desde Camiones.</p>`;
+      pie = `<a class="btn btn-sm" href="#/camiones">${ic('truck')} Ir a Camiones</a>`;
+    }
+  } else if (p.obj === 'montacargas') {
+    const info = MONTACARGAS_INFO[p.id], f = bodega3D.montacargas[p.id];
+    const fase = f?.fase01 ?? 0, ida = f?.ida ?? 0;
+    const [zA, zB] = info.zonas.map(z => `Zona ${z + 1}`);
+    const zona = ida > 0.75 ? zB : ida < 0.25 ? zA : `Pasillo ${zA} – ${zB}`;
+    const operacion = fase > 0.4 && fase < 0.6 ? `Levantando pallet en ${zB}` : fase < 0.5 ? `Trasladando carga a ${zB}` : `Regresando a ${zA}`;
+    tipo = 'Montacargas'; titulo = info.id; tono = 'yellow';
+    cuerpo = filaPop('🟡', 'ID', `<span class="mono">${info.id}</span>`)
+      + filaPop('📍', 'Zona actual', esc(zona))
+      + filaPop('🔋', 'Estado operativo', `<span class="badge tone-green">Operativo</span> ${info.bateria}%`)
+      + `<p class="wt-pop-nota">${esc(operacion)} · equipo ilustrativo, sin telemetría conectada.</p>`;
+  } else if (p.obj === 'bahia') {
+    const b = bahiasEscena3D()[p.id];
+    const st = estadoBahia(b);
+    const c = st.c;
+    tipo = `Bahía ${p.id + 1} · puerta de carga`; titulo = b; tono = st.tone;
+    const total = Number(c?.pallets_total) || 0, carg = Number(c?.pallets_cargados) || 0;
+    cuerpo = filaPop('🏷️', 'Bahía', esc(b))
+      + filaPop('🚛', 'Camión', c ? `<span class="mono">${esc(c.placa || 'Sin placa')}</span> · ${esc(c.conductor || 'Sin conductor')}` : '<span class="muted">Libre</span>')
+      + filaPop('📦', 'Pallets', c ? `${fmtNum(carg)} / ${fmtNum(total)}` : '—', c && total ? `<div class="progress tone-${tono}"><span style="width:${Math.round(carg / total * 100)}%"></span></div>` : '')
+      + filaPop('⏳', 'Tiempo estimado', esc(tiempoEstimado(c)));
+    pie = c ? `<select class="select sm" data-action="estado-camion" data-id="${esc(c.id)}" aria-label="Cambiar estado del camión">${opcionesEstadoCamion(c.estado)}</select>` : `<span class="badge tone-green">Disponible</span>`;
+  } else if (p.obj === 'pila') {
+    const prods = zonaProductos(p.id);
+    const conteo = new Map();
+    S.movimientos.forEach(m => conteo.set(m.producto_id, (conteo.get(m.producto_id) || 0) + 1));
+    const top = [...prods].sort((a, b) => (conteo.get(b.id) || 0) - (conteo.get(a.id) || 0) || b.cantidad_actual - a.cantidad_actual)[0];
+    const totalZona = prods.reduce((s, x) => s + (Number(x.cantidad_actual) || 0), 0);
+    const aprox = totalZona >= 100 ? Math.round(totalZona / 10) * 10 : totalZona;
+    tipo = `Pila de cajas · Zona ${p.id + 1}`; titulo = `Zona ${p.id + 1}`; tono = top ? (nivelStock(top) === 'bajo' ? 'red' : nivelStock(top) === 'medio' ? 'yellow' : 'green') : 'gray';
+    if (top) {
+      const veces = conteo.get(top.id) || 0;
+      cuerpo = filaPop('📦', 'Producto más frecuente', esc(top.nombre))
+        + filaPop('🔁', 'Movimientos recientes', veces ? `${veces}` : 'Sin movimientos recientes')
+        + filaPop('🔢', 'Cantidad aproximada', `≈ ${fmtNum(aprox)} unidades`)
+        + filaPop('🗂️', 'Productos en la zona', fmtNum(prods.length));
+      pie = `<button class="btn btn-primary btn-sm" data-action="mov" data-id="${esc(top.id)}">${ic('plus')} Movimiento</button><button class="btn btn-sm" data-action="chat-producto" data-id="${esc(top.id)}">Ver inventario</button>`;
+    } else {
+      cuerpo = '<p class="wt-pop-nota">Aún no hay productos en esta zona.</p>';
+    }
+  }
+  ponerHTML(el, `
+    <div class="wt-pop-head tone-${tono}">
+      <div><span class="wt-pop-tipo">${esc(tipo)}</span><strong>${esc(titulo)}</strong></div>
+      <button class="btn-icon sm" data-action="wt-pop-cerrar" aria-label="Cerrar">${ic('x')}</button>
+    </div>
+    <div class="wt-pop-body">${cuerpo}</div>
+    ${pie ? `<div class="wt-pop-pie">${pie}</div>` : ''}
+    <span class="wt-pop-flecha"></span>`);
 }
 
 /* ═══════════════ 7. MODO DEMO ═══════════════ */
@@ -5114,6 +5389,7 @@ function iniciarMejorasTrabajador() {
   iniciarChat();
 }
 function detenerMejoras() {
+  if (bodega3D.iniciado) cerrarPop3D(true);
   bodega3D.activo = false;
   if (bodega3D.raf) { cancelAnimationFrame(bodega3D.raf); bodega3D.raf = null; }
   detenerChat();
